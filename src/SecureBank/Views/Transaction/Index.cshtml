@@ -1,0 +1,70 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+<div class="container-fluid">
+    <div class="container">
+
+        <h2 class="transTableTitle">Index</h2>
+
+        <p class="transTableButtNew">
+            <a class="btn btn-primary" asp-action="Create">Create New</a>
+        </p>
+
+        <table id="transactionsTable" class="table table-hover"></table>
+        <br />
+        <br />
+        <br />
+        <div>
+            <form method="post" enctype="multipart/form-data" action="/upload/UploadTansactions">
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <p>Upload one or more transaction:</p>
+                        <input type="file" name="files" multiple accept="text/xml">
+                    </div>
+                    <div class="col-md-2">
+                        <br />
+                        <br />
+                        <input type="submit" value="Upload" class="btn btn-primary">
+                    </div>
+                </div>
+                <div class="form-group">
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#transactionsTable').DataTable({
+                ordering: false,
+                serverSide: true,
+                processing: true,
+                "ajax": "/api/Transaction/GetTransactions",
+                columns: [
+                    { data: 'senderId', title: 'Sender' },
+                    { data: 'receiverId', title: 'Receiver' },
+                    { data: 'dateTime', title: 'Transaction time' },
+                    {
+                        data: 'amount', title: 'Amount',
+                        mRender: function (rowData) {
+                            return rowData.toFixed(2) + "€";
+                        }
+                    },
+                    { data: 'reason', title: 'Reason' },
+                    {
+                        data: "id",
+                        title: "View",
+                        mRender: function (rowData) {
+                            return "<a href='/Transaction/Details/" + rowData + "'><button class='btn btn-primary'>Details</button></a>";
+                        }
+                    }
+                ]
+            });
+        });
+    </script>
+}

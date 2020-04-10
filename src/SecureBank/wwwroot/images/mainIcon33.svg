@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='iso-8859-1'?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 44 44">
+  <g>
+    <g>
+      <g>
+        <path fill-rule="evenodd" d="m40,6h-36c-2.209,0-4,1.791-4,4v24c0,2.209 1.791,4 4,4h36c2.209,0 4-1.791 4-4v-24c0-2.209-1.791-4-4-4zm2,28c0,1.104-0.896,2-2,2h-36c-1.104,0-2-0.896-2-2v-24c0-1.104 0.896-2 2-2h36c1.104,0 2,0.896 2,2v24z"/>
+      </g>
+    </g>
+    <g>
+      <g>
+        <path fill-rule="evenodd" d="M2,12v2h40v-2H2z M2,20h40v-2H2V20z"/>
+      </g>
+    </g>
+  </g>
+</svg>

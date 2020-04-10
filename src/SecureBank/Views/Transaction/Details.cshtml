@@ -1,0 +1,57 @@
+﻿@model SecureBank.DAL.DBModels.TransactionDBModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="container-fluid">
+    <div class="container">
+
+        <div class="signup-form">
+            <h4>Details of transaction</h4>
+            <hr />
+            <dl class="dl-horizontal">
+                <dt>
+                    @Html.DisplayNameFor(model => model.SenderId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.SenderId)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.ReceiverId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.ReceiverId)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.TransactionDateTime)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.TransactionDateTime)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Reason)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Reason)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Amount)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Amount)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Reference)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Reference)
+                </dd>
+            </dl>
+            <a class="btn btn-success" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+        </div>
+        <div>
+            <a class="btn btn-info" asp-action="Index">Back to List</a>
+        </div>
+    </div>
+</div>

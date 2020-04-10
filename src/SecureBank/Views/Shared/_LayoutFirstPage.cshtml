@@ -1,0 +1,101 @@
+﻿@using SecureBank.Helpers
+
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- awesone fonts css-->
+    <link href="/css/font-awesome.css" rel="stylesheet" type="text/css">
+    <!-- owl carousel css-->
+    <link rel="stylesheet" href="/owl-carousel/assets/owl.carousel.min.css" type="text/css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <!-- custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <title>SecureBank</title>
+    <style>
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light bg-transparent" id="gtco-main-nav">
+        <div class="container">
+            <a class="navbar-brand">SecureBank</a>
+            <button class="navbar-toggler" data-target="#my-nav" onclick="myFunction(this)" data-toggle="collapse">
+                <span class="bar1"></span> <span class="bar2"></span> <span class="bar3"></span>
+            </button>
+            <div id="my-nav" class="collapse navbar-collapse">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#news">News</a></li>
+                </ul>
+
+                @if (!User.Identity.IsAuthenticated)
+                {
+                    <form class="form-inline my-2 my-lg-0">
+                        <a href="/auth/login" class="btn btn-outline-dark my-2 my-sm-0 mr-3 text-uppercase">login</a>
+                        <a href="/auth/register" class="btn btn-info my-2 my-sm-0 text-uppercase">
+                            sign up
+                        </a>
+                    </form>
+                }
+                else
+                {
+                    <div class="pull-right">
+                        <img src="/user/ProfileImage?user=@User.Identity.Name" height="50" width="50" />
+                        <span style="color:gray">@User.Identity.Name</span>
+                        <span class="navAccountAmountColor">
+                            <span id="amount"></span>
+                            <span>€</span>
+                        </span>
+                    </div>
+                    <script>
+                    let username = "@User.Identity.Name";
+                    </script>
+                    <a class="btn btn-info my-2 my-sm-0 text-uppercase" href="/Identity/Account/Logout?returnUrl=/">Logout</a>
+                }
+
+            </div>
+        </div>
+    </nav>
+    @RenderBody()
+    <footer class="container-fluid" id="gtco-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="row">
+                        <div class="col-12">
+                            <p>&copy; 2020. SSRD SecureBank </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+
+    <script src="/js/popper.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <!-- owl carousel js-->
+    <script src="/owl-carousel/owl.carousel.min.js"></script>
+    <script src="/js/main.js"></script>
+
+    <script src="/js/chart-js/chart.js"></script>
+    @RenderSection("Scripts", required: false)
+    <script>
+
+        $(document).ready(function() {
+            $.get("/user/GetAvaliableFunds/@Context.GetUserName()", function(data) {
+                $("#amount").html(data);
+                });
+            });
+
+    </script>
+</body>
+</html>

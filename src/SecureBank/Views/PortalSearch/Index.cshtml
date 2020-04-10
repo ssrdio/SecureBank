@@ -1,0 +1,40 @@
+﻿@model SecureBank.Models.PortalSearch.PortalSearchModel
+
+@{
+    ViewData["Title"] = "Portal search";
+}
+<div class="container-fluid">
+    <div class="container">
+
+        <h2 class="transTableTitle">Here you can find everything and nothing.</h2>
+
+        <p class="transTableButtNew">
+            <form asp-controller="PortalSearch" asp-action="Index" method="get">
+                <p>
+                    Title: <input type="text" asp-for="SearchString">
+                    <input type="submit" value="Search" />
+                </p>
+            </form>
+        </p>
+        @if (Model.SearchString?.Length > 0)
+        {
+            <p>Results for search: @Html.Raw(@Model.SearchString)</p>
+        }
+
+        <table id="exampleTable" class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Result</th>
+                </tr>
+            </thead>
+            @foreach (string result in Model.Results)
+            {
+                <tr>
+                   <td>@result</td>
+                </tr>
+            }
+        </table>
+        
+    </div>
+</div>
+

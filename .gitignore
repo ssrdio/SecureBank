@@ -1,0 +1,12 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/BankWebPortal/.vs/BankWebPortal/v16
+/BankWebPortal/BankWebPortal/bin/Debug/netcoreapp2.2
+/BankWebPortal/BankWebPortal/obj
+*.user
+/BankWebPortal/.vs
+.vs/
+bin/
+obj/

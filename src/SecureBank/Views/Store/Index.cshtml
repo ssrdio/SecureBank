@@ -1,0 +1,174 @@
+﻿@model List<SecureBank.Models.Store.StoreItem>
+
+@{
+    ViewData["Title"] = "Store";
+}
+<div class="container-fluid">
+    <div class="container">
+        <h2 class="transTableTitle">Store</h2>
+        <p class="transTableButtStoreHistory">
+            <a class="btn btn-primary" asp-area="" asp-controller="Store" asp-action="History">Store History</a>
+        </p>
+        <br />
+        <span class="transTableTitle">Here you can buy latest and gratest services which are offered by our  SecureBank</span>
+
+        <!-- <a asp-area="" asp-controller="Store" asp-action="History">Store History</a> -->
+        <!-- <br />
+    <br /> -->
+
+        <table id="exampleTable" class="table table-hover">
+            <thead class="transTHead">
+                <tr>
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        Price
+                    </th>
+                    <th>
+                        Description
+                    </th>
+                    <th>
+                        Bought how many times
+                    </th>
+
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="itemName">
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td class="itemPrice">
+                            @Html.DisplayFor(modelItem => item.Price)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Description)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Installments)
+                        </td>
+                        <td>
+                            <!-- <a class="btn btn-success btnMarRight" asp-action="Edit" asp-route-id="@item.Id">Buy</a> -->
+                            <a class="cd-popup-trigger btn btn-success btnMarRight btnBuy" href="#0" data-id="@item.Id" data-name="@item.Name" data-price="@item.Price">Buy</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+
+        <div class="cd-popup" role="alert">
+            <div class="cd-popup-container">
+                <p class="popupTitle">Are you sure you want to buy this service?</p>
+                <p class="popupContent"></p>
+                <ul class="cd-buttons">
+                    <li><a class="confirmBuy" href="#0">Yes</a></li>
+                    <li><a class="cancleBuy" href="#0">No</a></li>
+                </ul>
+                <a href="#0" class="cd-popup-close img-replace">Close</a>
+            </div> <!-- cd-popup-container -->
+        </div> <!-- cd-popup -->
+
+        <div class="cd-popup2" role="alert">
+            <div class="cd-popup-container">
+                <p class="popupTitle">Your purchase was Successful!</p>
+                <ul class="cd-buttons">
+                    <li><a class="cancleBuy2" href="#0">Close</a></li>
+                </ul>
+                <a href="#0" class="cd-popup-close img-replace">Close</a>
+            </div> <!-- cd-popup-container -->
+        </div> <!-- cd-popup -->
+
+        <div class="cd-popup3" role="alert">
+            <div class="cd-popup-container">
+                <p class="popupTitle">Your purchase has Failed!</p>
+                <ul class="cd-buttons">
+                    <li><a class="cancleBuy2" href="#0">Close</a></li>
+                </ul>
+                <a href="#0" class="cd-popup-close img-replace">Close</a>
+            </div> <!-- cd-popup-container -->
+        </div> <!-- cd-popup -->
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        //POPUP
+
+        jQuery(document).ready(() => {
+            let id;
+            let name;
+            let price;
+            var x;
+
+            //open Main popup
+            $('.cd-popup-trigger').on('click', function (event) {
+                event.preventDefault();
+                $('.cd-popup').addClass('is-visible');  //show popup
+                var $row = $(this).closest("tr");    // Find the row
+                var $text = $row.find(".itemName").text(); // Find the text
+                $(".popupContent").text($text);     //writes it on popup
+
+                id = $(event.target).data("id");
+                name = $(event.target).data("name");
+                price = $(event.target).data("price");
+                x = {
+                    "id": id,
+                    "quantity": 1,
+                    "price": price
+                }
+            });
+
+            //close popups
+            $('.cd-popup, .cd-popup2, .cd-popup3').on('click', function (event) {
+                if ($(event.target).is('.cd-popup-close') || $(event.target).is('.cd-popup')) {
+                    event.preventDefault();
+                    $(this).removeClass('is-visible');
+                }
+                if ($(event.target).is('.cancleBuy') || $(event.target).is('.cd-popup')) {
+                    event.preventDefault();
+                    $(this).removeClass('is-visible');
+                }
+                if ($(event.target).is('.confirmBuy') || $(event.target).is('.cd-popup')) {
+                    event.preventDefault();
+                    $(this).removeClass('is-visible');
+                }
+                if ($(event.target).is('.cancleBuy2') || $(event.target).is('.cd-popup')) {
+                    event.preventDefault();
+                    $(this).removeClass('is-visible');
+                }
+            });
+
+            //close popup when clicking the esc keyboard button
+            $(document).keyup(function (event) {
+                if (event.which == '27') {
+                    $('.cd-popup').removeClass('is-visible');
+                }
+            });
+
+            $('.confirmBuy').on('click', function (event) {
+                console.log(id);
+                console.log(name);
+                console.log(price);
+                $.ajax({
+                    type: "POST",
+                    url: "/api/Store/BuyProduct",
+                    data: JSON.stringify(x),
+                    contentType: 'application/json',
+                    success: data => {
+                        event.preventDefault();
+                        $('.cd-popup2').addClass('is-visible');  //show popup2
+                    },
+                    error: data => {
+                        event.preventDefault();
+                        $('.cd-popup3').addClass('is-visible');  //show popup3
+                    }
+                });
+            });
+        });
+    </script>
+}

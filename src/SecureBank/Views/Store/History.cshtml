@@ -1,0 +1,59 @@
+﻿@model List<SecureBank.Models.Store.PurcahseHistoryItemResp>
+
+@{
+    ViewData["Title"] = "History";
+}
+
+<div class="container-fluid">
+    <div class="container">
+        <h2 class="transTableTitle">Order history</h2>
+
+        <p class="transTableButtStoreHistory">
+            <a asp-action="Index" class="btn btn-primary">Back to List</a>
+        </p>
+        <table id="exampleTable" class="table table-hover">
+            <thead class="transTHead">
+                <tr>
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        Description
+                    </th>
+                    <th>
+                        Price
+                    </th>
+                    <th>
+                        Quantity
+                    </th>
+                    <th>
+                        Bought time
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Description)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Price)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Quantity)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PurchaseTime)
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

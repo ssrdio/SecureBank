@@ -1,0 +1,45 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+<div class="container-fluid">
+    <div class="container">
+            <h2 class="transTableTitle">Store items</h2>
+            <p class="transTableButtNew">
+                <a class="btn btn-primary" asp-action="Create">Create New</a>
+            </p>
+            <table id="storeItemsTable" class="table table-hover"></table>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#storeItemsTable').DataTable({
+                ordering: false,
+                serverSide: false,
+                processing: true,
+                "ajax": "/api/AdminStore/GetStoreItems",
+                columns: [
+                    { data: 'name', title: 'Name' },
+                    { data: 'description', title: 'Description' },
+                    {
+                        data: 'price', title: 'Price',
+                        mRender: function (rowData) {
+                            return rowData.toFixed(2) + "€";
+                        }
+                    },
+                    { data: 'installments', title: 'Installs' },
+                    {
+                        data: "id",
+                        title: "View",
+                        mRender: function (rowData) {
+                            return "<a href='/AdminStore/Edit/" + rowData + "'><button class='btn btn-primary'>Details</button></a>";
+                        }
+                    }
+                ]
+            });
+        });
+    </script>
+}

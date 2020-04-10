@@ -1,0 +1,125 @@
+﻿
+@{
+    ViewData["Title"] = "Log in";
+}
+
+
+<div class="login_wrapper">
+    <div class="animate form login_form">
+
+        <section class="login_content">
+            <div id="prospects_form" class="forma">
+                <h4 class="secondaryTitle">Use a local account to log in.</h4>
+                <hr />
+                <div class="form-group">
+                    <label>User name:</label>
+                    <input type="email" id="UserName" class="UserName form-control" required />
+                    <div id="notEmailText" style="display: none">Email address is invalid!</div>
+                </div>
+                <div class="form-group">
+
+                    <label>Password:</label>
+                    <input type="password" id="Password" class="Password form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" id="submitbutton" class="btnLogin btn btn-primary">Log in</button>
+                </div>
+                <div class="form-group">
+                    @if (ViewBag.ShowForgotPassword)
+                    {
+                        <p>
+                            <a class="reset_pass" href="./PasswordRecovery">Forgot your password?</a>
+                        </p>
+                    }
+                    <p>
+                        <a class="reset_pass" href="./Register">Register as a new user</a>
+                    </p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+</div>
+
+@*Pop-ups*@
+
+<div class="cd-popup3" role="alert">
+    <div class="cd-popup-container">
+        <p class="popupTitle">Login has failed!</p>
+        <ul class="cd-buttons">
+            <li><a class="closeBtn" href="#0">Close</a></li>
+        </ul>
+        <a href="#0" class="cd-popup-close img-replace">Close</a>
+    </div>
+</div>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('#Password').keyup(function (event) {
+                // Number 13 is the "Enter" key on the keyboard
+                if (event.keyCode === 13) {
+                    // Cancel the default action, if needed
+                    event.preventDefault();
+                    // Trigger the button element with a click
+                    login();
+                }
+            });
+
+            $('.btnLogin').on('click', function (event) {
+                login();
+            });
+
+            $('.cd-popup4, .cd-popup3').on('click', function (event) {
+                if ($(event.target).is('.cd-popup-close, .closeBtn, .cancleBuy2') || $(event.target).is('.cd-popup')) {
+                    event.preventDefault();
+                    $(this).removeClass('is-visible');
+                }
+            });
+    
+            //form validation
+            function validateEmail(email) {
+                var re = /[a-z0-9._%+-]+@@[a-z0-9.-]+\.[a-z]{2,3}/;
+                return re.test(email);
+            }
+
+            var y = document.getElementById("UserName");         // function checks if input Amount is greater than 0 if not it disables submit button,
+            y.addEventListener('blur', function (event) {              // ads an "alert" div and border color and also checks if input value is a number.
+                var x = document.getElementById("UserName").value;
+                if (!validateEmail(x)) {
+                    y.classList.add("mystyle");
+                    document.getElementById('notEmailText').style.display = 'block';
+                    document.getElementById('submitbutton').disabled = true;
+
+                } else {
+     
+                    y.classList.remove("mystyle");
+                    document.getElementById('notEmailText').style.display = 'none';
+                    document.getElementById('submitbutton').disabled = false;
+                }
+            });
+            function login() {
+                $.ajax({
+                    type: "POST",
+                    url: "/api/Auth/Login",
+                    data: JSON.stringify({ "UserName": $('#UserName').val(), "Password": $('#Password').val() }),
+                    contentType: 'application/json',
+                    success: data => {
+                            window.location.href = "/Transaction";
+                    },
+                    error: data => {
+                        $('.cd-popup3').addClass('is-visible');  //show popup
+                    }
+                });
+            }
+        });
+
+    </script>
+}
+
+

@@ -1,0 +1,61 @@
+﻿
+@{
+    ViewData["Title"] = "Recover";
+}
+
+<div class="login_wrapper">
+    <div class="login_form">
+
+        <section class="login_content">
+            <div class="forma">
+                <input hidden id="token" value="@ViewBag.Token" />
+                <h4 class="secondaryTitle">New password</h4> <br />
+                <div class="form-group">
+                    <label>Password:</label>
+                    <input type="password" id="originalpassword" class="UserEmail Email form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Confirm password:</label>
+                    <input type="password" id="confirmedpassword" class="UserEmail Email form-control" required />
+                    <div id="notCorrectConfirmPass" style="display: none">Passwords do not match</div>
+                </div>
+                <button type="submit" id="submitbutton" class="subEmail btn btn-success">Submit</button>
+            </div>
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.subEmail').on('click', function (event) {
+                $.ajax({
+                    type: "POST",
+                    url: "/api/Auth/Recover",
+                    data: JSON.stringify({ "Password": $('#confirmedpassword').val(), "Token": $('#token').val() }),
+                    contentType: 'application/json',
+                    success: data => {
+                        window.location.href = "/Auth/RecoverConfirm";
+                    },
+                    error: data => {
+                        $('.cd-popup3').addClass('is-visible');  //show popup
+                    }
+                });
+            });
+
+            var pass1 = document.getElementById("originalpassword");
+            var pass2 = document.getElementById("confirmedpassword");
+
+            pass2.addEventListener('blur', function (event) {
+                if (pass1.value == pass2.value) {
+                    pass2.classList.remove("mystyle");
+                    document.getElementById('notCorrectConfirmPass').style.display = 'none';          
+                } else {
+                    pass2.classList.add("mystyle");
+                    document.getElementById('notCorrectConfirmPass').style.display = 'block';        
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,15 @@
+﻿
+<div class="login_wrapper">
+    <div class="login_form">
+
+        @if (ViewBag.Status == "ok")
+        {
+            <h2>Registration completed!</h2>
+            <h3>You can now login <a href="/auth/login"> here</a>.</h3>
+        }
+        else
+        {
+            <h2>Invalid token</h2>
+        }
+        </div>
+</div>

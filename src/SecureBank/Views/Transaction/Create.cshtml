@@ -1,0 +1,88 @@
+﻿@model SecureBank.DAL.DBModels.TransactionDBModel
+@using SecureBank.Helpers
+
+@{
+    ViewData["Title"] = "Create";
+}
+<div class="container-fluid">
+    <div class="container">
+
+        <div class="row">
+            <div class="signup-form">
+                <h4>Create new transaction</h4>
+                <hr />
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input hidden id="SenderId" name="SenderId" value="@Context.GetUserName()" />
+                    <div class="form-group">
+                        <label class="control-label">Sender</label>
+                        <input class="form-control searchbox" disabled type="text" placeholder="Sender e-mail" value="@Context.GetUserName()" />
+                        <span asp-validation-for="SenderId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Receiver</label>
+                        <input name="ReceiverId" id="ReceiverId" class="form-control searchbox" type="text" placeholder="Receiver e-mail" />
+                        <span asp-validation-for="ReceiverId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="TransactionDateTime" class="control-label"></label>
+                        <input type="date" data-val="true" data-val-required="The TransactionDateTime field is required." id="TransactionDateTime" name="TransactionDateTime" class="form-control" />
+                        <span asp-validation-for="TransactionDateTime" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Reason" class="control-label"></label>
+                        <input id="Reason" name="Reason" class="form-control" />
+                        <span asp-validation-for="Reason" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Reference" class="control-label"></label>
+                        <input id="Reference" name="Reference" class="form-control" />
+                        <span asp-validation-for="Reference" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Amount" class="control-label"></label>
+                        <input id="Amount" name="Amount" class="form-control" />
+                        <div id="notANumberErrorText" style="display: none">Number must be greater than 0.</div>
+                        <span asp-validation-for="Amount" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input id="submitbutton" type="submit" value="Create" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div>
+            <a class="btn btn-info" asp-action="Index">Back to List</a>
+        </div>
+
+    </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            $('.searchbox').autocomplete({
+                source: '/api/Search/FindUser'
+            });
+        });
+
+        var y = document.getElementById("Amount");         // function checks if input Amount is greater than 0 if not it disables submit button,
+        y.addEventListener('keyup', function (event) {              // ads an "alert" div and border color and also checks if input value is a number.
+            var x = document.getElementById("Amount").value;
+            if (x < 1) {
+                y.classList.add("mystyle");
+                document.getElementById('notANumberErrorText').style.display = 'block';
+                document.getElementById('submitbutton').disabled = true;
+
+            } else if (isNaN(x)) {
+                y.classList.add("mystyle")
+            } else {
+                y.classList.remove("mystyle");
+                document.getElementById('notANumberErrorText').style.display = 'none';
+                document.getElementById('submitbutton').disabled = false;
+            }
+        });
+    </script>
+}

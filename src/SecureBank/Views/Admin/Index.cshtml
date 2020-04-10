@@ -1,0 +1,65 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+<div class="container-fluid">
+    <div class="container">
+
+        <h2 class="transTableTitle">All transactions of users</h2>
+        <p class="transTableButtNew">
+            <a class="btn btn-primary" href="/AdminStore/">Admin store</a>
+        </p>
+        <table id="transactionTable" class="table table-hover"></table>
+
+    </div>
+    <hr />
+    <div class="container">
+        <h2 class="transTableTitle">All users</h2>
+        <table id="usersTable" class="table table-hover"></table>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(() => {
+            $('#transactionTable').DataTable({
+                ordering: false,
+                serverSide: false,
+                processing: true,
+                "ajax": "/api/Admin/Transactions",
+                columns: [
+                    { data: 'senderId', title: 'Sender' },
+                    { data: 'receiverId', title: 'Receiver' },
+                    { data: 'dateTime', title: 'Transaction time' },
+                    {
+                        data: 'amount', title: 'Amount',
+                        mRender: function (rowData) {
+                            return rowData.toFixed(2) + "€";
+                        }
+                    },
+                    { data: 'reason', title: 'Reason' },
+                    {
+                        data: "id",
+                        title: "View",
+                        mRender: function (rowData) {
+                            return "<a href='/Transaction/Details/" + rowData + "'><button class='btn btn-primary'>Details</button></a>";
+                        }
+                    }
+                ]
+            });
+
+            $('#usersTable').DataTable({
+                ordering: false,
+                serverSide: false,
+                processing: true,
+                "ajax": "/api/Admin/GetAllUsers",
+                columns: [
+                    { data: 'username', title: 'User name' },
+                    { data: 'name', title: 'Name' },
+                    { data: 'surname', title: 'Surname' },
+                    { data: 'role', title: 'Role' }
+                ]
+            });
+        });
+    </script>
+}

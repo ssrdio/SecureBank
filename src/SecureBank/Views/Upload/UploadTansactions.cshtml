@@ -1,0 +1,23 @@
+﻿
+@{
+    ViewData["Title"] = "Upload";
+}
+    <div class="container-fluid">
+        <div class="container">
+            @if (ViewBag.Success)
+            {
+                <h2>Successfully transfered data</h2>
+                <div>
+                    <span>@Html.Raw(ViewBag.Content)</span>
+                </div>
+            }
+            else
+            {
+                <h2>Failed to upload file</h2>
+            }
+
+            <div>
+                <a class="reset_pass" href="/Transaction">Back to transactions</a>
+            </div>
+        </div>
+    </div>

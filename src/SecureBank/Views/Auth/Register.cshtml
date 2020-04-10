@@ -1,0 +1,180 @@
+﻿
+@{
+    ViewData["Title"] = "Register";
+}
+
+
+
+<div class="login_wrapper">
+    <div class="login_form">
+        <section class="login_content">
+            <div class="forma">
+                <h4 class="secondaryTitle">Create a new account.</h4>
+                <hr />
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" id="email" class="UserEmail form-control" required />
+                    <div id="notEmailText" style="display: none">Email address is invalid!</div>
+                </div>
+                <div class="form-group">
+                    <label>Password:</label>
+                    <input type="password" id="password" class="Password form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password:</label>
+                    <input type="password" id="passwordConfirm" class="confirmPassword form-control" required />
+                    <div id="notCorrectConfirmPass" style="display: none">Passwords do not match</div>
+                </div>
+                @if (!string.IsNullOrEmpty(ViewBag.LegalURL))
+                {
+                    <div class="form-group">
+                        <p><input type="checkbox" id="termsCheck"/>
+                        I accept the <a href="@ViewBag.LegalURL">Terms and conditions</a>.</p>
+                        <div id="termsNotAccepted" style="display: none">You need to accept tearms and conditions</div>
+                    </div>
+                }
+                <div>
+                    <button type="submit" id="submitbutton" class="btnRegister btn btn-primary">Register</button>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+@*Pop-ups*@
+<div class="cd-popup4" role="alert">
+    <div class="cd-popup-container">
+        @if (ViewBag.ConfirmMail)
+        {
+            <p class="popupTitle">We have sent a confirmation link to your email address.</p>
+        }
+        else
+        {
+            <p class="popupTitle">You have successfully registered your acount.</p>
+        }
+        <ul class="cd-buttons">
+            <li><a class="cancleBuy2" href="#0">Close</a></li>
+        </ul>
+        <a href="#0" class="cd-popup-close img-replace">Close</a>
+    </div>
+</div>
+
+<div class="cd-popup3" role="alert">
+    <div class="cd-popup-container">
+        <p class="popupTitle">Registration failed!</p>
+        <ul class="cd-buttons">
+            <li><a class="closeBtn" href="#0">Close</a></li>
+        </ul>
+        <a href="#0" class="cd-popup-close img-replace">Close</a>
+    </div>
+</div>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('.btnRegister').on('click', function (event) {
+                if (@Json.Serialize(!string.IsNullOrEmpty(ViewBag.LegalURL)))
+                {
+                    if (!$('#termsCheck').is(':checked')) {
+                        $('#termsNotAccepted').show();
+                        return;
+                    }
+                    else {
+                        $('#termsNotAccepted').hide();
+                    }
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "/api/Auth/Register",
+                    data: JSON.stringify({ "UserName": $('.UserEmail').val(), "Password": $('.Password').val() }),
+                    contentType: 'application/json',
+                    success: data => {
+                        $('.cd-popup4').addClass('is-visible');  //show popup
+                        setTimeout(function () {
+                            window.location.href = "/Auth/Login";
+                        }, 8000)
+                    },
+                    error: data => {
+                        $('.cd-popup3').addClass('is-visible');  //show popup
+                    }
+                });
+            });
+            $('.cd-popup4, .cd-popup3').on('click', function (event) {
+                if ($(event.target).is('.cd-popup-close, .closeBtn, .cancleBuy2') || $(event.target).is('.cd-popup')) {
+                    event.preventDefault();
+                    $(this).removeClass('is-visible');
+                }
+            });
+
+            //$('.btnRegister').on('click', function (event) {
+            //    $.ajax({
+            //        type: "POST",
+            //        url: "/Auth/RegisterAdmin",
+            //        data: JSON.stringify({ "UserName": $('.UserEmail').val(), "Password": $('.Password').val() }),
+            //        contentType: 'application/json',
+            //        success: data => {
+            //            console.log('SUCESSS');
+            //            var parsedData = JSON.parse(data);
+            //            if (parsedData.status == "ok") {
+            //                $('.cd-popup4').addClass('is-visible');  //show popup
+            //                setTimeout(function () {
+            //                    window.location.href = "/Auth/Login";
+            //                }, 8000)
+            //            } else {
+            //                console.log('ERROR1');
+            //                $('.cd-popup3').addClass('is-visible');  //show popup
+            //            }
+            //        },
+            //        error: data => {
+            //            console.log('ERROR');
+            //            $('.cd-popup3').addClass('is-visible');  //show popup
+            //        }
+            //    });
+            //});
+
+            //form validation
+            function validateEmail(email) {
+                var re = /[a-z0-9._%+-]+@@[a-z0-9.-]+\.[a-z]{2,3}/;
+                return re.test(email);
+            }
+
+            var y = document.getElementById("email");        
+            y.addEventListener('blur', function (event) {         
+                var x = document.getElementById("email").value;
+                if (!validateEmail(x)) {
+                    y.classList.add("mystyle");
+                    document.getElementById('notEmailText').style.display = 'block';
+                    document.getElementById('submitbutton').disabled = true;
+
+                } else {
+                    y.classList.remove("mystyle");
+                    document.getElementById('notEmailText').style.display = 'none';
+                    document.getElementById('submitbutton').disabled = false;
+                }
+            });
+
+            var pass1 = document.getElementById("password");     
+            var pass2 = document.getElementById("passwordConfirm");    
+            pass2.addEventListener('blur', function (event) {          
+                var x = document.getElementById("password").value;
+                var y = document.getElementById("passwordConfirm").value;
+                if (x == y) {
+                    pass2.classList.remove("mystyle");
+                    document.getElementById('notCorrectConfirmPass').style.display = 'none';
+                    document.getElementById('submitbutton').disabled = false;
+
+                } else {
+                    pass2.classList.add("mystyle");
+                    document.getElementById('notCorrectConfirmPass').style.display = 'block';
+                    document.getElementById('submitbutton').disabled = true;
+                }
+            });
+
+        });
+    </script>
+}
