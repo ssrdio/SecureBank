@@ -28,7 +28,7 @@ namespace SecureBank.Ctf.CTFd
         private const string CHALLENGES_ENTRY_NAME = "db/challenges.json";
         private const string FLAGS_ENTRY_NAME = "db/flags.json";
 
-        private readonly ILogger _logge = LogManager.GetCurrentClassLogger();
+        private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
 
         private CTFdBaseModel<CTFdAlembicVersionModel> GetAlembicVersion()
         {
@@ -81,7 +81,7 @@ namespace SecureBank.Ctf.CTFd
                 }
                 catch (Exception ex)
                 {
-                    _logge.Error($"Faild to create folder for ctf. {ex.Message}");
+                    _logger.Error($"Failed to create folder for ctf. {ex.Message}");
                     return;
                 }
             }

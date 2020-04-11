@@ -5,7 +5,7 @@
 <div class="container-fluid">
     <div class="container">
 
-        <h2 class="transTableTitle">Index</h2>
+        <h2 class="transTableTitle">Transactions</h2>
 
         <p class="transTableButtNew">
             <a class="btn btn-primary" asp-action="Create">Create New</a>
@@ -22,9 +22,7 @@
                         <p>Upload one or more transaction:</p>
                         <input type="file" name="files" multiple accept="text/xml">
                     </div>
-                    <div class="col-md-2">
-                        <br />
-                        <br />
+                    <div class="col-md-2 align-center">
                         <input type="submit" value="Upload" class="btn btn-primary">
                     </div>
                 </div>
@@ -48,7 +46,7 @@
                 columns: [
                     { data: 'senderId', title: 'Sender' },
                     { data: 'receiverId', title: 'Receiver' },
-                    { data: 'dateTime', title: 'Transaction time' },
+                    { data: 'dateTime', title: 'Transaction date' },
                     {
                         data: 'amount', title: 'Amount',
                         mRender: function (rowData) {
@@ -60,7 +58,7 @@
                         data: "id",
                         title: "View",
                         mRender: function (rowData) {
-                            return "<a href='/Transaction/Details/" + rowData + "'><button class='btn btn-primary'>Details</button></a>";
+                            return "<a href='/Transaction/Details/" + rowData + "'><button class='btn btn-primary btn-sm'>Details</button></a>";
                         }
                     }
                 ]

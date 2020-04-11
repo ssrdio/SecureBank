@@ -237,7 +237,7 @@ namespace SecureBank.Services
                 return Task.FromResult(false);
             }
 
-            if (_userDAO.UpdatePassword(userName, passwordRecoveryModel.Password))
+            if (!_userDAO.UpdatePassword(userName, passwordRecoveryModel.Password))
             {
                 return Task.FromResult(false);
             }

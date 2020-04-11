@@ -65,12 +65,17 @@ namespace SecureBank.DAL.DAO
         public virtual bool UpdatePassword(string userName, string password)
         {
             UserDBModel user = GetUser(userName);
-            if (user != null)
+            if (user == null)
             {
-                user.Password = password;
-                return true;
+                return false;
             }
-            return false;
+
+            user.Password = password;
+
+            _portalDBContext.Entry(user).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            int changes = _portalDBContext.SaveChanges();
+
+            return changes > 0;
         }
 
         public virtual bool ValidatePassword(string userName, string pass)

@@ -25,6 +25,16 @@
     </div>
 </div>
 
+<div class="cd-popup3" role="alert">
+    <div class="cd-popup-container">
+        <p class="popupTitle">Password recovery has failed!</p>
+        <ul class="cd-buttons">
+            <li><a class="closeBtn" href="#0">Close</a></li>
+        </ul>
+        <a href="#0" class="cd-popup-close img-replace">Close</a>
+    </div>
+</div>
+
 @section Scripts {
 
     <script type="text/javascript">
@@ -54,6 +64,13 @@
                 } else {
                     pass2.classList.add("mystyle");
                     document.getElementById('notCorrectConfirmPass').style.display = 'block';        
+                }
+            });
+
+            $('.cd-popup4, .cd-popup3').on('click', function (event) {
+                if ($(event.target).is('.cd-popup-close, .closeBtn, .cancleBuy2') || $(event.target).is('.cd-popup')) {
+                    event.preventDefault();
+                    $(this).removeClass('is-visible');
                 }
             });
         });

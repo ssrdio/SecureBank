@@ -74,12 +74,31 @@ namespace SecureBank.Controllers.Api
             return Ok(result);
         }
 
-        [HttpGet]
+        [HttpPost]
+        [ProducesResponseType(typeof(EmptyResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> PasswordRecovery([FromBody] UserModel userModel)
+        {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            bool passwordRecovery = await _authBL.PasswordRecovery(userModel);
+            if(!passwordRecovery)
+            {
+                return BadRequest();
+            }
+
+            return Ok();
+        }
+
+        [HttpPost]
         [ProducesResponseType(typeof(EmptyResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Recover([FromBody] UserModel passwordRecoveryModel)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
