@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+    securebank:
+        image: ssrd/securebank
+        environment: 
+            - AppSettings:Ctf:Enabled=false
+            - AppSettings:Ctf:Seed=example
+            - FTPServerIp=
+        ports: 
+            - 80:80
+            - 5000:5000
+            - 1080:1080
+            - 20-21:20-21
+            - 50000-50100:50000-50100
+        volumes: 
+            - ./ctf:/SecureBank/Ctf
+            - .data:/var/opt/mssql/data
