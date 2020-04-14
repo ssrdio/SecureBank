@@ -1,4 +1,7 @@
 # SecureBank
+[![Docker Automated](https://img.shields.io/docker/cloud/automated/ssrd/securebank.svg)](https://hub.docker.com/r/ssrd/securebank)
+[![Docker Build status](https://img.shields.io/docker/cloud/build/ssrd/securebank.svg)](https://hub.docker.com/r/ssrd/securebank/builds)
+[![License](https://img.shields.io/github/license/ssrdio/SecureBank)](https://github.com/ssrdio/SecureBank/blob/master/LICENSE)
 
 SecureBank is a FinTech application which contains all OWASP TOP 10 security vulnerabilities along with some other security flaws found in real-world applications.
 
