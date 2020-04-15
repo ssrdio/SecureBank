@@ -9,7 +9,7 @@ namespace SecureBank.Models
     {
         public int RecordsTotal { get; set; }
         public int RecordsFiltered { get; set; }
-        public List<T> Data { get; set; }
+        public List<T> Data { get; set; } = new List<T>();
 
         public DataTableResp()
         {

@@ -16,6 +16,9 @@ using SecureBank.DAL;
 using SecureBank.Helpers.Authorization;
 using SecureBank.Interfaces;
 using SecureBank.Models;
+using SecureBank.Ctf.Models;
+using Microsoft.Extensions.Options;
+using System.Linq;
 
 namespace SecureBank
 {
@@ -105,7 +108,15 @@ namespace SecureBank
 
             services.AddSwaggerGen(x =>
             {
-                x.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "BankWeb API", Version = "v1" });
+#pragma warning disable ASP0000
+                IServiceProvider serviceProvider = services.BuildServiceProvider();
+                CtfOptions ctfOptions = serviceProvider.GetService<IOptions<CtfOptions>>()?.Value;
+
+                CtfChallangeModel swaggerChallange = ctfOptions?.CtfChallanges
+                    .Where(x => x.Type == CtfChallengeTypes.Swagger)
+                    .Single();
+
+                x.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "BankWeb API", Version = "v1", Description = swaggerChallange?.Flag });
 
                 string xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml");
                 x.IncludeXmlComments(xmlPath);
@@ -118,7 +129,6 @@ namespace SecureBank
             AppSettings appSettings = Configuration.GetSection("AppSettings").Get<AppSettings>();
 
             app.UseDeveloperExceptionPage();
-
 
             app.UseSwagger();
             app.UseSwaggerUI(x =>
