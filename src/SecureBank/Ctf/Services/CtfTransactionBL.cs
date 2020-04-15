@@ -55,8 +55,9 @@ namespace SecureBank.Ctf.Services
             }
 
             string userName = _httpContextAccessor.HttpContext.GetUserName();
+            string role = _httpContextAccessor.HttpContext.GetRole();
 
-            if (transaction.SenderId != userName && transaction.ReceiverId != userName)
+            if (role != "admin" && transaction.SenderId != userName && transaction.ReceiverId != userName)
             {
                 CtfChallangeModel enumerationChallange = _ctfOptions.CtfChallanges
                     .Where(x => x.Type == CtfChallengeTypes.Enumeration)
@@ -96,27 +97,27 @@ namespace SecureBank.Ctf.Services
                 .Where(x => x.Type == CtfChallengeTypes.SqlInjection)
                 .Single();
 
-            List<TransactionResp> transactions;
-
-            try
+            DataTableResp<TransactionResp> paginatedTransactions = base.GetTransactions(userName, search, start, lenght);
+            if(paginatedTransactions == null)
             {
-                transactions = _transactionDAO.GetTransactions(userName, search);
-            }
-            catch (Exception)
-            {
-                _httpContextAccessor.HttpContext.Response.Headers.Add(sqlInjectionChallange.FlagKey, sqlInjectionChallange.Flag);
-                return null;
+                paginatedTransactions = new DataTableResp<TransactionResp>();
             }
 
-            List<TransactionResp> validTransactions = _transactionDAO.GetTransactionsCtfCheck(userName, search);
+            string validSearch = search;
+            if(search == null || search.All(x => "%".Contains(x)))
+            {
+                validSearch = null;
+            }
 
-            if (validTransactions.Count != transactions.Count)
+            List<TransactionResp> validTransactions = _transactionDAO.GetTransactionsCtfCheck(userName, validSearch);
+
+            if (validTransactions.Count != paginatedTransactions.RecordsTotal)
             {
                 _httpContextAccessor.HttpContext.Response.Headers.Add(sqlInjectionChallange.FlagKey, sqlInjectionChallange.Flag);
             }
             else
             {
-                foreach (var transaction in transactions)
+                foreach (TransactionResp transaction in paginatedTransactions.Data)
                 {
                     if (!validTransactions.Any(x => x.IsEqual(transaction)))
                     {
@@ -126,7 +127,7 @@ namespace SecureBank.Ctf.Services
                 }
             }
 
-            bool xss = transactions.Any(x => CtfConstants.XXS_KEYVORDS.Any(c =>
+            bool xss = paginatedTransactions.Data.Any(x => CtfConstants.XXS_KEYVORDS.Any(c =>
                 (x.SenderId?.Contains(c) ?? false) || (x.ReceiverId?.Contains(c) ?? false) || (x.Reason?.Contains(c) ?? false) || (x.Reference?.Contains(c) ?? false)));
             if (xss)
             {

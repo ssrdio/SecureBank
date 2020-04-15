@@ -16,6 +16,14 @@ namespace SecureBank.Ctf.Services
 {
     public class CtfUserBL : UserBL
     {
+        private readonly string[] CTF_FILES = new string[]
+        {
+            "../appsettings.json",
+            "../../appsettings.json",
+            "..\\appsettings.json",
+            "..\\..\\appsettings.json"
+        };
+
         private readonly IUserDAO _userDAO;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -75,7 +83,22 @@ namespace SecureBank.Ctf.Services
         {
             ValidateBrokenAuthSensitivedataExposure(userName);
 
-            if (userName != null && (userName.Contains("../") || userName.Contains("..\\")))
+            byte[] profileImage;
+
+            try
+            {
+                profileImage = base.GetProfileImage(userName);
+            }
+            catch(Exception ex)
+            {
+                CtfChallangeModel exceptionHandlingChallange = _ctfOptions.CtfChallanges
+                    .Where(x => x.Type == CtfChallengeTypes.ExcaptionHandling)
+                    .Single();
+
+                throw new Exception(exceptionHandlingChallange.Flag, ex);
+            }
+
+            if (userName != null && CTF_FILES.Contains(userName))
             {
                 CtfChallangeModel pathTraversal = _ctfOptions.CtfChallanges
                     .Where(x => x.Type == CtfChallengeTypes.PathTraversal)
@@ -84,7 +107,7 @@ namespace SecureBank.Ctf.Services
                 _httpContextAccessor.HttpContext.Response.Headers.Add(pathTraversal.FlagKey, pathTraversal.Flag);
             }
 
-            return base.GetProfileImage(userName);
+            return profileImage;
         }
     }
 }

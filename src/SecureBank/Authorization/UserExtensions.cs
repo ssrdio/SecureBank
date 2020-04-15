@@ -9,6 +9,12 @@ namespace SecureBank.Helpers.Authorization
 {
     public class UserExtensions : IUserExtensions
     {
+        public string GetRole(IPrincipal user)
+        {
+            Claim claim = ((ClaimsIdentity)user.Identity).FindFirst("role");
+            return claim?.Value;
+        }
+
         public string GetUserName(IPrincipal user)
         {
             Claim claim = ((ClaimsIdentity)user.Identity).FindFirst("userName");

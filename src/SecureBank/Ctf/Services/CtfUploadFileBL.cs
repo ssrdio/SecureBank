@@ -13,6 +13,13 @@ namespace SecureBank.Ctf.Services
 {
     public class CtfUploadFileBL : UploadFileBL
     {
+        private readonly string[] CTF_XEE_FILES = new string[]
+        {
+            "C:/Windows/System32/drivers/etc/hosts",
+            "C:\\Windows\\System32\\drivers\\etc\\hosts",
+            "etc/passwd"
+        };
+
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly CtfOptions _ctfOptions;
 
@@ -49,7 +56,10 @@ namespace SecureBank.Ctf.Services
                     .Where(x => x.Type == CtfChallengeTypes.XxeInjection)
                     .Single();
 
-                _httpContextAccessor.HttpContext.Response.Headers.Add(xxeChallange.FlagKey, xxeChallange.Flag);
+                if (CTF_XEE_FILES.Any(x => xml.Contains(x)))
+                {
+                    _httpContextAccessor.HttpContext.Response.Headers.Add(xxeChallange.FlagKey, xxeChallange.Flag);
+                }
             }
 
             return parsedXml;

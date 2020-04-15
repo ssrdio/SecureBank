@@ -25,6 +25,9 @@ namespace SecureBank.Helpers.Authorization
         protected const int TOKEN_INDEX = 1;
         protected const int ROLDE_INDEX = 2;
 
+        protected const string NORMAL_ROLE_STRING = "normal";
+        protected const string ADMIN_ROLE_STRING = "admin";
+
         public AuthorizeService()
         {
         }
@@ -43,12 +46,6 @@ namespace SecureBank.Helpers.Authorization
                 return false;
             }
 
-            IUserDAO userDAO = context.HttpContext.RequestServices.GetRequiredService<IUserDAO>();
-            if (userDAO.ValidateSession(sessionParts[TOKEN_INDEX]) == false)
-            {
-                return false;
-            }
-
             bool parseRoleResult = int.TryParse(sessionParts[ROLDE_INDEX], out int role);
             if (!parseRoleResult)
             {
@@ -60,10 +57,17 @@ namespace SecureBank.Helpers.Authorization
                 return false;
             }
 
+            IUserDAO userDAO = context.HttpContext.RequestServices.GetRequiredService<IUserDAO>();
+            if (userDAO.ValidateSession(sessionParts[TOKEN_INDEX]) == false)
+            {
+                return false;
+            }
+
             Claim[] claims = new[]
             {
                 new Claim("authenticated", "true"),
-                new Claim("userName", EncoderUtils.Base64Decode(sessionParts[USER_NAME_INDEX]))
+                new Claim("userName", EncoderUtils.Base64Decode(sessionParts[USER_NAME_INDEX])),
+                new Claim("role", ADMIN_ROLE_STRING),
             };
 
             GenericPrincipal tmpUser = new GenericPrincipal(new ClaimsIdentity(claims), Array.Empty<string>());
@@ -92,16 +96,29 @@ namespace SecureBank.Helpers.Authorization
                 return false;
             }
 
+            bool parseRoleResult = int.TryParse(sessionParts[ROLDE_INDEX], out int role);
+            if (!parseRoleResult)
+            {
+                return false;
+            }
+
             IUserDAO userDAO = context.HttpContext.RequestServices.GetRequiredService<IUserDAO>();
             if (userDAO.ValidateSession(sessionParts[TOKEN_INDEX]) == false)
             {
                 return false;
             }
 
+            string roleString = NORMAL_ROLE_STRING;
+            if (role >= ADMIN_ROLE)
+            {
+                roleString = ADMIN_ROLE_STRING;
+            }
+
             Claim[] claims = new[]
             {
                 new Claim("authenticated", "true"),
-                new Claim("userName", EncoderUtils.Base64Decode(sessionParts[USER_NAME_INDEX]))
+                new Claim("userName", EncoderUtils.Base64Decode(sessionParts[USER_NAME_INDEX])),
+                new Claim("role", roleString),
             };
 
             GenericPrincipal tmpUser = new GenericPrincipal(new ClaimsIdentity(claims), Array.Empty<string>());

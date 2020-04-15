@@ -25,5 +25,12 @@ namespace SecureBank.Helpers
 
             return userExtensions.GetUserName(context.User);
         }
+
+        public static string GetRole(this HttpContext context)
+        {
+            IUserExtensions userExtensions = context.RequestServices.GetRequiredService<IUserExtensions>();
+
+            return userExtensions.GetRole(context.User);
+        }
     }
 }

@@ -49,12 +49,19 @@ namespace SecureBank.Services
 
         public virtual DataTableResp<TransactionResp> GetTransactions(string userName, string search, int start, int lenght)
         {
-            List<TransactionResp> transactions = _transactionDAO.GetTransactions(userName, search);
+            try
+            {
+                List<TransactionResp> transactions = _transactionDAO.GetTransactions(userName, search);
 
-            return new DataTableResp<TransactionResp>(
-                recordsTotal: transactions.Count,
-                recordsFiltered: transactions.Count,
-                data: transactions.Skip(start).Take(lenght).ToList());
+                return new DataTableResp<TransactionResp>(
+                    recordsTotal: transactions.Count,
+                    recordsFiltered: transactions.Count,
+                    data: transactions.Skip(start).Take(lenght).ToList());
+            }
+            catch(Exception)
+            {
+                return null;
+            }
         }
 
         public virtual List<TransactionsByDayResp> GetTransactionsByDay(string userName)

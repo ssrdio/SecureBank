@@ -96,7 +96,7 @@ namespace SecureBank.Ctf
             ctfChallanges.Add(pathTraversal);
 
             CtfChallangeModel enumeration = new CtfChallangeModel(
-                title: USE_REAL_CHALLENGE_NAME ? "Enumeration" : $"Challange {CtfChallengeTypes.Enumeration.ToChallengeNumber()}",
+                title: USE_REAL_CHALLENGE_NAME ? "Enumeration" : $"Challenge {CtfChallengeTypes.Enumeration.ToChallengeNumber()}",
                 type: CtfChallengeTypes.Enumeration,
                 flag: string.Format(CTF_FLAG_FORMAT, stringGenerator.Generate()),
                 flagKey: USE_REAL_CHALLENGE_NAME ? "enumeration" : $"challenge_{CtfChallengeTypes.Enumeration.ToChallengeNumber()}",
@@ -107,7 +107,7 @@ namespace SecureBank.Ctf
             #region XXE
 
             CtfChallangeModel xxeInjection = new CtfChallangeModel(
-                title: USE_REAL_CHALLENGE_NAME ? "XXE Injection" : $"Challange {CtfChallengeTypes.XxeInjection.ToChallengeNumber()}",
+                title: USE_REAL_CHALLENGE_NAME ? "XXE Injection" : $"Challenge {CtfChallengeTypes.XxeInjection.ToChallengeNumber()}",
                 type: CtfChallengeTypes.XxeInjection,
                 flag: string.Format(CTF_FLAG_FORMAT, stringGenerator.Generate()),
                 flagKey: USE_REAL_CHALLENGE_NAME ? "xxe_injection" : $"challenge_{CtfChallengeTypes.XxeInjection.ToChallengeNumber()}",
@@ -156,7 +156,7 @@ namespace SecureBank.Ctf
             #region XSS
 
             CtfChallangeModel xxs = new CtfChallangeModel(
-                title: USE_REAL_CHALLENGE_NAME ? "XXS" : $"Challange {CtfChallengeTypes.Xss.ToChallengeNumber()}",
+                title: USE_REAL_CHALLENGE_NAME ? "XXS" : $"Challenge {CtfChallengeTypes.Xss.ToChallengeNumber()}",
                 type: CtfChallengeTypes.Xss,
                 flag: string.Format(CTF_FLAG_FORMAT, stringGenerator.Generate()),
                 flagKey: USE_REAL_CHALLENGE_NAME ? "xss" : $"challenge_{CtfChallengeTypes.Xss.ToChallengeNumber()}",
@@ -183,7 +183,7 @@ namespace SecureBank.Ctf
             ctfChallanges.Add(unknown);
 
             CtfChallangeModel hiddenPage = new CtfChallangeModel(
-                title: USE_REAL_CHALLENGE_NAME ? "Hidden Page" : $"Challange {CtfChallengeTypes.HiddenPage.ToChallengeNumber()}",
+                title: USE_REAL_CHALLENGE_NAME ? "Hidden Page" : $"Challenge {CtfChallengeTypes.HiddenPage.ToChallengeNumber()}",
                 type: CtfChallengeTypes.HiddenPage,
                 flag: string.Format(CTF_FLAG_FORMAT, stringGenerator.Generate()),
                 flagKey: USE_REAL_CHALLENGE_NAME ? "hidden_page" : $"challenge_{CtfChallengeTypes.HiddenPage.ToChallengeNumber()}",
@@ -191,7 +191,7 @@ namespace SecureBank.Ctf
             ctfChallanges.Add(hiddenPage);
 
             CtfChallangeModel invalidRedirect = new CtfChallangeModel(
-                title: USE_REAL_CHALLENGE_NAME ? "Invalid Redirect" : $"Challange {CtfChallengeTypes.InvalidModel.ToChallengeNumber()}",
+                title: USE_REAL_CHALLENGE_NAME ? "Invalid Redirect" : $"Challenge {CtfChallengeTypes.InvalidModel.ToChallengeNumber()}",
                 type: CtfChallengeTypes.InvalidRedirect,
                 flag: string.Format(CTF_FLAG_FORMAT, stringGenerator.Generate()),
                 flagKey: USE_REAL_CHALLENGE_NAME ? "invalid_redirect" : $"challenge_{CtfChallengeTypes.InvalidModel.ToChallengeNumber()}",

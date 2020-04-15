@@ -68,14 +68,8 @@ namespace SecureBank.Services
             {
                 if (userName.Contains("@"))
                 {
-                    //TO DO: that can be an flag
-
                     string[] listFiles = System.IO.Directory.GetFiles(path);
                     data = System.IO.File.ReadAllBytes(listFiles[listFiles.Length - 1]);
-                }
-                else
-                {
-                    data = System.IO.File.ReadAllBytes(userPath);
                 }
             }
 

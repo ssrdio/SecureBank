@@ -10,5 +10,6 @@ namespace SecureBank.Helpers.Authorization
     {
         bool IsAuthenticated(IPrincipal user);
         string GetUserName(IPrincipal user);
+        string GetRole(IPrincipal user);
     }
 }
