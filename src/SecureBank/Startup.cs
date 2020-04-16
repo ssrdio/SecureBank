@@ -108,15 +108,24 @@ namespace SecureBank
 
             services.AddSwaggerGen(x =>
             {
+                if (appSettings?.Ctf?.Enabled ?? false)
+                {
+                    //TO DO: Try to change this so singelton services are not created
+
 #pragma warning disable ASP0000
-                IServiceProvider serviceProvider = services.BuildServiceProvider();
-                CtfOptions ctfOptions = serviceProvider.GetService<IOptions<CtfOptions>>()?.Value;
+                    IServiceProvider serviceProvider = services.BuildServiceProvider();
+                    CtfOptions ctfOptions = serviceProvider.GetService<IOptions<CtfOptions>>()?.Value;
 
-                CtfChallangeModel swaggerChallange = ctfOptions?.CtfChallanges
-                    .Where(x => x.Type == CtfChallengeTypes.Swagger)
-                    .Single();
+                    CtfChallangeModel swaggerChallange = ctfOptions?.CtfChallanges
+                        .Where(x => x.Type == CtfChallengeTypes.Swagger)
+                        .Single();
 
-                x.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "BankWeb API", Version = "v1", Description = swaggerChallange?.Flag });
+                    x.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "BankWeb API", Version = "v1", Description = swaggerChallange?.Flag });
+                }
+                else
+                {
+                    x.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "BankWeb API", Version = "v1" });
+                }
 
                 string xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml");
                 x.IncludeXmlComments(xmlPath);

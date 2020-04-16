@@ -198,6 +198,14 @@ namespace SecureBank.Ctf
                 category: CtfChallangeCategories.Miscellaneous);
             ctfChallanges.Add(invalidRedirect);
 
+            CtfChallangeModel swagger = new CtfChallangeModel(
+                title: USE_REAL_CHALLENGE_NAME ? "Swagger" : $"Challenge {CtfChallengeTypes.InvalidModel.ToChallengeNumber()}",
+                type: CtfChallengeTypes.Swagger,
+                flag: string.Format(CTF_FLAG_FORMAT, stringGenerator.Generate()),
+                flagKey: USE_REAL_CHALLENGE_NAME ? "swagger" : $"challenge_{CtfChallengeTypes.Swagger.ToChallengeNumber()}",
+                category: CtfChallangeCategories.Miscellaneous);
+            ctfChallanges.Add(swagger);
+
             if (includeFtp)
             {
                 CtfChallangeModel ftp = new CtfChallangeModel(
@@ -215,7 +223,6 @@ namespace SecureBank.Ctf
         public static void GenerateCtfdExport(this IApplicationBuilder app, string path)
         {
             using IServiceScope scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
-
             IServiceProvider services = scope.ServiceProvider;
 
             IOptions<CtfOptions> ctfOptions = services.GetRequiredService<IOptions<CtfOptions>>();

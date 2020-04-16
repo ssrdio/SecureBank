@@ -2,57 +2,68 @@ version: '3'
 
 services:
   securebank:
-    build: ./src/securebank
+    build: ./src/SecureBank
     container_name: securebank
+    depends_on:
+      - mssql
+      - maildev
+      - storeapi
     environment: 
-      - AppSettings:StoreEndpoint:ApiUrl=storeapi/api/Store/
-      - AppSettings:StoreEndpoint:ApiToken=-
-      - AppSettings:SmtpCredentialsIp=maildev
-      - AppSettings:SmtpCredentials:Port=1025
-      - AppSettings:SmtpCredentials:Username=-
-      - AppSettings:SmtpCredentials:Password=-
+      - AppSettings:StoreEndpoint:ApiUrl=http://storeapi:80/api/Store/
+      - AppSettings:StoreEndpoint:ApiToken=
+      - AppSettings:SmtpCredentials:Ip=maildev
+      - AppSettings:SmtpCredentials:Port=25
+      - AppSettings:SmtpCredentials:Username=
+      - AppSettings:SmtpCredentials:Password=
       - AppSettings:Ctf:Enabled=false
       - AppSettings:Ctf:Seed=example
+      - AppSettings:LegalURL=
       - DatabaseConnections:SecureBankMSSQL:UserId=sa
       - DatabaseConnections:SecureBankMSSQL:UserPass=Your_Password123
       - DatabaseConnections:SecureBankMSSQL:Server=mssql
-      - DatabaseConnections:SecureBankMSSQL:1433
-      - DatabaseConnections:SecureBankMSSQL:securebank
+      - DatabaseConnections:SecureBankMSSQL:ServerPort=1433
+      - DatabaseConnections:SecureBankMSSQL:Database=securebank
     volumes:
-      -  ./logs/storeapi:/var/log/storeapi
+      -  ./logs/securebank:/app/logs
     ports: 
       - 7000:80
   
   storeapi:
-    build: ./src/storeapi
+    build: ./src/StoreAPI
     container_name: storeapi
+    depends_on: 
+      - mssql
     environment: 
       - DatabaseConnections:StoreMSSQL:UserId=sa
       - DatabaseConnections:StoreMSSQL:UserPass=Your_Password123
       - DatabaseConnections:StoreMSSQL:Server=mssql
       - DatabaseConnections:StoreMSSQL:ServerPort=1433
       - DatabaseConnections:StoreMSSQL:Database=store
+      - StoreAPI:Seed=true
     volumes:
-      - ./logs/storeapi:/var/log/storeapi
+      - ./logs/storeapi:/app/logs
     ports:
       - 7010:80
   
   mssql:
-    image: mcr.microsoft.com/mssql/server:2019-CU3-ubuntu-16.04
+    image: mcr.microsoft.com/mssql/server
     container_name: mssql
     environment: 
       - ACCEPT_EULA=y
       - SA_PASSWORD=Your_Password123
-#    ports: 
-#      - 1433:1433
+    # ports: 
+    #   - 1433:1433
     volumes: 
-      - .data:/var/opt/mssql/data
+      - mssql-data:/var/opt/mssql/backups
+      - mssql-data:/var/opt/sqlserver
+      - mssql-data:/var/opt/mssql
 
   maildev:
     image: maildev/maildev:1.1.0
     container_name: maildev
     ports: 
-      - 1080:1080
+      - '1080:80'
+      # - '1025:25'
   
   ftp:
     image: inanimate/vsftpd-anon
@@ -60,5 +71,8 @@ services:
     ports:
       - 20-21:20-21
       - 65500-65515:65500-65515
-    volumes: :
+    volumes:
       - ./ftp-files:/var/ftp:ro
+
+volumes: 
+  mssql-data:
