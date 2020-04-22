@@ -48,9 +48,11 @@ namespace SecureBank.Ctf.Models
         InvalidModel = 100,
         UnknownGeneration = 101,
         HiddenPage = 102,
+
         InvalidRedirect = 103,
         Ftp = 104,
         Swagger = 105,
+        HiddenComment = 106
     }
 
     public static class CtfChallengeTypesExtensions

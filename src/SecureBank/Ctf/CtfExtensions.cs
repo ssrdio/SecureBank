@@ -190,6 +190,14 @@ namespace SecureBank.Ctf
                 category: CtfChallangeCategories.Miscellaneous);
             ctfChallanges.Add(hiddenPage);
 
+            CtfChallangeModel hiddenComment = new CtfChallangeModel(
+               title: USE_REAL_CHALLENGE_NAME ? "Hidden Comment" : $"Challenge {CtfChallengeTypes.HiddenComment.ToChallengeNumber()}",
+               type: CtfChallengeTypes.HiddenComment,
+               flag: string.Format(CTF_FLAG_FORMAT, stringGenerator.Generate()),
+               flagKey: USE_REAL_CHALLENGE_NAME ? "hidden_comment" : $"challenge_{CtfChallengeTypes.HiddenComment.ToChallengeNumber()}",
+               category: CtfChallangeCategories.Miscellaneous);
+            ctfChallanges.Add(hiddenComment);
+
             CtfChallangeModel invalidRedirect = new CtfChallangeModel(
                 title: USE_REAL_CHALLENGE_NAME ? "Invalid Redirect" : $"Challenge {CtfChallengeTypes.InvalidModel.ToChallengeNumber()}",
                 type: CtfChallengeTypes.InvalidRedirect,
