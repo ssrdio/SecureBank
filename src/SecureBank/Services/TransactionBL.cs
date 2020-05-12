@@ -58,9 +58,9 @@ namespace SecureBank.Services
                     recordsFiltered: transactions.Count,
                     data: transactions.Skip(start).Take(lenght).ToList());
             }
-            catch(Exception)
+            catch(Exception ex)
             {
-                return null;
+                throw ex;
             }
         }
 

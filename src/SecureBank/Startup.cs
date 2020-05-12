@@ -165,18 +165,20 @@ namespace SecureBank
                 app.GenerateCtfdExport($"{AppContext.BaseDirectory}/Ctf");
             }
 
-            //if (Configuration["SecureBank:Seed"] == "true")
-            //{
-            //    string password = "Password1!";
-            //    if (!string.IsNullOrEmpty(Configuration["SecureBank:Seed:Password"]))
-            //    {
-            //        password = Configuration["SecureBank:Seed:Password"];
-            //    }
+            if (Configuration["SecureBank:Seed"] == "true")
+            {
+                string password = "Password1!";
+                if (!string.IsNullOrEmpty(Configuration["SecureBank:Seed:Password"]))
+                {
+                    password = Configuration["SecureBank:Seed:Password"];
+                }
 
-            //    app.InitializeDatabase(Configuration["SecureBank:Seed:Admin"], Configuration["SecureBank:Seed:AdminPassword"], password);
-            //}
-
-            //app.InitializeDatabase("admin@testing.ssrd.io", "admin", "admin");
+                app.InitializeDatabase(Configuration["SecureBank:Seed:Admin"], Configuration["SecureBank:Seed:AdminPassword"], password);
+            }
+            else
+            {
+                app.InitializeDatabase("admin@testing.ssrd.io", "admin", "admin");
+            }
         }
     }
 }
