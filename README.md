@@ -34,3 +34,6 @@ SecureBank is a FinTech application which contains all OWASP TOP 10 security vul
 If you want to run SecureBank in CTF mode we have also prepared this option. It will create CTFd compatible export file.
 
 Run  `docker run -p 80:80 -p 5000:5000 -e 'AppSettings:Ctf:Enabled=true' -e 'AppSettings:Ctf:Seed=example' ssrd/securebank`
+
+## Custom training
+For custom training you can contact us at [training[at]ssrd.io](training@ssrd.io)
