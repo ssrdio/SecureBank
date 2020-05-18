@@ -24,6 +24,7 @@
                     <label>Confirm Password:</label>
                     <input type="password" id="passwordConfirm" class="confirmPassword form-control" required />
                     <div id="notCorrectConfirmPass" style="display: none">Passwords do not match</div>
+                    <div id="notEnoughChars" style="display: none">Password length must be at least 5 chars long!</div>
                 </div>
                 @if (!string.IsNullOrEmpty(ViewBag.LegalURL))
                 {
@@ -86,6 +87,12 @@
                     else {
                         $('#termsNotAccepted').hide();
                     }
+                }
+                if (document.getElementById("passwordConfirm").value.length < 5) {
+                    document.getElementById('notEnoughChars').style.display = 'block';
+                    document.getElementById('submitbutton').disabled = true;
+                    document.getElementById("passwordConfirm").classList.add("mystyle");
+                    return;
                 }
 
                 $.ajax({
