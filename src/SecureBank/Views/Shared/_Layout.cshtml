@@ -112,7 +112,7 @@
             @if (Context.IsAuthenticated())
                 {
                     <text>
-                         $.get("/api/User/GetAvaliableFunds?user=@Context.GetUserName()", function(data) {
+                         $.get("/api/User/GetAvailableFunds?user=@Context.GetUserName()", function(data) {
                              $("#amount").html(data.balance);
                          });
                     </text>

@@ -32,7 +32,7 @@ namespace SecureBank.Controllers.Api
 
         [HttpGet]
         [ProducesResponseType(typeof(AccountBalanceResp), StatusCodes.Status200OK)]
-        public IActionResult GetAvaliableFunds([FromQuery] string user)
+        public IActionResult GetAvailableFunds([FromQuery] string user)
         {
             AccountBalanceResp accountBalance = _userBL.GetAmount(user);
 

@@ -91,7 +91,7 @@
     <script>
 
         $(document).ready(function() {
-            $.get("/user/GetAvaliableFunds/@Context.GetUserName()", function(data) {
+            $.get("/user/GetAvailableFunds/@Context.GetUserName()", function(data) {
                 $("#amount").html(data);
                 });
             });
