@@ -21,5 +21,6 @@ namespace SecureBank.Interfaces
         Task<bool> PasswordRecovery(UserModel passwordRecoveryModel);
         Task<bool> RecoverPasswordValid(string token);
         Task<bool> RecoverPassword(UserModel passwordRecoveryModel);
+        UserModel GetUser(string userName);
     }
 }

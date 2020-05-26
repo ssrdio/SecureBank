@@ -244,7 +244,15 @@ namespace SecureBank.Services
 
             return Task.FromResult(true);
         }
-
+        public virtual UserModel GetUser(string userName)
+        {
+            UserDBModel user = _userDAO.GetUser(userName);
+            return new UserModel
+            {
+                UserName = user.UserName,
+                Password = user.Password
+            };
+        }
         public string GetLegalURL()
         {
             return _appSettings.LegalURL;
@@ -254,5 +262,8 @@ namespace SecureBank.Services
         {
             return _appSettings.IgnoreEmails;
         }
+
+
+
     }
 }

@@ -55,7 +55,8 @@ namespace SecureBank.DAL.Initializers
                 new UserDBModel{ Name="Yan", Surname="Li", UserName="yan.li@ssrd.io"},
                 new UserDBModel{ Name="Peggy", Surname="Justice", UserName="peggy.justice@ssrd.io"},
                 new UserDBModel{ Name="Laura", Surname="Norman", UserName="laura.norman@ssrd.io"},
-                new UserDBModel{ Name="Nino", Surname="Olivetto", UserName="nino.olivetto@ssrd.io"}
+                new UserDBModel{ Name="Nino", Surname="Olivetto", UserName="nino.olivetto@ssrd.io"},
+                new UserDBModel{ Name="Tester", Surname="Test", UserName="tester@ssrd.io"}
             };
 
             foreach (UserDBModel user in sampleUsers)
