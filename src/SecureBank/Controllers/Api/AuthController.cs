@@ -111,13 +111,5 @@ namespace SecureBank.Controllers.Api
 
             return Ok(new EmptyResult());
         }
-
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [HttpGet]
-        public IActionResult GetTestUser()
-        {
-            UserModel userModel = _authBL.GetUser("tester@ssrd.io");
-            return Ok(userModel);
-        }
     }
 }

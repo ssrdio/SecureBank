@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SecureBank.Interfaces;
+using SecureBank.Models.Auth;
 
 namespace SecureBank.Controllers
 {
@@ -122,5 +123,13 @@ namespace SecureBank.Controllers
 
             return View();
         }
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [HttpGet]
+        public IActionResult GetTestUser()
+        {
+            UserModel userModel = _authBL.GetUser("tester@ssrd.io");
+            return Ok(userModel);
+        }
     }
+   
 }
