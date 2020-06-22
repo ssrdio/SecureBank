@@ -19,6 +19,7 @@ SecureBank is a FinTech application which contains all OWASP TOP 10 security vul
 4. Navigate to directory SecureBank -> src
 5. `dotnet run` or open solution in IDE and run there 
 
+
 ## From Docker
 1. Install [Docker](https://docs.docker.com/get-docker/)
 2. Execute `docker run -p 80:80 -p 5000:5000 -p 1080:1080 ssrd/securebank`
@@ -29,6 +30,13 @@ SecureBank is a FinTech application which contains all OWASP TOP 10 security vul
 2. Install [Docker Compose](https://docs.docker.com/compose/install/)
 3. Run `docker-compose up`
 
+## Default users:
+```
+admin@ssrd.io:admin
+developer@ssrd.io:test
+yoda@ssrd.io:test
+tester@ssrd.io:test
+```
 
 ## CTF-Mode
 If you want to run SecureBank in CTF mode we have also prepared this option. It will create CTFd compatible export file.
