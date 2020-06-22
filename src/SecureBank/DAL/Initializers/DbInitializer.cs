@@ -48,6 +48,8 @@ namespace SecureBank.DAL.Initializers
 
             List<UserDBModel> sampleUsers = new List<UserDBModel>
             {
+                new UserDBModel{ Name="Super", Surname="Developer", UserName="developer@ssrd.io"},
+                new UserDBModel{ Name="Master", Surname="Yoda", UserName="yoda@ssrd.io"},
                 new UserDBModel{ Name="Carson", Surname="Alexander", UserName="carson.alexander@ssrd.io"},
                 new UserDBModel{ Name="Merdith", Surname="Alonso", UserName="merdith.alonso@ssrd.io"},
                 new UserDBModel{ Name="Arturo", Surname="Anand", UserName="arturo.anad@ssrd.io"},

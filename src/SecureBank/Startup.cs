@@ -177,7 +177,7 @@ namespace SecureBank
             }
             else
             {
-                app.InitializeDatabase("admin@testing.ssrd.io", "admin", "admin");
+                app.InitializeDatabase("admin@ssrd.io", "admin", "test");
             }
         }
     }
