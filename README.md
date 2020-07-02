@@ -39,6 +39,10 @@ developer@ssrd.io:test
 yoda@ssrd.io:test
 tester@ssrd.io:test
 ```
+## Ports 
+- 80 on this port SecureBank is accessible 
+- 1080 is maildev server for user registration
+- 5000 is hidden API
 
 ## CTF-Mode
 If you want to run SecureBank in CTF mode we have also prepared this option. It will create CTFd compatible export file.
