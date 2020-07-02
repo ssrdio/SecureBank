@@ -5,6 +5,8 @@
 
 SecureBank is a FinTech application which contains all OWASP TOP 10 security vulnerabilities along with some other security flaws found in real-world applications.
 
+You can read more about SecureBank and OWASP top 10 vulnerabilities [here](https://ssrd.gitbook.io/securebank/).
+
 ![alt text](preview.gif "SecureBankPreview")
 
 # Setup
