@@ -70,7 +70,7 @@ namespace StoreAPI
 
             app.CreateDatabase();
 
-            if (Configuration["StoreAPI:Seed"] == "true")
+            if (Configuration["StoreAPI:Seed"] == "True")
             {
                 app.InitializeDatabase();
             }
