@@ -198,6 +198,15 @@ namespace SecureBank.Ctf
                category: CtfChallangeCategories.Miscellaneous);
             ctfChallanges.Add(hiddenComment);
 
+
+            CtfChallangeModel base2048Content = new CtfChallangeModel(
+               title: USE_REAL_CHALLENGE_NAME ? "Hidden Comment" : $"Challenge {CtfChallengeTypes.Base2048Content.ToChallengeNumber()}",
+               type: CtfChallengeTypes.Base2048Content,
+               flag: new Helpers.Base2048().Encode("Quisque non pulvinar libero, eget malesuada nisi. Ut molestie id arcu a scelerisque. Mauris bibendum sapien elit. Etiam condimentum consectetur nulla vitae rutrum. Vivamus condimentum egestas mauris, sed malesuada neque. Aenean in fermentum orci. Donec quis dolor vitae libero sagittis sagittis." + string.Format(CTF_FLAG_FORMAT, stringGenerator.Generate())),
+               flagKey: USE_REAL_CHALLENGE_NAME ? "base_encoding" : $"challenge_{CtfChallengeTypes.Base2048Content.ToChallengeNumber()}",
+               category: CtfChallangeCategories.Miscellaneous);
+            ctfChallanges.Add(base2048Content);
+
             CtfChallangeModel invalidRedirect = new CtfChallangeModel(
                 title: USE_REAL_CHALLENGE_NAME ? "Invalid Redirect" : $"Challenge {CtfChallengeTypes.InvalidModel.ToChallengeNumber()}",
                 type: CtfChallengeTypes.InvalidRedirect,

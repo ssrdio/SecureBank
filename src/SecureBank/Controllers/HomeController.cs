@@ -22,6 +22,9 @@ namespace SecureBank.Controllers
             {
                 ViewBag.HiddenComment = _ctfOptions.CtfChallanges.Where(x => x.Type == CtfChallengeTypes.HiddenComment)
                     .Single().Flag;
+                ViewBag.Base = _ctfOptions.CtfChallanges
+                    .Where(x => x.Type == CtfChallengeTypes.Base2048Content)
+                    .Single().Flag;
             }
             return View();
         }
