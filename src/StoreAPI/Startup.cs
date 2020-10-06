@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using StoreAPI.DAL;
 using StoreAPI.Models;
 using Microsoft.Extensions.Hosting;
+using NLog.Fluent;
 
 namespace StoreAPI
 {
@@ -70,12 +71,10 @@ namespace StoreAPI
 
             app.CreateDatabase();
 
-            if (Configuration["StoreAPI:Seed"] == "True")
+            if (Configuration["StoreAPI:Seed"].ToUpper() == "TRUE")
             {
                 app.InitializeDatabase();
             }
-
-            //app.InitializeDatabase();
 
             app.UseEndpoints(routes =>
             {

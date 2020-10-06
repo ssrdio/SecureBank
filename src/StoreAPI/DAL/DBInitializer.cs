@@ -42,6 +42,11 @@ namespace StoreAPI.DAL
             using (var scope = app.ApplicationServices.CreateScope())
             {
                 var services = scope.ServiceProvider;
+
+
+                ILoggerFactory loggerfactory = services.GetRequiredService<ILoggerFactory>();
+                ILogger logger = loggerfactory.CreateLogger(typeof(DBInitializer));
+
                 try
                 {
                     context = services.GetRequiredService<StoreContext>();
@@ -50,8 +55,12 @@ namespace StoreAPI.DAL
 
                     if (context.StoreItems.Any())
                     {
+                        logger.LogInformation($"Database is not empty");
                         return;   // DB has been seeded
                     }
+
+                    logger.LogInformation($"Seeding store database");
+
                     string[] descriptions = new string[]
                     {
                         "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
@@ -97,7 +106,7 @@ namespace StoreAPI.DAL
                         {
                             Name = itemNames[i],
                             Description = descriptions[i],
-                            Price = r.Next(1, 500),
+                            Price = r.Next(10, 150),
                             Installments = r.Next(1, 24)
                         });
                     }
@@ -106,9 +115,6 @@ namespace StoreAPI.DAL
                 }
                 catch (Exception ex)
                 {
-                    ILoggerFactory loggerfactory = services.GetRequiredService<ILoggerFactory>();
-                    ILogger logger = loggerfactory.CreateLogger(typeof(DBInitializer));
-
                     logger.LogError(ex, "An error occurred while seeding the database.");
                     return;
                 }
