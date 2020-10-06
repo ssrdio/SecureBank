@@ -110,6 +110,10 @@ namespace SecureBank
             {
                 ctfOptions = services.ConfigureCtf(Configuration);
             }
+            else 
+            {
+                ctfOptions = services.ConfigureWithoutCtf(Configuration);
+            }
 
             services.AddControllersWithViews();
 
@@ -131,7 +135,7 @@ namespace SecureBank
 
             CtfOptions ctfOptions = app.ApplicationServices.GetRequiredService<IOptions<CtfOptions>>().Value;
 
-            if (ctfOptions.CtfChallengeOptions.ExceptionHandlingTransactionCreate)
+            if (ctfOptions?.CtfChallengeOptions?.ExceptionHandlingTransactionCreate == true)
             {
                 app.UseDeveloperExceptionPage();
             }

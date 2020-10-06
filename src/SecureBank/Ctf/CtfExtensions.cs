@@ -17,6 +17,19 @@ namespace SecureBank.Ctf
 {
     public static class CtfExtensions
     {
+        public static CtfOptions ConfigureWithoutCtf(this IServiceCollection services, IConfiguration configuration)
+        {
+            
+            services.Configure<CtfOptions>(ctfOptions =>
+            {
+                ctfOptions.CtfChallanges = new List<CtfChallangeModel>();
+                ctfOptions.CtfChallengeOptions = new CtfChallengeOptions();
+            });
+            return new CtfOptions(
+             ctfChallanges: new List<CtfChallangeModel>(),
+             ctfChallengeOptions: new CtfChallengeOptions());
+        }
+
         public static CtfOptions ConfigureCtf(this IServiceCollection services, IConfiguration configuration)
         {
             AppSettings appSettings = configuration.GetSection("AppSettings").Get<AppSettings>();
