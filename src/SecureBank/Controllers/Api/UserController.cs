@@ -3,14 +3,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SecureBank.Interfaces;
 using SecureBank.Models.User;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SecureBank.Controllers.Api
 {
-    [AuthorizeMissing]
+    [AuthorizeMissing(AuthorizeAttributeTypes.Api)]
     public class UserController : ApiBaseController
     {
         private readonly IUserBL _userBL;

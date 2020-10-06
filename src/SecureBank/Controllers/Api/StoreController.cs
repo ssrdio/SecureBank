@@ -31,9 +31,14 @@ namespace SecureBank.Controllers.Api
 
         [HttpGet]
         [ProducesResponseType(typeof(List<PurcahseHistoryItemResp>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetHistory()
+        public async Task<IActionResult> GetHistory([FromQuery] string username = null)
         {
-            List<PurcahseHistoryItemResp> history = await _storeBL.GetPurcahseHistory(HttpContext.GetUserName());
+            if(string.IsNullOrEmpty(username))
+            {
+                username = HttpContext.GetUserName();
+            }
+
+            List<PurcahseHistoryItemResp> history = await _storeBL.GetPurcahseHistory(username);
 
             return Ok(history);
         }

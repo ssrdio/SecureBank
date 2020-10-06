@@ -1,13 +1,9 @@
-﻿using SecureBank.DAL.DAO;
-using NLog;
-using SecureBank.DAL.DBModels;
+﻿using SecureBank.DAL.DBModels;
 using SecureBank.Interfaces;
 using SecureBank.Models;
 using SecureBank.Models.Transaction;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace SecureBank.Services
 {
@@ -22,22 +18,44 @@ namespace SecureBank.Services
 
         public virtual bool Create(TransactionDBModel transaction)
         {
+            bool result = CheckTransaction(transaction);
+            if(!result)
+            {
+                return false;
+            }
+
             return _transactionDAO.Add(transaction);
         }
 
-        public virtual void Delete()
+        protected virtual bool CheckTransaction(TransactionDBModel transaction)
         {
-            return;
-        }
+            if(transaction.Amount < 0)
+            {
+                return false;
+            }
 
-        public virtual void Edit()
-        {
-            return;
+            if(string.IsNullOrEmpty(transaction.SenderId) || string.IsNullOrEmpty(transaction.ReceiverId))
+            {
+                return false;
+            }
+
+            double accountBalance = _transactionDAO.GetAccountbalance(transaction.SenderId);
+            if (accountBalance < 0)
+            {
+                return false;
+            }
+
+            if (accountBalance < transaction.Amount)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public virtual TransactionDBModel Details(int? id)
         {
-            if(!id.HasValue)
+            if (!id.HasValue)
             {
                 return null;
             }
@@ -49,19 +67,12 @@ namespace SecureBank.Services
 
         public virtual DataTableResp<TransactionResp> GetTransactions(string userName, string search, int start, int lenght)
         {
-            try
-            {
-                List<TransactionResp> transactions = _transactionDAO.GetTransactions(userName, search);
+            List<TransactionResp> transactions = _transactionDAO.GetTransactions(userName, search);
 
-                return new DataTableResp<TransactionResp>(
-                    recordsTotal: transactions.Count,
-                    recordsFiltered: transactions.Count,
-                    data: transactions.Skip(start).Take(lenght).ToList());
-            }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
+            return new DataTableResp<TransactionResp>(
+                recordsTotal: transactions.Count,
+                recordsFiltered: transactions.Count,
+                data: transactions.Skip(start).Take(lenght).ToList());
         }
 
         public virtual List<TransactionsByDayResp> GetTransactionsByDay(string userName)

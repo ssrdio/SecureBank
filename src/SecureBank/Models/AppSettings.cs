@@ -8,11 +8,12 @@ namespace SecureBank.Models
 {
     public class AppSettings
     {
+        public string BaseUrl { get; set; }
+
         public ApiEndpoint StoreEndpoint { get; set; }
         public SmtpCredentials SmtpCredentials { get; set; }
         public CtfConfig Ctf { get; set; }
 
-        public string LegalURL { get; set; }
         public bool IgnoreEmails { get; set; }
     }
 }

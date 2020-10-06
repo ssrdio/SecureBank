@@ -32,6 +32,26 @@ namespace SecureBank.DAL.Initializers
             }
         }
 
+        public static void InitializeDatabase(this IApplicationBuilder app, string admin, string adminPassword)
+        {
+            ILogger logger = LogManager.GetCurrentClassLogger();
+
+            using IServiceScope scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
+            IServiceProvider services = scope.ServiceProvider;
+
+            try
+            {
+                IDbInitializer dbInitializer = services.GetRequiredService<IDbInitializer>();
+
+                dbInitializer.Initialize(admin, adminPassword);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, ex.Message);
+                return;
+            }
+        }
+
         /// <summary>
         /// This adds admin user and some seed users with random transaction
         /// UserNames:
@@ -44,11 +64,7 @@ namespace SecureBank.DAL.Initializers
         /// laura.norman@ssrd.io
         /// nino.olivetto@ssrd.io
         /// </summary>
-        /// <param name="app"></param>
-        /// <param name="admin"></param>
-        /// <param name="adminPassword"></param>
-        /// <param name="userPassword"></param>
-        public static void InitializeDatabase(this IApplicationBuilder app, string admin, string adminPassword, string userPassword)
+        public static void SeedDatabase(this IApplicationBuilder app, string userPassword)
         {
             ILogger logger = LogManager.GetCurrentClassLogger();
 
@@ -59,7 +75,7 @@ namespace SecureBank.DAL.Initializers
             {
                 IDbInitializer dbInitializer = services.GetRequiredService<IDbInitializer>();
 
-                dbInitializer.Initialize(app, admin, adminPassword, userPassword);
+                dbInitializer.Seed(userPassword);
             }
             catch (Exception ex)
             {

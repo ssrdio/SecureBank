@@ -13,12 +13,14 @@ namespace SecureBank.Services
 {
     public class UserBL : IUserBL
     {
-        private readonly ITransactionDAO _transactionDAO;
-        private readonly IUserDAO _userDAO;
+        protected readonly ITransactionDAO _transactionDAO;
+        protected readonly IUserDAO _userDAO;
 
-        private readonly IWebHostEnvironment _webHostEnvironment;
+        protected readonly IWebHostEnvironment _webHostEnvironment;
 
-        private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
+        protected readonly ILogger _logger = LogManager.GetCurrentClassLogger();
+
+        protected const string BASE_FOLDER = "SecureFiles/Images/";
 
         public UserBL(ITransactionDAO transactionDAO, IUserDAO userDAO, IWebHostEnvironment webHostEnvironment)
         {
@@ -49,16 +51,17 @@ namespace SecureBank.Services
 
         public virtual byte[] GetProfileImage(string userName)
         {
-            if(string.IsNullOrEmpty(userName))
+            if (string.IsNullOrEmpty(userName))
             {
                 return Array.Empty<byte>();
             }
 
             string contentRootPath = _webHostEnvironment.ContentRootPath;
-            string path = System.IO.Path.Combine(contentRootPath, "SecureFiles/Images/");
-            byte[] data = Array.Empty<byte>();
 
+            string path = System.IO.Path.Combine(contentRootPath, BASE_FOLDER);
             string userPath = System.IO.Path.Combine(path, userName);
+
+            byte[] data;
 
             if (System.IO.File.Exists(userPath))
             {
@@ -66,10 +69,22 @@ namespace SecureBank.Services
             }
             else
             {
-                if (userName.Contains("@"))
+                try
                 {
-                    string[] listFiles = System.IO.Directory.GetFiles(path);
-                    data = System.IO.File.ReadAllBytes(listFiles[listFiles.Length - 1]);
+                    if (userName.Contains("@"))
+                    {
+                        string[] listFiles = System.IO.Directory.GetFiles(path);
+                        data = System.IO.File.ReadAllBytes(listFiles[^1]);
+                    }
+                    else
+                    {
+                        data = System.IO.File.ReadAllBytes(userPath);
+                    }
+                }
+                catch(Exception ex)
+                {
+                    _logger.Error(ex, "Failed to get user image");
+                    return Array.Empty<byte>();
                 }
             }
 

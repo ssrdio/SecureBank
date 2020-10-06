@@ -3,6 +3,7 @@
     ViewData["Title"] = "Register";
 }
 
+@inject Microsoft.Extensions.Options.IOptions<SecureBank.Ctf.Models.CtfChallengeOptions> _ctfChallengeOptions;
 
 
 <div class="login_wrapper">
@@ -26,14 +27,11 @@
                     <div id="notCorrectConfirmPass" style="display: none">Passwords do not match</div>
                     <div id="notEnoughChars" style="display: none">Password length must be at least 5 chars long!</div>
                 </div>
-                @if (!string.IsNullOrEmpty(ViewBag.LegalURL))
-                {
-                    <div class="form-group">
-                        <p><input type="checkbox" id="termsCheck"/>
-                        I accept the <a href="@ViewBag.LegalURL">Terms and conditions</a>.</p>
-                        <div id="termsNotAccepted" style="display: none">You need to accept terms and conditions</div>
-                    </div>
-                }
+                <div class="form-group">
+                    <p><input type="checkbox" id="termsCheck"/>
+                        I accept the <a href="/docs/legal.pdf">Terms and conditions</a>.</p>
+                    <div id="termsNotAccepted" style="display: none">You need to accept terms and conditions</div>
+                </div>
                 <div>
                     <button type="submit" id="submitbutton" class="btnRegister btn btn-primary">Register</button>
                 </div>
@@ -117,32 +115,37 @@
                     $(this).removeClass('is-visible');
                 }
             });
+            @if(_ctfChallengeOptions.Value.HiddenPageRegisterAdmin)
+            { 
+                <text>
 
-            //$('.btnRegister').on('click', function (event) {
-            //    $.ajax({
-            //        type: "POST",
-            //        url: "/Auth/RegisterAdmin",
-            //        data: JSON.stringify({ "UserName": $('.UserEmail').val(), "Password": $('.Password').val() }),
-            //        contentType: 'application/json',
-            //        success: data => {
-            //            console.log('SUCESSS');
-            //            var parsedData = JSON.parse(data);
-            //            if (parsedData.status == "ok") {
-            //                $('.cd-popup4').addClass('is-visible');  //show popup
-            //                setTimeout(function () {
-            //                    window.location.href = "/Auth/Login";
-            //                }, 8000)
-            //            } else {
-            //                console.log('ERROR1');
-            //                $('.cd-popup3').addClass('is-visible');  //show popup
-            //            }
-            //        },
-            //        error: data => {
-            //            console.log('ERROR');
-            //            $('.cd-popup3').addClass('is-visible');  //show popup
-            //        }
-            //    });
-            //});
+                    //$('.btnRegister').on('click', function (event) {
+                    //    $.ajax({
+                    //        type: "POST",
+                    //        url: "/Auth/RegisterAdmin",
+                    //        data: JSON.stringify({ "UserName": $('.UserEmail').val(), "Password": $('.Password').val() }),
+                    //        contentType: 'application/json',
+                    //        success: data => {
+                    //            console.log('SUCESSS');
+                    //            var parsedData = JSON.parse(data);
+                    //            if (parsedData.status == "ok") {
+                    //                $('.cd-popup4').addClass('is-visible');  //show popup
+                    //                setTimeout(function () {
+                    //                    window.location.href = "/Auth/Login";
+                    //                }, 8000)
+                    //            } else {
+                    //                console.log('ERROR1');
+                    //                $('.cd-popup3').addClass('is-visible');  //show popup
+                    //            }
+                    //        },
+                    //        error: data => {
+                    //            console.log('ERROR');
+                    //            $('.cd-popup3').addClass('is-visible');  //show popup
+                    //        }
+                    //    });
+                    //});
+                    </text>
+            }
 
             //form validation
             function validateEmail(email) {

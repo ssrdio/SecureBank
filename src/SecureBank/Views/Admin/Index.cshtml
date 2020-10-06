@@ -1,4 +1,5 @@
-﻿
+﻿@inject Microsoft.Extensions.Options.IOptions<SecureBank.Ctf.Models.CtfOptions> _ctfOptions
+
 @{
     ViewData["Title"] = "Index";
 }
@@ -28,16 +29,33 @@
                 processing: true,
                 "ajax": "/api/Admin/Transactions",
                 columns: [
-                    { data: 'senderId', title: 'Sender' },
-                    { data: 'receiverId', title: 'Receiver' },
-                    { data: 'dateTime', title: 'Transaction time' },
                     {
-                        data: 'amount', title: 'Amount',
+                        data: 'senderId',
+                        title: 'Sender',
+                        @if (!_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
+                    },
+                    {
+                        data: 'receiverId',
+                        title: 'Receiver',
+                        @if (!_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
+                    },
+                    {
+                        data: 'dateTime',
+                        title: 'Transaction time',
+                        @if (!_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
+                    },
+                    {
+                        data: 'amount',
+                        title: 'Amount',
                         mRender: function (rowData) {
                             return rowData.toFixed(2) + "€";
                         }
                     },
-                    { data: 'reason', title: 'Reason' },
+                    {
+                        data: 'reason',
+                        title: 'Reason',
+                        @if (!_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
+                    },
                     {
                         data: "id",
                         title: "View",
@@ -54,10 +72,26 @@
                 processing: true,
                 "ajax": "/api/Admin/GetAllUsers",
                 columns: [
-                    { data: 'username', title: 'User name' },
-                    { data: 'name', title: 'Name' },
-                    { data: 'surname', title: 'Surname' },
-                    { data: 'role', title: 'Role' }
+                    {
+                        data: 'username',
+                        title: 'User name',
+                        @if (!_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
+                    },
+                    {
+                        data: 'name',
+                        title: 'Name',
+                        @if (!_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
+                    },
+                    {
+                        data: 'surname',
+                        title: 'Surname',
+                        @if (!_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
+                    },
+                    {
+                        data: 'role',
+                        title: 'Role',
+                        @if (!_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
+                    }
                 ]
             });
         });

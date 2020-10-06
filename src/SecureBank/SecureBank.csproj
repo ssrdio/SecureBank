@@ -35,5 +35,19 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Documents\**\*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\css\swagger-original.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\css\swagger-original.css" />
+  </ItemGroup>
   
 </Project>

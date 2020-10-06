@@ -8,7 +8,8 @@ namespace SecureBank.Interfaces
 {
     public interface IDbInitializer
     {
-        void Initialize(IApplicationBuilder app, string admin, string adminPassword, string userPassword);
+        void Initialize(string admin, string adminPassword);
+        void Seed(string userPassword);
 
         void Create(IApplicationBuilder app);
     }

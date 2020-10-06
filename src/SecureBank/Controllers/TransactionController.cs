@@ -6,6 +6,8 @@ using SecureBank.Helpers.Authorization.Attributes;
 using SecureBank.DAL.DBModels;
 using SecureBank.DAL;
 using SecureBank.Interfaces;
+using SecureBank.Helpers;
+using SecureBank.Filters;
 
 namespace SecureBank.Controllers
 {
@@ -65,7 +67,7 @@ namespace SecureBank.Controllers
             bool createResult = _transactionBL.Create(transaction);
             if (!createResult)
             {
-                ModelState.AddModelError("_error", "Error");
+                ModelState.AddModelError(string.Empty, "Error");
                 return View(transaction);
             }
 
@@ -73,10 +75,9 @@ namespace SecureBank.Controllers
         }
 
         // GET: Transaction/Edit/5
+        [UnknownGeneration]
         public async Task<IActionResult> Edit(int? id)
         {
-            _transactionBL.Edit();
-
             if (id == null)
             {
                 return NotFound();
@@ -94,11 +95,11 @@ namespace SecureBank.Controllers
         // POST: Transaction/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [UnknownGeneration]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,SenderId,ReceiverId,DateTime,Reason,Amount,Reference")] TransactionDBModel transactionTable)
         {
-            _transactionBL.Edit();
 
             if (id != transactionTable.Id)
             {
@@ -128,11 +129,10 @@ namespace SecureBank.Controllers
             return View(transactionTable);
         }
 
+        [UnknownGeneration]
         // GET: Transaction/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            _transactionBL.Delete();
-
             if (id == null)
             {
                 return NotFound();
@@ -149,12 +149,11 @@ namespace SecureBank.Controllers
         }
 
         // POST: Transaction/Delete/5
+        [UnknownGeneration]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            _transactionBL.Delete();
-
             var transactionTable = await _context.Transactions.FindAsync(id);
             _context.Transactions.Remove(transactionTable);
             await _context.SaveChangesAsync();

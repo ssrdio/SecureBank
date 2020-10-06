@@ -24,6 +24,25 @@ namespace SecureBank.DAL.DAO
                 .Any();
         }
 
+        public virtual bool UpdatePasswordToken(string userName, string token)
+        {
+            var user = _portalDBContext.UserData
+                .FirstOrDefault(x => x.UserName == userName);
+            if (user == null)
+            {
+                return false;
+            }
+            user.RecoveryGuid = token;
+            _portalDBContext.SaveChanges();
+            return true;
+        }
+
+        public virtual bool PasswordTokenExists(string token)
+        {
+            return _portalDBContext.UserData
+                .Any(x => x.RecoveryGuid == token);
+        }
+
         public virtual bool RegisterUser(UserModel userModel)
         {
             if (_portalDBContext.UserData.Any(t => t.UserName == userModel.UserName))
@@ -78,14 +97,18 @@ namespace SecureBank.DAL.DAO
             return changes > 0;
         }
 
-        public virtual bool ValidatePassword(string userName, string pass)
+        public virtual bool ValidatePassword(string userName, string pass, bool requireConfirmed)
         {
-            if (_portalDBContext.UserData.Any(t => t.UserName == userName && t.Password == pass && t.Confirmed))
+            IQueryable<UserDBModel> query = _portalDBContext.UserData
+                .Where(x => x.UserName == userName)
+                .Where(x => x.Password == pass);
+
+            if(requireConfirmed)
             {
-                return true;
+                query = query.Where(x => x.Confirmed);
             }
 
-            return false;
+            return query.Any();
         }
 
         public virtual UserDBModel GetUser(string userName)

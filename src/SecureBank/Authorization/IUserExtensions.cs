@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Principal;
 using System.Threading.Tasks;
 
@@ -8,8 +10,8 @@ namespace SecureBank.Helpers.Authorization
 {
     public interface IUserExtensions
     {
-        bool IsAuthenticated(IPrincipal user);
-        string GetUserName(IPrincipal user);
-        string GetRole(IPrincipal user);
+        bool IsAuthenticated(HttpContext context);
+        string GetUserName(HttpContext context);
+        string GetRole(HttpContext context);
     }
 }

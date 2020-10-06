@@ -1,14 +1,12 @@
-﻿using SecureBank.Models.User;
-using CommonUtils;
+﻿using CommonUtils;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
 using NLog;
 using SecureBank.DAL.DBModels;
 using SecureBank.Interfaces;
+using SecureBank.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace SecureBank.DAL.Initializers
 {
@@ -23,14 +21,15 @@ namespace SecureBank.DAL.Initializers
             _context = context;
         }
 
-        public void Initialize(IApplicationBuilder app, string admin, string adminPassword, string userPassword)
+        public void Initialize(string admin, string adminPassword)
         {
-            //context.Database.EnsureDeleted();
-            _logger.Info("Creating database");
-            _context.Database.EnsureCreated();
-            _logger.Info("Database created");
+            AddAdmin(admin, adminPassword);
+            AddCredit();
+        }
 
-            List<string> userNames = AddUsers(admin, adminPassword, userPassword);
+        public void Seed(string userPassword)
+        {
+            List<string> userNames = AddUsers(userPassword);
             if (userNames == null)
             {
                 return;
@@ -39,7 +38,70 @@ namespace SecureBank.DAL.Initializers
             AddTransactions(userNames);
         }
 
-        private List<string> AddUsers(string admin, string adminPassword, string userPassword)
+        private void AddAdmin(string admin, string adminPassword)
+        {
+            if(string.IsNullOrEmpty(admin) || string.IsNullOrEmpty(adminPassword))
+            {
+                return;
+            }
+
+            bool exists = _context.UserData
+                .Where(x => x.UserName == admin)
+                .Any();
+            if(exists)
+            {
+                return;
+            }
+
+            UserDBModel adminDbModel = new UserDBModel 
+            {
+                Name = "admin",
+                Surname = "admin",
+                UserName = admin,
+                Password = adminPassword,
+                Confirmed = true,
+                Role = 100 
+            };
+            _context.UserData.Add(adminDbModel);
+
+            int changes = _context.SaveChanges();
+            if(changes <= 0)
+            {
+                throw new Exception("Failed to add admin");
+            }
+
+            GiveMoney(new List<string> { adminDbModel.UserName });
+        }
+
+        private void AddCredit()
+        {
+            bool exists = _context.UserData
+                .Where(x => x.UserName == SecureBankConstants.CREDIT_USERNAME)
+                .Any();
+            if (exists)
+            {
+                return;
+            }
+
+            UserDBModel creditDbModel = new UserDBModel 
+            { 
+                Name = "credit",
+                Surname = "credit",
+                UserName = SecureBankConstants.CREDIT_USERNAME,
+                Password = Guid.NewGuid().ToString(),
+                Confirmed = true,
+                Role = 100
+            };
+            _context.UserData.Add(creditDbModel);
+
+            int changes = _context.SaveChanges();
+            if (changes <= 0)
+            {
+                throw new Exception("Failed to add credit");
+            }
+        }
+
+        private List<string> AddUsers(string userPassword)
         {
             if (_context.UserData.Any())
             {
@@ -58,7 +120,8 @@ namespace SecureBank.DAL.Initializers
                 new UserDBModel{ Name="Peggy", Surname="Justice", UserName="peggy.justice@ssrd.io"},
                 new UserDBModel{ Name="Laura", Surname="Norman", UserName="laura.norman@ssrd.io"},
                 new UserDBModel{ Name="Nino", Surname="Olivetto", UserName="nino.olivetto@ssrd.io"},
-                new UserDBModel{ Name="Tester", Surname="Test", UserName="tester@ssrd.io"}
+                new UserDBModel{ Name="Tester", Surname="Test", UserName="tester@ssrd.io"},
+                new UserDBModel {Name="Credit", Surname="Credit", UserName=SecureBankConstants.CREDIT_USERNAME,}
             };
 
             foreach (UserDBModel user in sampleUsers)
@@ -70,16 +133,6 @@ namespace SecureBank.DAL.Initializers
             }
 
             _context.SaveChanges();
-
-            if (!string.IsNullOrEmpty(admin) && !string.IsNullOrEmpty(adminPassword))
-            {
-                UserDBModel adminDbModel = new UserDBModel { Name = "admin", Surname = "admin", UserName = admin, Password = adminPassword, Confirmed = true, Role = 100 };
-                _context.UserData.Add(adminDbModel);
-
-                _context.SaveChanges();
-
-                sampleUsers.Add(adminDbModel);
-            }
 
             return sampleUsers
                 .Select(x => x.UserName)
@@ -108,6 +161,38 @@ namespace SecureBank.DAL.Initializers
 
                 _context.Transactions.Add(transactionTable);
             }
+
+            _context.SaveChanges();
+        }
+
+        public void GiveMoneyToAll(double amount = 10000)
+        {
+            List<string> userNames = _context.UserData
+                .Select(x => x.UserName)
+                .ToList();
+
+            GiveMoney(userNames, amount);
+        }
+
+        public void GiveMoney(List<string> userNames, double amount = 10000)
+        {
+            List<TransactionDBModel> transactions = new List<TransactionDBModel>();
+
+            foreach(var user in userNames)
+            {
+                TransactionDBModel transactionDBModel = new TransactionDBModel
+                {
+                    Amount = amount,
+                    TransactionDateTime = DateTime.UtcNow,
+                    Reason = "top up",
+                    ReceiverId = user,
+                    SenderId = "SecureBank"
+                };
+
+                transactions.Add(transactionDBModel);
+            }
+
+            _context.Transactions.AddRange(transactions);
 
             _context.SaveChanges();
         }

@@ -12,7 +12,7 @@
                 <h4>Create new transaction</h4>
                 <hr />
                 <form asp-action="Create">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div asp-validation-summary="All" class="text-danger"></div>
                     <input hidden id="SenderId" name="SenderId" value="@Context.GetUserName()" />
                     <div class="form-group">
                         <label class="control-label">Sender</label>
@@ -43,7 +43,6 @@
                     <div class="form-group">
                         <label asp-for="Amount" class="control-label"></label>
                         <input id="Amount" name="Amount" class="form-control" />
-                        <div id="notANumberErrorText" style="display: none">Number must be greater than 0.</div>
                         <span asp-validation-for="Amount" class="text-danger"></span>
                     </div>
                     <div class="form-group">
@@ -67,7 +66,6 @@
                 source: '/api/Search/FindUser'
             });
         });
-
         var y = document.getElementById("Amount");         // function checks if input Amount is greater than 0 if not it disables submit button,
         y.addEventListener('keyup', function (event) {              // ads an "alert" div and border color and also checks if input value is a number.
             var x = document.getElementById("Amount").value;

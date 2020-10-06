@@ -18,9 +18,9 @@
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet" href="~/css/popup.css" />
+
+    @RenderSection("Styles", required: false)
     <title>SecureBank</title>
-    <style>
-    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light bg-transparent" id="gtco-main-nav">
@@ -110,24 +110,28 @@
 
         $(document).ready(function () {
             @if (Context.IsAuthenticated())
-                {
-                    <text>
-                         $.get("/api/User/GetAvailableFunds?user=@Context.GetUserName()", function(data) {
-                             $("#amount").html(data.balance);
-                         });
-                    </text>
-                }
+            {
+                <text>
+                        $.get("/api/User/GetAvailableFunds?user=@Context.GetUserName()", function(data) {
+                            $("#amount").html(data.balance);
+                        });
+                </text>
+            }
+            else
+            {
+                <text>
+                    if (window.location.pathname == '/') {
+                        document.getElementById("mainLoginButton").classList.add('btn-outline-dark');
+                        document.getElementById("mainSignUpButton").classList.add('btn-info');
+                    }
+                </text>
+            }
 
-                if (window.location.pathname == '/') {
-                    // Index (home) page
-                    document.getElementById("gtco-main-nav").classList.add('mainBuble');
-
-                    document.getElementById("mainLoginButton").classList.add('btn-outline-dark');
-                    document.getElementById("mainSignUpButton").classList.add('btn-info');
-
-                }
-
-            });
+            if (window.location.pathname == '/') {
+                // Index (home) page
+                document.getElementById("gtco-main-nav").classList.add('mainBuble');
+            }
+        });
 
     </script>
 </body>

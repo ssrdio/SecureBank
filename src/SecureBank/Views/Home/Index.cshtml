@@ -1,4 +1,23 @@
-﻿<div class="container-fluid gtco-banner-area">
+﻿@inject Microsoft.Extensions.Options.IOptions<SecureBank.Ctf.Models.CtfOptions> _ctfOptions
+<!--
+    <div id="video-modal" class="modal fade" role="dialog" style="display: none;">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">SecureBank</h5>
+                    <button type="button" class="custom-close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                </div>
+                <div class="modal-body">
+                    <video controls>
+                        <source src="~/videos/cybernight.mp4" type="video/mp4" />
+                        Your browser does not support videos
+                    </video>
+                </div>
+            </div>
+        </div>
+    </div>-->
+
+<div class="container-fluid gtco-banner-area">
     <div class="container">
         <div class="row">
             <div class="col-md-6">
@@ -273,7 +292,7 @@
                 <div class="card text-center">
                     <img class="card-img-top" src="images/news1.jpg" alt="">
                     <div class="card-body text-left pr-0 pl-0">
-                        <h5>
+                        <h5 class="news-title">
                             Aenean ultrices lorem quis blandit
                             tempor urabitur accumsan.
                         </h5>
@@ -288,18 +307,29 @@
             </div>
             <div>
                 <div class="card text-center">
-                    <img class="card-img-top" src="images/news2.jpg" alt="">
+                    <img class="card-img-top" src="images/news3.jpg" alt="">
                     <div class="card-body text-left pr-0 pl-0">
-                        <h5>
-                            Nam vel nisi eget odio pulvinar
-                            iaculis. Fusce aliquet.
-                        </h5>
+                        <h5 class="news-title"> Our new mobile bank app! </h5>
                         <p class="card-text">
                             Donec non sem mi. In hac habitasse platea dictumst. Nullam a feugiat augue,
                             et porta metus. Nulla mollis lobortis leet. Maecenas tincidunt, arcu sed ornare purus risus
                             . . .
                         </p>
-                        <a href="#">READ MORE <i class="fa fa-angle-right" aria-hidden="true"></i></a>
+                        <a href="/Home/DownloadAndroidApp">DOWNLOAD <i class="fa fa-angle-right" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="card text-center">
+                    <img class="card-img-top" src="images/news2.jpg" alt="">
+                    <div class="card-body text-left pr-0 pl-0">
+                        <h5 class="news-title"> The bank was in the news today </h5>
+                        <p class="card-text">
+                            Donec non sem mi. In hac habitasse platea dictumst. Nullam a feugiat augue,
+                            et porta metus. Nulla mollis lobortis leet. Maecenas tincidunt, arcu sed ornare purus risus
+                            . . .
+                        </p>
+                        <button id="video-modal-button" class="custom-button">Watch <i class="fa fa-angle-right" aria-hidden="true"></i></button>
                     </div>
                 </div>
             </div>
@@ -307,7 +337,7 @@
                 <div class="card text-center">
                     <img class="card-img-top" src="images/news3.jpg" alt="">
                     <div class="card-body text-left pr-0 pl-0">
-                        <h5>
+                        <h5 class="news-title">
                             Morbi faucibus odio sollicitudin
                             risus scelerisque dignissim.
                         </h5>
@@ -324,7 +354,7 @@
                 <div class="card text-center">
                     <img class="card-img-top" src="images/news1.jpg" alt="">
                     <div class="card-body text-left pr-0 pl-0">
-                        <h5>
+                        <h5 class="news-title">
                             Aenean ultrices lorem quis blandit
                             tempor urabitur accumsan.
                         </h5>
@@ -339,24 +369,9 @@
             </div>
             <div>
                 <div class="card text-center">
-                    <img class="card-img-top" src="images/twitter_about_us.png" alt="">
-                    <div class="card-body text-left pr-0 pl-0">
-                        <h5>
-                            There was a tweet about us
-                        </h5>
-                        <p class="card-text">
-                            @ViewBag.Base
-                            . . .
-                        </p>
-                        <a href="#">READ MORE <i class="fa fa-angle-right" aria-hidden="true"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div>
-                <div class="card text-center">
                     <img class="card-img-top" src="images/news2.jpg" alt="">
                     <div class="card-body text-left pr-0 pl-0">
-                        <h5>
+                        <h5 class="news-title">
                             Nam vel nisi eget odio pulvinar
                             iaculis. Fusce aliquet.
                         </h5>
@@ -373,7 +388,7 @@
                 <div class="card text-center">
                     <img class="card-img-top" src="images/news3.jpg" alt="">
                     <div class="card-body text-left pr-0 pl-0">
-                        <h5>
+                        <h5 class="news-title">
                             Morbi faucibus odio sollicitudin
                             risus scelerisque dignissim.
                         </h5>
@@ -384,10 +399,18 @@
                         </p>
                         <a href="#">READ MORE <i class="fa fa-angle-right" aria-hidden="true"></i></a>
                         <!--
-
-                Curabitur aliquam nulla eu elementum eleifend. Aenean at justo scelerisque, placerat nibh at, pharetra ex. In finibus odio eget est eleifend eleifend. @ViewBag.HiddenComment Sed tempus vulputate metus a tincidunt. Morbi maximus risus neque, quis vehicula tortor mattis ac. Mauris felis nulla, vestibulum vel quam ornare, volutpat pretium lacus. Morbi vel nisl diam. Donec placerat felis sit amet tristique sagittis. Suspendisse dapibus sit amet eros ac iaculis. Praesent sodales vel est in euismod. In volutpat hendrerit lectus et aliquet. Vivamus ac tincidunt nulla, et sodales diam. Phasellus consectetur et ex eu maximus. Cras eu elit ullamcorper, pretium nibh eget, pulvinar nisl.
-
-                -->
+                @{
+                    if(_ctfOptions.Value.CtfChallengeOptions.Base2048Content)
+                    {
+                        var base2048Challenge = _ctfOptions.Value.CtfChallanges
+                            .Where(x => x.Type == SecureBank.Ctf.Models.CtfChallengeTypes.Base2048Content)
+                            .Single();
+                        <text>
+                            Curabitur aliquam nulla eu elementum eleifend. Aenean at justo scelerisque, placerat nibh at, pharetra ex.In finibus odio eget est eleifend eleifend.@base2048Challenge.FlagKey. Sed tempus vulputate metus a tincidunt.Morbi maximus risus neque, quis vehicula tortor mattis ac. Mauris felis nulla, vestibulum vel quam ornare, volutpat pretium lacus. Morbi vel nisl diam. Donec placerat felis sit amet tristique sagittis.Suspendisse dapibus sit amet eros ac iaculis.Praesent sodales vel est in euismod.In volutpat hendrerit lectus et aliquet. Vivamus ac tincidunt nulla, et sodales diam. Phasellus consectetur et ex eu maximus. Cras eu elit ullamcorper, pretium nibh eget, pulvinar nisl.
+                        </text>
+                    }
+                }
+                                -->
                     </div>
 
                 </div>
@@ -396,3 +419,67 @@
     </div>
 </div>
 
+@section Styles {
+<style>
+    .custom-close {
+        border: 0;
+        background: transparent;
+        font-size: 17px;
+        font-weight: bold;
+    }
+
+    .modal-content video {
+        width: 100%;
+        height: auto;
+    }
+
+    .custom-button {
+        background-image: -moz-linear-gradient(0deg, #06c6f9 0%, #38eaf9 100%);
+        background-image: -webkit-linear-gradient(0deg, #06c6f9 0%, #38eaf9 100%);
+        background-image: -ms-linear-gradient(0deg, #06c6f9 0%, #38eaf9 100%);
+        font-size: 18px;
+        font-family: "OpenSans-Semibold";
+        color: #fff;
+        border-radius: 50px;
+        padding: 3px 30px;
+        display: inline-block;
+        text-transform: uppercase;
+        padding-right: 5px;
+        text-decoration: none !important;
+        cursor: pointer;
+        border: 0px;
+    }
+
+        .custom-button .fa {
+            background: #fff;
+            border-radius: 50%;
+            height: 32px;
+            width: 32px;
+            color: #37eaf9;
+            font-size: 22px;
+            text-align: center;
+            padding-top: 5px;
+            margin-left: 15px;
+        }
+
+    .news-title {
+        min-height: 55px;
+    }
+</style>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(() => {
+
+            $('#video-modal-button').on('click', () => {
+                $('#video-modal').modal('show');
+            });
+
+            $('#video-modal').on('hide.bs.modal', () => {
+                $('#video-modal').find('video').trigger('pause');
+            });
+
+        });
+    </script>
+}

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using SecureBank.Ctf.Models;
 
 namespace SecureBank.Models
 {
@@ -9,5 +6,13 @@ namespace SecureBank.Models
     {
         public string Seed { get; set; }
         public bool Enabled { get; set; }
+        public bool GenerateCtfdExport { get; set; }
+
+        public string FlagFormat { get; set; }
+        public bool UseRealChallengeName { get; set; }
+
+        public string FtpFlag { get; set; }
+
+        public CtfChallengeOptions Challenges { get; set; }
     }
 }

@@ -17,7 +17,7 @@ namespace SecureBank.Services
         {
             string xmlStringContent = Encoding.UTF8.GetString(stream.ToArray());
             string xml = ParseXml(xmlStringContent);
-            if(string.IsNullOrEmpty(xml))
+            if(xml == null)
             {
                 return null;
             }
@@ -40,15 +40,22 @@ namespace SecureBank.Services
 
             string result = string.Empty;
 
-            XmlReader reader = XmlReader.Create(new StringReader(xml), settings);
-            while (reader.Read())
+            try
             {
-                if (reader.NodeType == XmlNodeType.Element)
+                XmlReader reader = XmlReader.Create(new StringReader(xml), settings);
+                while (reader.Read())
                 {
-                    result = reader.ReadElementContentAsString();
+                    if (reader.NodeType == XmlNodeType.Element)
+                    {
+                        result = reader.ReadElementContentAsString();
+                    }
                 }
             }
-
+            catch(Exception)
+            {
+                return null;
+            }
+            
             return result;
         }
     }

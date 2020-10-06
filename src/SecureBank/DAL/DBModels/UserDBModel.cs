@@ -16,5 +16,6 @@ namespace SecureBank.DAL.DBModels
         public string Password { get; set; }
         public int Role { get; set; }
         public bool Confirmed { get; set; }
+        public string RecoveryGuid { get; set; }
     }
 }

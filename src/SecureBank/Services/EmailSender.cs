@@ -42,8 +42,7 @@ namespace SecureBank.Services
                     client.Credentials = new NetworkCredential(_appSettings.SmtpCredentials.Username, _appSettings.SmtpCredentials.Password);
                 }
 
-                _logger.Info($"IP: {_appSettings.SmtpCredentials.Ip} Port: {_appSettings.SmtpCredentials.Port}" +
-                    $" UserName: {_appSettings.SmtpCredentials.Username} Password: {_appSettings.SmtpCredentials.Password}");
+                _logger.Info($"Sending mail");
 
                 MailMessage mailMessage = new MailMessage();
                 mailMessage.From = new MailAddress("securebank@ssrd.io");

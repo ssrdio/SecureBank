@@ -33,32 +33,38 @@ namespace SecureBank.Ctf.Services
         {
             string parsedXml;
 
-            try
+            if(_ctfOptions.CtfChallengeOptions.XxeInjection)
             {
                 parsedXml = base.ParseXml(xml);
-            }
-            catch (Exception ex)
-            {
-                CtfChallangeModel exceptionHandlingChallange = _ctfOptions.CtfChallanges
-                    .Where(x => x.Type == CtfChallengeTypes.ExcaptionHandling)
-                    .Single();
 
-                throw new Exception(exceptionHandlingChallange.Flag, ex);
-            }
-
-            try
-            {
-                string validParse = ValidXmlParse(xml);
-            }
-            catch (Exception)
-            {
-                CtfChallangeModel xxeChallange = _ctfOptions.CtfChallanges
-                    .Where(x => x.Type == CtfChallengeTypes.XxeInjection)
-                    .Single();
-
-                if (CTF_XEE_FILES.Any(x => xml.Contains(x)))
+                if (parsedXml != null)
                 {
-                    _httpContextAccessor.HttpContext.Response.Headers.Add(xxeChallange.FlagKey, xxeChallange.Flag);
+                    try
+                    {
+                        string validParse = ValidXmlParse(xml);
+                    }
+                    catch (Exception)
+                    {
+                        CtfChallangeModel xxeChallange = _ctfOptions.CtfChallanges
+                            .Where(x => x.Type == CtfChallengeTypes.XxeInjection)
+                            .Single();
+
+                        if (CTF_XEE_FILES.Any(x => xml.Contains(x)))
+                        {
+                            _httpContextAccessor.HttpContext.Response.Headers.Add(xxeChallange.FlagKey, xxeChallange.Flag);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                try
+                {
+                    parsedXml = ValidXmlParse(xml);
+                }
+                catch(Exception)
+                {
+                    parsedXml = null;
                 }
             }
 

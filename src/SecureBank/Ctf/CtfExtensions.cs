@@ -8,8 +8,6 @@ using SecureBank.Helpers.Authorization;
 using SecureBank.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using SecureBank.Ctf.Authorization;
 using SecureBank.Ctf.Services;
 using Microsoft.Extensions.Configuration;
@@ -19,23 +17,21 @@ namespace SecureBank.Ctf
 {
     public static class CtfExtensions
     {
-        private const string CTF_FLAG_FORMAT = "ctf{{{0}}}";
-
-        private const bool USE_REAL_CHALLENGE_NAME = true;
-
-        public static void ConfigureCtf(this IServiceCollection services, IConfiguration configuration)
+        public static CtfOptions ConfigureCtf(this IServiceCollection services, IConfiguration configuration)
         {
             AppSettings appSettings = configuration.GetSection("AppSettings").Get<AppSettings>();
 
-            string ctfSeed = appSettings.Ctf.Seed;
-            if (string.IsNullOrEmpty(ctfSeed))
+            if (string.IsNullOrEmpty(appSettings.Ctf.Seed))
             {
-                ctfSeed = "icEYG435oN";
+                throw new Exception("Seed can not be null");
             }
+
+            List<CtfChallangeModel> ctfChallenges = GetChallanges(appSettings.Ctf.Challenges, appSettings.Ctf);
 
             services.Configure<CtfOptions>(ctfOptions =>
             {
-                ctfOptions.CtfChallanges = GetChallanges(ctfSeed, !string.IsNullOrEmpty(appSettings.LegalURL));
+                ctfOptions.CtfChallanges = ctfChallenges;
+                ctfOptions.CtfChallengeOptions = appSettings.Ctf.Challenges;
             });
 
             services.AddScoped<IAdminBL, CtfAdminBL>();
@@ -46,191 +42,314 @@ namespace SecureBank.Ctf
             services.AddScoped<IAuthBL, CtfAuthBL>();
             services.AddScoped<IUploadFileBL, CtfUploadFileBL>();
 
+            services.AddScoped<IPortalSearchBL, CtfPortalSearchBL>();
+
+            services.AddScoped<IHomeBL, CtfHomeBL>();
+
             services.AddScoped<IAuthorizeService, CtfAuthorizeService>();
+
+            return new CtfOptions(
+                ctfChallanges: ctfChallenges,
+                ctfChallengeOptions: appSettings.Ctf.Challenges);
         }
 
-        private static List<CtfChallangeModel> GetChallanges(string seed, bool includeFtp)
+        private static List<CtfChallangeModel> GetChallanges(CtfChallengeOptions ctfChallengeOptions, CtfConfig ctfConfig)
         {
-            RandomStringGenerator stringGenerator = new RandomStringGenerator(seed);
+            RandomStringGenerator stringGenerator = new RandomStringGenerator(ctfConfig.Seed);
 
             List<CtfChallangeModel> ctfChallanges = new List<CtfChallangeModel>();
 
             #region Injection
 
-            CtfChallangeModel sqlInjection = new CtfChallangeModel(
-                title: USE_REAL_CHALLENGE_NAME ? "SQL Injection" : $"Challenge {CtfChallengeTypes.SqlInjection.ToChallengeNumber()}",
-                type: CtfChallengeTypes.SqlInjection,
-                flag: string.Format(CTF_FLAG_FORMAT, stringGenerator.Generate()),
-                flagKey: USE_REAL_CHALLENGE_NAME ? "sql_injection" : $"challenge_{CtfChallengeTypes.SqlInjection.ToChallengeNumber()}",
-                category: CtfChallangeCategories.Injection);
-            ctfChallanges.Add(sqlInjection);
+            string flag = null;
+
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            if (ctfChallengeOptions.SqlInjection)
+            {
+                CtfChallangeModel sqlInjection = new CtfChallangeModel(
+                    title: ctfConfig.UseRealChallengeName ? "SQL Injection" : $"Challenge {CtfChallengeTypes.SqlInjection.ToChallengeNumber()}",
+                    type: CtfChallengeTypes.SqlInjection,
+                    flag: flag,
+                    flagKey: ctfConfig.UseRealChallengeName ? "sql_injection" : $"challenge_{CtfChallengeTypes.SqlInjection.ToChallengeNumber()}",
+                    category: CtfChallangeCategories.Injection);
+                ctfChallanges.Add(sqlInjection);
+            }
 
             #endregion
             #region BrokenAuthentication
 
-            CtfChallangeModel weakPassword = new CtfChallangeModel(
-                title: USE_REAL_CHALLENGE_NAME ? "Weak Password" : $"Challenge {CtfChallengeTypes.WeakPassword.ToChallengeNumber()}",
-                type: CtfChallengeTypes.WeakPassword,
-                flag: string.Format(CTF_FLAG_FORMAT, stringGenerator.Generate()),
-                flagKey: USE_REAL_CHALLENGE_NAME ? "weak_password" : $"challenge_{CtfChallengeTypes.WeakPassword.ToChallengeNumber()}",
-                category: CtfChallangeCategories.BrokenAuthentication);
-            ctfChallanges.Add(weakPassword);
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            if (ctfChallengeOptions.WeakPassword)
+            {
+                CtfChallangeModel weakPassword = new CtfChallangeModel(
+                    title: ctfConfig.UseRealChallengeName ? "Weak Password" : $"Challenge {CtfChallengeTypes.WeakPassword.ToChallengeNumber()}",
+                    type: CtfChallengeTypes.WeakPassword,
+                    flag: flag,
+                    flagKey: ctfConfig.UseRealChallengeName ? "weak_password" : $"challenge_{CtfChallengeTypes.WeakPassword.ToChallengeNumber()}",
+                    category: CtfChallangeCategories.BrokenAuthentication);
+                ctfChallanges.Add(weakPassword);
+            }
 
             #endregion
             #region SensitiveDataExposure
 
-            CtfChallangeModel sensitiveDataExposure = new CtfChallangeModel(
-                title: USE_REAL_CHALLENGE_NAME ? "Sensitive Data Exposure" : $"Challenge {CtfChallengeTypes.SensitiveDataExposure.ToChallengeNumber()}",
-                type: CtfChallengeTypes.SensitiveDataExposure,
-                flag: string.Format(CTF_FLAG_FORMAT, stringGenerator.Generate()),
-                flagKey: USE_REAL_CHALLENGE_NAME ? "sensitive_data_exposure" : $"challenge_{CtfChallengeTypes.SensitiveDataExposure.ToChallengeNumber()}",
-                category: CtfChallangeCategories.SensitiveDataExposure);
-            ctfChallanges.Add(sensitiveDataExposure);
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            if (ctfChallengeOptions.SensitiveDataExposureBalance || ctfChallengeOptions.SensitiveDataExposureProfileImage || ctfChallengeOptions.SensitiveDataExposureStore)
+            {
+                CtfChallangeModel sensitiveDataExposure = new CtfChallangeModel(
+                    title: ctfConfig.UseRealChallengeName ? "Sensitive Data Exposure" : $"Challenge {CtfChallengeTypes.SensitiveDataExposure.ToChallengeNumber()}",
+                    type: CtfChallengeTypes.SensitiveDataExposure,
+                    flag: flag,
+                    flagKey: ctfConfig.UseRealChallengeName ? "sensitive_data_exposure" : $"challenge_{CtfChallengeTypes.SensitiveDataExposure.ToChallengeNumber()}",
+                    category: CtfChallangeCategories.SensitiveDataExposure);
+                ctfChallanges.Add(sensitiveDataExposure);
+            }
 
-            CtfChallangeModel pathTraversal = new CtfChallangeModel(
-                title: USE_REAL_CHALLENGE_NAME ? "Path Traversal" : $"Challenge {CtfChallengeTypes.PathTraversal.ToChallengeNumber()}",
-                type: CtfChallengeTypes.PathTraversal,
-                flag: string.Format(CTF_FLAG_FORMAT, stringGenerator.Generate()),
-                flagKey: USE_REAL_CHALLENGE_NAME ? "path_traversal" : $"challenge_{CtfChallengeTypes.PathTraversal.ToChallengeNumber()}",
-                category: CtfChallangeCategories.SensitiveDataExposure);
-            ctfChallanges.Add(pathTraversal);
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            if (ctfChallengeOptions.PathTraversal)
+            {
+                CtfChallangeModel pathTraversal = new CtfChallangeModel(
+                    title: ctfConfig.UseRealChallengeName ? "Path Traversal" : $"Challenge {CtfChallengeTypes.PathTraversal.ToChallengeNumber()}",
+                    type: CtfChallengeTypes.PathTraversal,
+                    flag: flag,
+                    flagKey: ctfConfig.UseRealChallengeName ? "path_traversal" : $"challenge_{CtfChallengeTypes.PathTraversal.ToChallengeNumber()}",
+                    category: CtfChallangeCategories.SensitiveDataExposure);
+                ctfChallanges.Add(pathTraversal);
+            }
 
-            CtfChallangeModel enumeration = new CtfChallangeModel(
-                title: USE_REAL_CHALLENGE_NAME ? "Enumeration" : $"Challenge {CtfChallengeTypes.Enumeration.ToChallengeNumber()}",
-                type: CtfChallengeTypes.Enumeration,
-                flag: string.Format(CTF_FLAG_FORMAT, stringGenerator.Generate()),
-                flagKey: USE_REAL_CHALLENGE_NAME ? "enumeration" : $"challenge_{CtfChallengeTypes.Enumeration.ToChallengeNumber()}",
-                category: CtfChallangeCategories.SensitiveDataExposure);
-            ctfChallanges.Add(enumeration);
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            if (ctfChallengeOptions.Enumeration)
+            {
+                CtfChallangeModel enumeration = new CtfChallangeModel(
+                    title: ctfConfig.UseRealChallengeName ? "Enumeration" : $"Challenge {CtfChallengeTypes.Enumeration.ToChallengeNumber()}",
+                    type: CtfChallengeTypes.Enumeration,
+                    flag: flag,
+                    flagKey: ctfConfig.UseRealChallengeName ? "enumeration" : $"challenge_{CtfChallengeTypes.Enumeration.ToChallengeNumber()}",
+                    category: CtfChallangeCategories.SensitiveDataExposure);
+                ctfChallanges.Add(enumeration);
+            }
 
             #endregion
             #region XXE
 
-            CtfChallangeModel xxeInjection = new CtfChallangeModel(
-                title: USE_REAL_CHALLENGE_NAME ? "XXE Injection" : $"Challenge {CtfChallengeTypes.XxeInjection.ToChallengeNumber()}",
-                type: CtfChallengeTypes.XxeInjection,
-                flag: string.Format(CTF_FLAG_FORMAT, stringGenerator.Generate()),
-                flagKey: USE_REAL_CHALLENGE_NAME ? "xxe_injection" : $"challenge_{CtfChallengeTypes.XxeInjection.ToChallengeNumber()}",
-                category: CtfChallangeCategories.XXE);
-            ctfChallanges.Add(xxeInjection);
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            if (ctfChallengeOptions.XxeInjection)
+            {
+                CtfChallangeModel xxeInjection = new CtfChallangeModel(
+                    title: ctfConfig.UseRealChallengeName ? "XXE Injection" : $"Challenge {CtfChallengeTypes.XxeInjection.ToChallengeNumber()}",
+                    type: CtfChallengeTypes.XxeInjection,
+                    flag: flag,
+                    flagKey: ctfConfig.UseRealChallengeName ? "xxe_injection" : $"challenge_{CtfChallengeTypes.XxeInjection.ToChallengeNumber()}",
+                    category: CtfChallangeCategories.XXE);
+                ctfChallanges.Add(xxeInjection);
+            }
 
             #endregion
             #region BrokenAccesControl
 
-            CtfChallangeModel registrationRoleSet = new CtfChallangeModel(
-                title: USE_REAL_CHALLENGE_NAME ? "Registration role set" : $"Challenge {CtfChallengeTypes.RegistrationRoleSet.ToChallengeNumber()}",
-                type: CtfChallengeTypes.RegistrationRoleSet,
-                flag: string.Format(CTF_FLAG_FORMAT, stringGenerator.Generate()),
-                flagKey: USE_REAL_CHALLENGE_NAME ? "registration_role_set" : $"challenge_{CtfChallengeTypes.RegistrationRoleSet.ToChallengeNumber()}",
-                category: CtfChallangeCategories.BrokenAccesControl);
-            ctfChallanges.Add(registrationRoleSet);
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            if (ctfChallengeOptions.RegistrationRoleSet)
+            {
+                CtfChallangeModel registrationRoleSet = new CtfChallangeModel(
+                    title: ctfConfig.UseRealChallengeName ? "Registration role set" : $"Challenge {CtfChallengeTypes.RegistrationRoleSet.ToChallengeNumber()}",
+                    type: CtfChallengeTypes.RegistrationRoleSet,
+                    flag: flag,
+                    flagKey: ctfConfig.UseRealChallengeName ? "registration_role_set" : $"challenge_{CtfChallengeTypes.RegistrationRoleSet.ToChallengeNumber()}",
+                    category: CtfChallangeCategories.BrokenAccesControl);
+                ctfChallanges.Add(registrationRoleSet);
+            }
 
-            CtfChallangeModel missingAuth = new CtfChallangeModel(
-                title: USE_REAL_CHALLENGE_NAME ? "Missing Authentication" : $"Challenge {CtfChallengeTypes.MissingAuthentication.ToChallengeNumber()}",
-                type: CtfChallengeTypes.MissingAuthentication,
-                flag: string.Format(CTF_FLAG_FORMAT, stringGenerator.Generate()),
-                flagKey: USE_REAL_CHALLENGE_NAME ? "missing_authentication" : $"challenge_{CtfChallengeTypes.MissingAuthentication.ToChallengeNumber()}",
-                category: CtfChallangeCategories.BrokenAccesControl);
-            ctfChallanges.Add(missingAuth);
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            if (ctfChallengeOptions.MissingAuthentication)
+            {
+                CtfChallangeModel missingAuth = new CtfChallangeModel(
+                    title: ctfConfig.UseRealChallengeName ? "Missing Authentication" : $"Challenge {CtfChallengeTypes.MissingAuthentication.ToChallengeNumber()}",
+                    type: CtfChallengeTypes.MissingAuthentication,
+                    flag: flag,
+                    flagKey: ctfConfig.UseRealChallengeName ? "missing_authentication" : $"challenge_{CtfChallengeTypes.MissingAuthentication.ToChallengeNumber()}",
+                    category: CtfChallangeCategories.BrokenAccesControl);
+                ctfChallanges.Add(missingAuth);
+            }
 
-            CtfChallangeModel changeRoleInCookie = new CtfChallangeModel(
-                title: USE_REAL_CHALLENGE_NAME ? "Change Role" : $"Challenge {CtfChallengeTypes.ChangeRoleInCookie.ToChallengeNumber()}",
-                type: CtfChallengeTypes.ChangeRoleInCookie,
-                flag: string.Format(CTF_FLAG_FORMAT, stringGenerator.Generate()),
-                flagKey: USE_REAL_CHALLENGE_NAME ? "change_role" : $"challenge_{CtfChallengeTypes.ChangeRoleInCookie.ToChallengeNumber()}",
-                category: CtfChallangeCategories.BrokenAccesControl);
-            ctfChallanges.Add(changeRoleInCookie);
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            if (ctfChallengeOptions.ChangeRoleInCookie)
+            {
+                CtfChallangeModel changeRoleInCookie = new CtfChallangeModel(
+                    title: ctfConfig.UseRealChallengeName ? "Change Role" : $"Challenge {CtfChallengeTypes.ChangeRoleInCookie.ToChallengeNumber()}",
+                    type: CtfChallengeTypes.ChangeRoleInCookie,
+                    flag: flag,
+                    flagKey: ctfConfig.UseRealChallengeName ? "change_role" : $"challenge_{CtfChallengeTypes.ChangeRoleInCookie.ToChallengeNumber()}",
+                    category: CtfChallangeCategories.BrokenAccesControl);
+                ctfChallanges.Add(changeRoleInCookie);
+            }
+
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            if (ctfChallengeOptions.UnconfirmedLogin)
+            {
+                CtfChallangeModel unconfirmedLogin = new CtfChallangeModel(
+                    title: ctfConfig.UseRealChallengeName ? "Unconfirmed Login" : $"challenge_{CtfChallengeTypes.UnconfirmedLogin.ToChallengeNumber()}",
+                    type: CtfChallengeTypes.UnconfirmedLogin,
+                    flag: flag,
+                    flagKey: ctfConfig.UseRealChallengeName ? "Unconfirmed Login" : $"challenge_{CtfChallengeTypes.UnconfirmedLogin.ToChallengeNumber()}",
+                    category: CtfChallangeCategories.Miscellaneous);
+                ctfChallanges.Add(unconfirmedLogin);
+            }
 
             #endregion
             #region Security Misconfiguration
 
-            CtfChallangeModel exceptionHandlingMisconfiguration = new CtfChallangeModel(
-                title: USE_REAL_CHALLENGE_NAME ? "Exception Handling" : $"Challenge {CtfChallengeTypes.ExcaptionHandling.ToChallengeNumber()}",
-                type: CtfChallengeTypes.ExcaptionHandling,
-                flag: string.Format(CTF_FLAG_FORMAT, stringGenerator.Generate()),
-                flagKey: USE_REAL_CHALLENGE_NAME ? "exception_handling" : $"challenge_{CtfChallengeTypes.ExcaptionHandling.ToChallengeNumber()}",
-                category: CtfChallangeCategories.SecurityMisconfiguration);
-            ctfChallanges.Add(exceptionHandlingMisconfiguration);
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            if (ctfChallengeOptions.ExceptionHandlingTransactionCreate)
+            {
+                CtfChallangeModel exceptionHandlingMisconfiguration = new CtfChallangeModel(
+                    title: ctfConfig.UseRealChallengeName ? "Exception Handling" : $"Challenge {CtfChallengeTypes.ExceptionHandling.ToChallengeNumber()}",
+                    type: CtfChallengeTypes.ExceptionHandling,
+                    flag: flag,
+                    flagKey: ctfConfig.UseRealChallengeName ? "exception_handling" : $"challenge_{CtfChallengeTypes.ExceptionHandling.ToChallengeNumber()}",
+                    category: CtfChallangeCategories.SecurityMisconfiguration);
+                ctfChallanges.Add(exceptionHandlingMisconfiguration);
+            }
 
             #endregion
             #region XSS
 
-            CtfChallangeModel xxs = new CtfChallangeModel(
-                title: USE_REAL_CHALLENGE_NAME ? "XXS" : $"Challenge {CtfChallengeTypes.Xss.ToChallengeNumber()}",
-                type: CtfChallengeTypes.Xss,
-                flag: string.Format(CTF_FLAG_FORMAT, stringGenerator.Generate()),
-                flagKey: USE_REAL_CHALLENGE_NAME ? "xss" : $"challenge_{CtfChallengeTypes.Xss.ToChallengeNumber()}",
-                category: CtfChallangeCategories.XSS);
-            ctfChallanges.Add(xxs);
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            if (ctfChallengeOptions.TableXss || ctfChallengeOptions.PortalSearchXss)
+            {
+                CtfChallangeModel xxs = new CtfChallangeModel(
+                    title: ctfConfig.UseRealChallengeName ? "XXS" : $"Challenge {CtfChallengeTypes.Xss.ToChallengeNumber()}",
+                    type: CtfChallengeTypes.Xss,
+                    flag: flag,
+                    flagKey: ctfConfig.UseRealChallengeName ? "xss" : $"challenge_{CtfChallengeTypes.Xss.ToChallengeNumber()}",
+                    category: CtfChallangeCategories.XSS);
+                ctfChallanges.Add(xxs);
+            }
 
             #endregion
             #region Miscellaneous
 
-            CtfChallangeModel invalidModel = new CtfChallangeModel(
-                title: USE_REAL_CHALLENGE_NAME ? "Invalid Model" : $"Challenge {CtfChallengeTypes.InvalidModel.ToChallengeNumber()}",
-                type: CtfChallengeTypes.InvalidModel,
-                flag: string.Format(CTF_FLAG_FORMAT, stringGenerator.Generate()),
-                flagKey: USE_REAL_CHALLENGE_NAME ? "invalid_model" : $"challenge_{CtfChallengeTypes.InvalidModel.ToChallengeNumber()}",
-                category: CtfChallangeCategories.Miscellaneous);
-            ctfChallanges.Add(invalidModel);
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            if (ctfChallengeOptions.InvalidModel)
+            {
+                CtfChallangeModel invalidModel = new CtfChallangeModel(
+                    title: ctfConfig.UseRealChallengeName ? "Invalid Model" : $"Challenge {CtfChallengeTypes.InvalidModel.ToChallengeNumber()}",
+                    type: CtfChallengeTypes.InvalidModel,
+                    flag: flag,
+                    flagKey: ctfConfig.UseRealChallengeName ? "invalid_model" : $"challenge_{CtfChallengeTypes.InvalidModel.ToChallengeNumber()}",
+                    category: CtfChallangeCategories.Miscellaneous);
+                ctfChallanges.Add(invalidModel);
+            }
 
-            CtfChallangeModel unknown = new CtfChallangeModel(
-                title: USE_REAL_CHALLENGE_NAME ? "Unknown Generation" : $"Challenge {CtfChallengeTypes.UnknownGeneration.ToChallengeNumber()}",
-                type: CtfChallengeTypes.UnknownGeneration,
-                flag: string.Format(CTF_FLAG_FORMAT, stringGenerator.Generate()),
-                flagKey: USE_REAL_CHALLENGE_NAME ? "unknown_generation" : $"challenge_{CtfChallengeTypes.UnknownGeneration.ToChallengeNumber()}",
-                category: CtfChallangeCategories.Miscellaneous);
-            ctfChallanges.Add(unknown);
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            if (ctfChallengeOptions.UnknownGeneration)
+            {
+                CtfChallangeModel unknown = new CtfChallangeModel(
+                    title: ctfConfig.UseRealChallengeName ? "Unknown Generation" : $"Challenge {CtfChallengeTypes.UnknownGeneration.ToChallengeNumber()}",
+                    type: CtfChallengeTypes.UnknownGeneration,
+                    flag: flag,
+                    flagKey: ctfConfig.UseRealChallengeName ? "unknown_generation" : $"challenge_{CtfChallengeTypes.UnknownGeneration.ToChallengeNumber()}",
+                    category: CtfChallangeCategories.Miscellaneous);
+                ctfChallanges.Add(unknown);
+            }
 
-            CtfChallangeModel hiddenPage = new CtfChallangeModel(
-                title: USE_REAL_CHALLENGE_NAME ? "Hidden Page" : $"Challenge {CtfChallengeTypes.HiddenPage.ToChallengeNumber()}",
-                type: CtfChallengeTypes.HiddenPage,
-                flag: string.Format(CTF_FLAG_FORMAT, stringGenerator.Generate()),
-                flagKey: USE_REAL_CHALLENGE_NAME ? "hidden_page" : $"challenge_{CtfChallengeTypes.HiddenPage.ToChallengeNumber()}",
-                category: CtfChallangeCategories.Miscellaneous);
-            ctfChallanges.Add(hiddenPage);
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            if (ctfChallengeOptions.HiddenPageLoginAdmin || ctfChallengeOptions.HiddenPageRegisterAdmin)
+            {
+                CtfChallangeModel hiddenPage = new CtfChallangeModel(
+                    title: ctfConfig.UseRealChallengeName ? "Hidden Page" : $"Challenge {CtfChallengeTypes.HiddenPage.ToChallengeNumber()}",
+                    type: CtfChallengeTypes.HiddenPage,
+                    flag: flag,
+                    flagKey: ctfConfig.UseRealChallengeName ? "hidden_page" : $"challenge_{CtfChallengeTypes.HiddenPage.ToChallengeNumber()}",
+                    category: CtfChallangeCategories.Miscellaneous);
+                ctfChallanges.Add(hiddenPage);
+            }
 
-            CtfChallangeModel hiddenComment = new CtfChallangeModel(
-               title: USE_REAL_CHALLENGE_NAME ? "Hidden Comment" : $"Challenge {CtfChallengeTypes.HiddenComment.ToChallengeNumber()}",
-               type: CtfChallengeTypes.HiddenComment,
-               flag: string.Format(CTF_FLAG_FORMAT, stringGenerator.Generate()),
-               flagKey: USE_REAL_CHALLENGE_NAME ? "hidden_comment" : $"challenge_{CtfChallengeTypes.HiddenComment.ToChallengeNumber()}",
-               category: CtfChallangeCategories.Miscellaneous);
-            ctfChallanges.Add(hiddenComment);
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            if (ctfChallengeOptions.Base2048Content)
+            {
+                string fullFlag = $"Quisque non pulvinar libero, eget malesuada nisi. Ut molestie id arcu a scelerisque. Mauris bibendum sapien elit. {flag} " +
+                                    $"Etiam condimentum consectetur nulla vitae rutrum. Vivamus condimentum egestas mauris, sed malesuada neque. Aenean in fermentum orci." +
+                                    $" Donec quis dolor vitae libero sagittis sagittis.";
 
+                CtfChallangeModel base2048Content = new CtfChallangeModel(
+                   title: ctfConfig.UseRealChallengeName ? "Base2048" : $"Challenge {CtfChallengeTypes.Base2048Content.ToChallengeNumber()}",
+                   type: CtfChallengeTypes.Base2048Content,
+                   flag: flag,
+                   flagKey: new Base2048().Encode(fullFlag),
+                   category: CtfChallangeCategories.Miscellaneous);
+                ctfChallanges.Add(base2048Content);
+            }
 
-            CtfChallangeModel base2048Content = new CtfChallangeModel(
-               title: USE_REAL_CHALLENGE_NAME ? "Hidden Comment" : $"Challenge {CtfChallengeTypes.Base2048Content.ToChallengeNumber()}",
-               type: CtfChallengeTypes.Base2048Content,
-               flag: new Helpers.Base2048().Encode("Quisque non pulvinar libero, eget malesuada nisi. Ut molestie id arcu a scelerisque. Mauris bibendum sapien elit. Etiam condimentum consectetur nulla vitae rutrum. Vivamus condimentum egestas mauris, sed malesuada neque. Aenean in fermentum orci. Donec quis dolor vitae libero sagittis sagittis." + string.Format(CTF_FLAG_FORMAT, stringGenerator.Generate())),
-               flagKey: USE_REAL_CHALLENGE_NAME ? "base_encoding" : $"challenge_{CtfChallengeTypes.Base2048Content.ToChallengeNumber()}",
-               category: CtfChallangeCategories.Miscellaneous);
-            ctfChallanges.Add(base2048Content);
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            if (ctfChallengeOptions.InvalidRedirect)
+            {
+                CtfChallangeModel invalidRedirect = new CtfChallangeModel(
+                    title: ctfConfig.UseRealChallengeName ? "Invalid Redirect" : $"Challenge {CtfChallengeTypes.InvalidRedirect.ToChallengeNumber()}",
+                    type: CtfChallengeTypes.InvalidRedirect,
+                    flag: flag,
+                    flagKey: ctfConfig.UseRealChallengeName ? "invalid_redirect" : $"challenge_{CtfChallengeTypes.InvalidRedirect.ToChallengeNumber()}",
+                    category: CtfChallangeCategories.Miscellaneous);
+                ctfChallanges.Add(invalidRedirect);
+            }
 
-            CtfChallangeModel invalidRedirect = new CtfChallangeModel(
-                title: USE_REAL_CHALLENGE_NAME ? "Invalid Redirect" : $"Challenge {CtfChallengeTypes.InvalidModel.ToChallengeNumber()}",
-                type: CtfChallengeTypes.InvalidRedirect,
-                flag: string.Format(CTF_FLAG_FORMAT, stringGenerator.Generate()),
-                flagKey: USE_REAL_CHALLENGE_NAME ? "invalid_redirect" : $"challenge_{CtfChallengeTypes.InvalidModel.ToChallengeNumber()}",
-                category: CtfChallangeCategories.Miscellaneous);
-            ctfChallanges.Add(invalidRedirect);
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            if (ctfChallengeOptions.Swagger)
+            {
+                CtfChallangeModel swagger = new CtfChallangeModel(
+                    title: ctfConfig.UseRealChallengeName ? "Swagger" : $"Challenge {CtfChallengeTypes.Swagger.ToChallengeNumber()}",
+                    type: CtfChallengeTypes.Swagger,
+                    flag: flag,
+                    flagKey: ctfConfig.UseRealChallengeName ? "swagger" : $"challenge_{CtfChallengeTypes.Swagger.ToChallengeNumber()}",
+                    category: CtfChallangeCategories.Miscellaneous);
+                ctfChallanges.Add(swagger);
+            }
 
-            CtfChallangeModel swagger = new CtfChallangeModel(
-                title: USE_REAL_CHALLENGE_NAME ? "Swagger" : $"Challenge {CtfChallengeTypes.InvalidModel.ToChallengeNumber()}",
-                type: CtfChallengeTypes.Swagger,
-                flag: string.Format(CTF_FLAG_FORMAT, stringGenerator.Generate()),
-                flagKey: USE_REAL_CHALLENGE_NAME ? "swagger" : $"challenge_{CtfChallengeTypes.Swagger.ToChallengeNumber()}",
-                category: CtfChallangeCategories.Miscellaneous);
-            ctfChallanges.Add(swagger);
-
-            if (includeFtp)
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            if (ctfChallengeOptions.Ftp)
             {
                 CtfChallangeModel ftp = new CtfChallangeModel(
-                    title: USE_REAL_CHALLENGE_NAME ? "FTP" : $"challenge_{CtfChallengeTypes.Ftp.ToChallengeNumber()}",
+                    title: ctfConfig.UseRealChallengeName ? "FTP" : $"challenge_{CtfChallengeTypes.Ftp.ToChallengeNumber()}",
                     type: CtfChallengeTypes.Ftp,
-                    flag: "ctf{6HtZa6lAea}",
-                    flagKey: USE_REAL_CHALLENGE_NAME ? "ftp" : $"challenge_{CtfChallengeTypes.Ftp.ToChallengeNumber()}",
+                    flag: string.IsNullOrEmpty(ctfConfig.FtpFlag) ? flag : ctfConfig.FtpFlag,
+                    flagKey: ctfConfig.UseRealChallengeName ? "ftp" : $"challenge_{CtfChallengeTypes.Ftp.ToChallengeNumber()}",
                     category: CtfChallangeCategories.Miscellaneous);
+                ctfChallanges.Add(ftp);
+            }
+
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            if (ctfChallengeOptions.SimultaneousRequest)
+            {
+                CtfChallangeModel simultaneousRequest = new CtfChallangeModel(
+                    title: ctfConfig.UseRealChallengeName ? "simultaneousRequest" : $"challenge_{CtfChallengeTypes.SimultaneousRequest.ToChallengeNumber()}",
+                    type: CtfChallengeTypes.SimultaneousRequest,
+                    flag: flag,
+                    flagKey: ctfConfig.UseRealChallengeName ? "simultaneousRequest" : $"challenge_{CtfChallengeTypes.SimultaneousRequest.ToChallengeNumber()}",
+                    category: CtfChallangeCategories.Miscellaneous);
+                ctfChallanges.Add(simultaneousRequest);
+            }
+
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            if (ctfChallengeOptions.reDOS)
+            {
+                CtfChallangeModel reDos = new CtfChallangeModel(
+                    title: ctfConfig.UseRealChallengeName ? "reDOS" : $"challenge_{CtfChallengeTypes.reDOS.ToChallengeNumber()}",
+                    type: CtfChallengeTypes.reDOS,
+                    flag: flag,
+                    flagKey: ctfConfig.UseRealChallengeName ? "reDOS" : $"challenge_{CtfChallengeTypes.reDOS.ToChallengeNumber()}",
+                    category: CtfChallangeCategories.Miscellaneous);
+                ctfChallanges.Add(reDos);
+            }
+
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            if (ctfChallengeOptions.FreeCredit)
+            {
+                CtfChallangeModel reDos = new CtfChallangeModel(
+                    title: ctfConfig.UseRealChallengeName ? "FreeCredit" : $"challenge_{CtfChallengeTypes.FreeCredit.ToChallengeNumber()}",
+                    type: CtfChallengeTypes.FreeCredit,
+                    flag: flag,
+                    flagKey: ctfConfig.UseRealChallengeName ? "FreeCredit" : $"challenge_{CtfChallengeTypes.FreeCredit.ToChallengeNumber()}",
+                    category: CtfChallangeCategories.Miscellaneous);
+                ctfChallanges.Add(reDos);
             }
             #endregion
 

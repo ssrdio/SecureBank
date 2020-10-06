@@ -1,4 +1,6 @@
 ﻿
+@inject Microsoft.Extensions.Options.IOptions<SecureBank.Ctf.Models.CtfOptions> _ctfOptions
+
 @{
     ViewData["Title"] = "Index";
 }
@@ -20,7 +22,7 @@
                 <div class="form-group row">
                     <div class="col-md-3">
                         <p>Upload one or more transaction:</p>
-                        <input type="file" name="files" multiple accept="text/xml">
+                        <input type="file" name="files" accept=".xml">
                     </div>
                     <div class="col-md-2 align-center">
                         <input type="submit" value="Upload" class="btn btn-primary">
@@ -36,6 +38,7 @@
 
 
 @section Scripts {
+
     <script type="text/javascript">
         $(document).ready(function () {
             $('#transactionsTable').DataTable({
@@ -44,16 +47,33 @@
                 processing: true,
                 "ajax": "/api/Transaction/GetTransactions",
                 columns: [
-                    { data: 'senderId', title: 'Sender' },
-                    { data: 'receiverId', title: 'Receiver' },
-                    { data: 'dateTime', title: 'Transaction date' },
                     {
-                        data: 'amount', title: 'Amount',
+                        data: 'senderId',
+                        title: 'Sender',
+                        @if (!_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
+                    },
+                    {
+                        data: 'receiverId',
+                        title: 'Receiver',
+                        @if (!_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
+                    },
+                    {
+                        data: 'dateTime',
+                        title: 'Transaction date',
+                        @if (!_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
+                    },
+                    {
+                        data: 'amount',
+                        title: 'Amount',
                         mRender: function (rowData) {
                             return rowData.toFixed(2) + "€";
                         }
                     },
-                    { data: 'reason', title: 'Reason' },
+                    {
+                        data: 'reason',
+                        title: 'Reason',
+                        @if (!_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
+                    },
                     {
                         data: "id",
                         title: "View",
@@ -64,5 +84,6 @@
                 ]
             });
         });
+        var errors = '@Json.Serialize(ViewData.ModelState.SelectMany(x => x.Value.Errors).Select(x => x.ErrorMessage))';
     </script>
 }

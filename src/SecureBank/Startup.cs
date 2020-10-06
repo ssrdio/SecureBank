@@ -8,7 +8,6 @@ using SecureBank.Services;
 using NLog;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Hosting;
 using SecureBank.Ctf;
 using SecureBank.DAL.DAO;
 using SecureBank.DAL.Initializers;
@@ -19,6 +18,9 @@ using SecureBank.Models;
 using SecureBank.Ctf.Models;
 using Microsoft.Extensions.Options;
 using System.Linq;
+using SecureBank.Authorization;
+using System.IO;
+using Microsoft.Extensions.FileProviders;
 
 namespace SecureBank
 {
@@ -46,8 +48,8 @@ namespace SecureBank
                 {
                     options.StoreEndpoint = appSettings.StoreEndpoint;
                     options.SmtpCredentials = appSettings.SmtpCredentials;
-                    options.LegalURL = appSettings.LegalURL;
-                    options.IgnoreEmails = appSettings.SmtpCredentials == null || string.IsNullOrEmpty(appSettings.SmtpCredentials.Ip) ? true : false;
+                    options.IgnoreEmails = string.IsNullOrEmpty(appSettings.SmtpCredentials.Ip);
+                    options.BaseUrl = appSettings.BaseUrl;
                 });
             }
 
@@ -87,6 +89,7 @@ namespace SecureBank
             services.AddScoped<IUploadFileBL, UploadFileBL>();
             services.AddScoped<IAdminBL, AdminBL>();
             services.AddScoped<IAdminStoreBL, AdminStoreBL>();
+            services.AddScoped<IHomeBL, HomeBL>();
 
             services.AddAuthorization(options => 
             {
@@ -99,33 +102,22 @@ namespace SecureBank
             services.AddSingleton<IAuthorizeService, AuthorizeService>();
             services.AddSingleton<IUserExtensions, UserExtensions>();
 
+            services.AddSingleton<ICookieService, CookieService>();
+
+            CtfOptions ctfOptions = null;
+
             if (appSettings?.Ctf?.Enabled ?? false)
             {
-                services.ConfigureCtf(Configuration);
+                ctfOptions = services.ConfigureCtf(Configuration);
             }
 
             services.AddControllersWithViews();
 
+            services.AddDirectoryBrowser();
+
             services.AddSwaggerGen(x =>
             {
-                if (appSettings?.Ctf?.Enabled ?? false)
-                {
-                    //TO DO: Try to change this so singelton services are not created
-
-#pragma warning disable ASP0000
-                    IServiceProvider serviceProvider = services.BuildServiceProvider();
-                    CtfOptions ctfOptions = serviceProvider.GetService<IOptions<CtfOptions>>()?.Value;
-
-                    CtfChallangeModel swaggerChallange = ctfOptions?.CtfChallanges
-                        .Where(x => x.Type == CtfChallengeTypes.Swagger)
-                        .Single();
-
-                    x.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "BankWeb API", Version = "v1", Description = swaggerChallange?.Flag });
-                }
-                else
-                {
-                    x.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "BankWeb API", Version = "v1" });
-                }
+                x.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "BankWeb API", Version = "v1" });
 
                 string xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml");
                 x.IncludeXmlComments(xmlPath);
@@ -137,14 +129,73 @@ namespace SecureBank
         {
             AppSettings appSettings = Configuration.GetSection("AppSettings").Get<AppSettings>();
 
-            app.UseDeveloperExceptionPage();
+            CtfOptions ctfOptions = app.ApplicationServices.GetRequiredService<IOptions<CtfOptions>>().Value;
 
-            app.UseSwagger();
-            app.UseSwaggerUI(x =>
+            if (ctfOptions.CtfChallengeOptions.ExceptionHandlingTransactionCreate)
             {
-                x.SwaggerEndpoint("/swagger/v1/swagger.json", "SecureBank API");
-            });
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Error");
+            }
+
+            if (ctfOptions.CtfChallengeOptions.Swagger)
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI(x =>
+                {
+                    x.SwaggerEndpoint("/swagger/v1/swagger.json", "SecureBank API");
+
+                    CtfChallangeModel swaggerChallange = ctfOptions.CtfChallanges
+                        .Where(x => x.Type == CtfChallengeTypes.Swagger)
+                        .Single();
+
+                    string swaggerCssPath = "css/swagger.css";
+                    string css = @$"
+                        .topbar-wrapper img[alt='Swagger UI'], .topbar-wrapper span {{
+                            visibility: hidden;
+                        }}
+
+                        .topbar-wrapper .link:after {{
+                            content: 'SecureBank';
+                            /*flag: {swaggerChallange.Flag}*/
+                            visibility: visible;
+                            display: block;
+                            position: absolute;
+                            padding: 15px;
+                            background: -moz-linear-gradient(left, #1d3ede, #01e6f8);
+                            -webkit-background-clip: text;
+                            -webkit-text-fill-color: transparent;
+                        }}";
+
+                    string fullPath = Path.Combine(env.ContentRootPath, "wwwroot", swaggerCssPath);
+
+                    File.WriteAllText(fullPath, css);
+                    
+                    x.InjectStylesheet($"/{swaggerCssPath}");
+                });
+            }
             app.UseStaticFiles();
+
+            if(ctfOptions.CtfChallengeOptions.Ftp)
+            {
+                CtfChallangeModel ftpChallenge = ctfOptions.CtfChallanges
+                    .Where(x => x.Type == CtfChallengeTypes.Ftp)
+                    .Single();
+
+                string fullPath = Path.Combine(env.ContentRootPath, "Documents", SecureBankConstants.DIRECTORY_BROWSING_FILE_NAME);
+
+                File.WriteAllText(fullPath, ftpChallenge.Flag + new string(Enumerable.Repeat(' ', 3245).ToArray()));
+
+                app.UseFileServer(new FileServerOptions 
+                {
+                    FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "Documents")),
+                    RequestPath = "/docs",
+                    EnableDirectoryBrowsing = true,
+                });
+            }
+
             app.UseRouting();
 
             app.UseAuthorization();
@@ -158,27 +209,28 @@ namespace SecureBank
 
             app.CreateDatabase();
 
-            if (appSettings?.Ctf?.Enabled ?? false)
+            if (appSettings.Ctf?.GenerateCtfdExport ?? false)
             {
-                // If you are generating CTFd export on mashine that you will run ctf don't forget to delete generated zip or users will be able
-                // to download this zip becuse of Path Treversial vulnerability
+                // If you are generating CTFd export on machine that you will run ctf don't forget to delete generated zip or users will be able
+                // to download this zip because of Path Traversal vulnerability
                 app.GenerateCtfdExport($"{AppContext.BaseDirectory}/Ctf");
             }
 
-            if (Configuration["SecureBank:Seed"] == "true")
+            if (Configuration["SecureBank:Seed"] == "True")
             {
-                string password = "Password1!";
-                if (!string.IsNullOrEmpty(Configuration["SecureBank:Seed:Password"]))
+                if (!string.IsNullOrEmpty(Configuration["SecureBank:UserPassword"]))
                 {
-                    password = Configuration["SecureBank:Seed:Password"];
-                }
+                    string password = Configuration["SecureBank:UserPassword"];
 
-                app.InitializeDatabase(Configuration["SecureBank:Seed:Admin"], Configuration["SecureBank:Seed:AdminPassword"], password);
+                    app.SeedDatabase(password);
+                }
+                else
+                {
+                    throw new Exception("User password is empty");
+                }
             }
-            else
-            {
-                app.InitializeDatabase("admin@ssrd.io", "admin", "test");
-            }
+
+            app.InitializeDatabase(Configuration["SecureBank:Admin"], Configuration["SecureBank:AdminPassword"]);
         }
     }
 }

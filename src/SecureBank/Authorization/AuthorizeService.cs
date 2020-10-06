@@ -1,74 +1,50 @@
-﻿using SecureBank.DAL.DAO;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
+﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
+using SecureBank.Authorization;
 using SecureBank.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
-using System.Threading.Tasks;
 
 namespace SecureBank.Helpers.Authorization
 {
     public class AuthorizeService : IAuthorizeService
     {
-        /// <summary>
-        /// Users with role grater then this are admin
-        /// </summary>
-        protected const int ADMIN_ROLE = 50;
+        protected readonly ICookieService _cookieService;
 
-        protected const int COOKIE_PARTS = 3;
-
-        protected const int USER_NAME_INDEX = 0;
-        protected const int TOKEN_INDEX = 1;
-        protected const int ROLDE_INDEX = 2;
-
-        protected const string NORMAL_ROLE_STRING = "normal";
-        protected const string ADMIN_ROLE_STRING = "admin";
-
-        public AuthorizeService()
+        public AuthorizeService(ICookieService cookieService)
         {
+            _cookieService = cookieService;
         }
 
         public virtual bool AuthorizeAdmin(AuthorizationFilterContext context)
         {
-            string sessionId = context.HttpContext.Request.Cookies["SessionId"];
-            if (string.IsNullOrEmpty(sessionId))
+            bool isCookieValid = _cookieService.ValidateCookie(context.HttpContext);
+            if(!isCookieValid)
             {
                 return false;
             }
 
-            string[] sessionParts = sessionId.Split('-');
-            if (sessionParts.Length != COOKIE_PARTS)
+            IEnumerable<Claim> claims = _cookieService.GetClaims(context.HttpContext);
+            if(claims == null)
             {
                 return false;
             }
 
-            bool parseRoleResult = int.TryParse(sessionParts[ROLDE_INDEX], out int role);
-            if (!parseRoleResult)
+            Claim roleCalim = claims
+                .Where(x => x.Type == CookieConstants.ROLE_CALIM_TYPE)
+                .SingleOrDefault();
+            if(roleCalim == null)
             {
                 return false;
             }
 
-            if (role < ADMIN_ROLE)
+            if(roleCalim.Value != CookieConstants.ADMIN_ROLE_STRING)
             {
                 return false;
             }
-
-            IUserDAO userDAO = context.HttpContext.RequestServices.GetRequiredService<IUserDAO>();
-            if (userDAO.ValidateSession(sessionParts[TOKEN_INDEX]) == false)
-            {
-                return false;
-            }
-
-            Claim[] claims = new[]
-            {
-                new Claim("authenticated", "true"),
-                new Claim("userName", EncoderUtils.Base64Decode(sessionParts[USER_NAME_INDEX])),
-                new Claim("role", ADMIN_ROLE_STRING),
-            };
 
             GenericPrincipal tmpUser = new GenericPrincipal(new ClaimsIdentity(claims), Array.Empty<string>());
 
@@ -84,42 +60,17 @@ namespace SecureBank.Helpers.Authorization
 
         public virtual bool AuthorizeNormal(AuthorizationFilterContext context)
         {
-            string sessionId = context.HttpContext.Request.Cookies["SessionId"];
-            if (string.IsNullOrEmpty(sessionId))
+            bool isCookieValid = _cookieService.ValidateCookie(context.HttpContext);
+            if (!isCookieValid)
             {
                 return false;
             }
 
-            string[] sessionParts = sessionId.Split('-');
-            if (sessionParts.Length != COOKIE_PARTS)
+            IEnumerable<Claim> claims = _cookieService.GetClaims(context.HttpContext);
+            if (claims == null)
             {
                 return false;
             }
-
-            bool parseRoleResult = int.TryParse(sessionParts[ROLDE_INDEX], out int role);
-            if (!parseRoleResult)
-            {
-                return false;
-            }
-
-            IUserDAO userDAO = context.HttpContext.RequestServices.GetRequiredService<IUserDAO>();
-            if (userDAO.ValidateSession(sessionParts[TOKEN_INDEX]) == false)
-            {
-                return false;
-            }
-
-            string roleString = NORMAL_ROLE_STRING;
-            if (role >= ADMIN_ROLE)
-            {
-                roleString = ADMIN_ROLE_STRING;
-            }
-
-            Claim[] claims = new[]
-            {
-                new Claim("authenticated", "true"),
-                new Claim("userName", EncoderUtils.Base64Decode(sessionParts[USER_NAME_INDEX])),
-                new Claim("role", roleString),
-            };
 
             GenericPrincipal tmpUser = new GenericPrincipal(new ClaimsIdentity(claims), Array.Empty<string>());
 

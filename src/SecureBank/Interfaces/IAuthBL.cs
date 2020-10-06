@@ -1,4 +1,5 @@
-﻿using SecureBank.Models.Auth;
+﻿using Microsoft.AspNetCore.Mvc;
+using SecureBank.Models.Auth;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,6 @@ namespace SecureBank.Interfaces
     public interface IAuthBL
     {
         bool IgnoreMails();
-        string GetLegalURL();
-        string RegisterAdmin(UserModel userModel);
         Task<bool> Register(UserModel userModel);
 
         Task<bool> ConfirmRegistration(string token);
@@ -22,5 +21,7 @@ namespace SecureBank.Interfaces
         Task<bool> RecoverPasswordValid(string token);
         Task<bool> RecoverPassword(UserModel passwordRecoveryModel);
         UserModel GetUser(string userName);
+
+        IActionResult LoginAdmin();
     }
 }

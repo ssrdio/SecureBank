@@ -30,17 +30,20 @@ namespace SecureBank.Ctf.Services
         {
             DataTableResp<TransactionResp> transactions = base.GetTransactions();
 
-            bool xss = transactions.Data.Any(x => CtfConstants.XXS_KEYVORDS.Any(c =>
-                (x.SenderId?.Contains(c) ?? false) || (x.ReceiverId?.Contains(c) ?? false) || (x.Reason?.Contains(c) ?? false) || (x.Reference?.Contains(c) ?? false)
-                || (x.SenderName?.Contains(c) ?? false) || (x.SenderSurname?.Contains(c) ?? false) || (x.ReceiverName?.Contains(c) ?? false)
-                || (x.ReceiverSurname?.Contains(c) ?? false)));
-            if (xss)
+            if (_ctfOptions.CtfChallengeOptions.TableXss)
             {
-                CtfChallangeModel xssChallange = _ctfOptions.CtfChallanges
-                    .Where(x => x.Type == CtfChallengeTypes.Xss)
-                    .Single();
+                bool xss = transactions.Data.Any(x => CtfConstants.XXS_KEYVORDS.Any(c =>
+                    (x.SenderId?.Contains(c) ?? false) || (x.ReceiverId?.Contains(c) ?? false) || (x.Reason?.Contains(c) ?? false) || (x.Reference?.Contains(c) ?? false)
+                    || (x.SenderName?.Contains(c) ?? false) || (x.SenderSurname?.Contains(c) ?? false) || (x.ReceiverName?.Contains(c) ?? false)
+                    || (x.ReceiverSurname?.Contains(c) ?? false)));
+                if (xss)
+                {
+                    CtfChallangeModel xssChallange = _ctfOptions.CtfChallanges
+                        .Where(x => x.Type == CtfChallengeTypes.Xss)
+                        .Single();
 
-                _httpContextAccessor.HttpContext.Response.Headers.Add(xssChallange.FlagKey, xssChallange.Flag);
+                    _httpContextAccessor.HttpContext.Response.Headers.Add(xssChallange.FlagKey, xssChallange.Flag);
+                }
             }
 
             return transactions;
@@ -50,15 +53,18 @@ namespace SecureBank.Ctf.Services
         {
             DataTableResp<AdminUserInfoResp> users = base.GetUsers();
 
-            bool xss = users.Data.Any(x => CtfConstants.XXS_KEYVORDS.Any(c =>
-                (x.Name?.Contains(c) ?? false) || (x.Surname?.Contains(c) ?? false) || (x.Username?.Contains(c) ?? false)));
-            if (xss)
+            if (_ctfOptions.CtfChallengeOptions.TableXss)
             {
-                CtfChallangeModel xxsChallange = _ctfOptions.CtfChallanges
-                    .Where(x => x.Type == CtfChallengeTypes.Xss)
-                    .Single();
+                bool xss = users.Data.Any(x => CtfConstants.XXS_KEYVORDS.Any(c =>
+                    (x.Name?.Contains(c) ?? false) || (x.Surname?.Contains(c) ?? false) || (x.Username?.Contains(c) ?? false)));
+                if (xss)
+                {
+                    CtfChallangeModel xxsChallange = _ctfOptions.CtfChallanges
+                        .Where(x => x.Type == CtfChallengeTypes.Xss)
+                        .Single();
 
-                _httpContextAccessor.HttpContext.Response.Headers.Add(xxsChallange.FlagKey, xxsChallange.Flag);
+                    _httpContextAccessor.HttpContext.Response.Headers.Add(xxsChallange.FlagKey, xxsChallange.Flag);
+                }
             }
 
             return users;

@@ -1,5 +1,7 @@
 ﻿@model SecureBank.Models.PortalSearch.PortalSearchModel
 
+@inject Microsoft.Extensions.Options.IOptions<SecureBank.Ctf.Models.CtfOptions> _ctfOptions
+
 @{
     ViewData["Title"] = "Portal search";
 }
@@ -18,7 +20,14 @@
         </p>
         @if (Model.SearchString?.Length > 0)
         {
-            <p>Results for search: @Html.Raw(@Model.SearchString)</p>
+            if (_ctfOptions.Value.CtfChallengeOptions.PortalSearchXss)
+            {
+                <p>Results for search: @Html.Raw(@Model.SearchString)</p>
+            }
+            else
+            {
+                <p>Results for search: @Model.SearchString</p>
+            }
         }
 
         <table id="exampleTable" class="table table-hover">

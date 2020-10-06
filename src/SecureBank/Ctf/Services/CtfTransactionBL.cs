@@ -14,18 +14,33 @@ using SecureBank.Interfaces;
 using SecureBank.Models;
 using SecureBank.Models.Transaction;
 using SecureBank.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Filters;
+using SecureBank.Authorization;
 
 namespace SecureBank.Ctf.Services
 {
     public class CtfTransactionBL : TransactionBL
     {
+        private readonly IUserDAO _userDAO;
+
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IActionContextAccessor _actionContextAccessor;
 
         private readonly CtfOptions _ctfOptions;
 
-        public CtfTransactionBL(ITransactionDAO transactionDAO, IHttpContextAccessor httpContextAccessor, IOptions<CtfOptions> ctfOptions) : base(transactionDAO)
+        public CtfTransactionBL(
+            ITransactionDAO transactionDAO,
+            IUserDAO userDAO,
+            IHttpContextAccessor httpContextAccessor,
+            IActionContextAccessor actionContextAccessor,
+            IOptions<CtfOptions> ctfOptions) : base(transactionDAO)
         {
+            _userDAO = userDAO;
+
             _httpContextAccessor = httpContextAccessor;
+            _actionContextAccessor = actionContextAccessor;
 
             _ctfOptions = ctfOptions.Value;
         }
@@ -36,6 +51,11 @@ namespace SecureBank.Ctf.Services
 
             if (transactionTable.SenderId != userName)
             {
+                if (!_ctfOptions.CtfChallengeOptions.InvalidModel)
+                {
+                    return false;
+                }
+
                 CtfChallangeModel invalidModelChallenge = _ctfOptions.CtfChallanges
                     .Where(x => x.Type == CtfChallengeTypes.InvalidModel)
                     .Single();
@@ -43,7 +63,75 @@ namespace SecureBank.Ctf.Services
                 _httpContextAccessor.HttpContext.Response.Cookies.Append(invalidModelChallenge.FlagKey, invalidModelChallenge.Flag);
             }
 
+            if(_ctfOptions.CtfChallengeOptions.FreeCredit)
+            {
+                if (transactionTable.Amount < 0)
+                {
+                    if (transactionTable.ReceiverId == SecureBankConstants.CREDIT_USERNAME)
+                    {
+
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                if(transactionTable.Amount < 0)
+                {
+                    return false;
+                }
+            }
+
+            if (_ctfOptions.CtfChallengeOptions.ExceptionHandlingTransactionCreate)
+            {
+                if (transactionTable.Id != 0)
+                {
+                    TransactionDBModel transaction = _transactionDAO.Get(transactionTable.Id);
+                    if (transaction != null)
+                    {
+                        try
+                        {
+                            base.Create(transactionTable);
+                        }
+                        catch (Exception ex)
+                        {
+                            CtfChallangeModel exceptionHandlingChallange = _ctfOptions.CtfChallanges
+                                .Where(x => x.Type == CtfChallengeTypes.ExceptionHandling)
+                                .Single();
+
+                            throw new Exception(exceptionHandlingChallange.Flag, ex);
+                        }
+                    }
+                    else
+                    {
+                        transactionTable.Id = 0;
+                    }
+                }
+            }
+
             return base.Create(transactionTable);
+        }
+
+        protected override bool CheckTransaction(TransactionDBModel transaction)
+        {
+            if(_ctfOptions.CtfChallengeOptions.FreeCredit)
+            {
+                if(transaction.ReceiverId == SecureBankConstants.CREDIT_USERNAME)
+                {
+                    CtfChallangeModel freeCredit = _ctfOptions.CtfChallanges
+                        .Where(x => x.Type == CtfChallengeTypes.FreeCredit)
+                        .SingleOrDefault();
+
+                    _httpContextAccessor.HttpContext.Response.Cookies.Append(freeCredit.FlagKey, freeCredit.Flag);
+
+                    return true;
+                }
+            }
+
+            return base.CheckTransaction(transaction);
         }
 
         public override TransactionDBModel Details(int? id)
@@ -57,88 +145,89 @@ namespace SecureBank.Ctf.Services
             string userName = _httpContextAccessor.HttpContext.GetUserName();
             string role = _httpContextAccessor.HttpContext.GetRole();
 
-            if (role != "admin" && transaction.SenderId != userName && transaction.ReceiverId != userName)
+            if (transaction.SenderId != userName && transaction.ReceiverId != userName && role != CookieConstants.ADMIN_ROLE_STRING)
             {
-                CtfChallangeModel enumerationChallange = _ctfOptions.CtfChallanges
-                    .Where(x => x.Type == CtfChallengeTypes.Enumeration)
-                    .Single();
+                if (_ctfOptions.CtfChallengeOptions.Enumeration)
+                {
+                    CtfChallangeModel enumerationChallange = _ctfOptions.CtfChallanges
+                        .Where(x => x.Type == CtfChallengeTypes.Enumeration)
+                        .Single();
 
-                _httpContextAccessor.HttpContext.Response.Headers.Add(enumerationChallange.FlagKey, enumerationChallange.Flag);
+                    _httpContextAccessor.HttpContext.Response.Headers.Add(enumerationChallange.FlagKey, enumerationChallange.Flag);
+                }
+                else
+                {
+                    return null;
+                }
             }
 
             return transaction;
         }
 
-        public override void Edit()
-        {
-            CtfChallangeModel unkonwChallange = _ctfOptions.CtfChallanges
-                .Where(x => x.Type == CtfChallengeTypes.UnknownGeneration)
-                .Single();
-
-            _httpContextAccessor.HttpContext.Response.Cookies.Append(unkonwChallange.FlagKey, unkonwChallange.Flag);
-
-            base.Edit();
-        }
-
-        public override void Delete()
-        {
-            CtfChallangeModel unkonwChallange = _ctfOptions.CtfChallanges
-                .Where(x => x.Type == CtfChallengeTypes.UnknownGeneration)
-                .Single();
-
-            _httpContextAccessor.HttpContext.Response.Cookies.Append(unkonwChallange.FlagKey, unkonwChallange.Flag);
-
-            base.Delete();
-        }
-
         public override DataTableResp<TransactionResp> GetTransactions(string userName, string search, int start, int lenght)
         {
-            CtfChallangeModel sqlInjectionChallange = _ctfOptions.CtfChallanges
-                .Where(x => x.Type == CtfChallengeTypes.SqlInjection)
-                .Single();
+            List<TransactionResp> transactions;
 
-            DataTableResp<TransactionResp> paginatedTransactions = base.GetTransactions(userName, search, start, lenght);
-            if(paginatedTransactions == null)
+            if (_ctfOptions.CtfChallengeOptions.SqlInjection)
             {
-                paginatedTransactions = new DataTableResp<TransactionResp>();
-            }
+                CtfChallangeModel sqlInjectionChallange = _ctfOptions.CtfChallanges
+                    .Where(x => x.Type == CtfChallengeTypes.SqlInjection)
+                    .Single();
 
-            string validSearch = search;
-            if(search == null || search.All(x => "%".Contains(x)))
-            {
-                validSearch = null;
-            }
-
-            List<TransactionResp> validTransactions = _transactionDAO.GetTransactionsCtfCheck(userName, validSearch);
-
-            if (validTransactions.Count != paginatedTransactions.RecordsTotal)
-            {
-                _httpContextAccessor.HttpContext.Response.Headers.Add(sqlInjectionChallange.FlagKey, sqlInjectionChallange.Flag);
-            }
-            else
-            {
-                foreach (TransactionResp transaction in paginatedTransactions.Data)
+                try
                 {
-                    if (!validTransactions.Any(x => x.IsEqual(transaction)))
+                    transactions = _transactionDAO.GetTransactions(userName, search);
+                }
+                catch (Exception)
+                {
+                    _httpContextAccessor.HttpContext.Response.Headers.Add(sqlInjectionChallange.FlagKey, sqlInjectionChallange.Flag);
+                    return null;
+                }
+
+                List<TransactionResp> validTransactions = _transactionDAO.GetTransactionsCtfCheck(userName, search);
+
+                if (validTransactions.Count != transactions.Count)
+                {
+                    _httpContextAccessor.HttpContext.Response.Headers.Add(sqlInjectionChallange.FlagKey, sqlInjectionChallange.Flag);
+                }
+                else
+                {
+                    foreach (var transaction in transactions)
                     {
-                        _httpContextAccessor.HttpContext.Response.Headers.Add(sqlInjectionChallange.FlagKey, sqlInjectionChallange.Flag);
-                        break;
+                        if (!validTransactions.Any(x => x.IsEqual(transaction)))
+                        {
+                            _httpContextAccessor.HttpContext.Response.Headers.Add(sqlInjectionChallange.FlagKey, sqlInjectionChallange.Flag);
+                            break;
+                        }
                     }
                 }
             }
-
-            bool xss = paginatedTransactions.Data.Any(x => CtfConstants.XXS_KEYVORDS.Any(c =>
-                (x.SenderId?.Contains(c) ?? false) || (x.ReceiverId?.Contains(c) ?? false) || (x.Reason?.Contains(c) ?? false) || (x.Reference?.Contains(c) ?? false)));
-            if (xss)
+            else
             {
-                CtfChallangeModel xxsChallange = _ctfOptions.CtfChallanges
-                    .Where(x => x.Type == CtfChallengeTypes.Xss)
-                    .Single();
-
-                _httpContextAccessor.HttpContext.Response.Headers.Add(xxsChallange.FlagKey, xxsChallange.Flag);
+                transactions = _transactionDAO.GetTransactionsCtfCheck(userName, search);
             }
 
-            return base.GetTransactions(userName, search, start, lenght);
+            if (_ctfOptions.CtfChallengeOptions.TableXss)
+            {
+                bool xss = transactions.Any(x => CtfConstants.XXS_KEYVORDS.Any(c =>
+                    (x.SenderId?.Contains(c) ?? false) || (x.ReceiverId?.Contains(c) ?? false) || (x.Reason?.Contains(c) ?? false) || (x.Reference?.Contains(c) ?? false)));
+                if (xss)
+                {
+                    CtfChallangeModel xxsChallange = _ctfOptions.CtfChallanges
+                        .Where(x => x.Type == CtfChallengeTypes.Xss)
+                        .Single();
+
+                    _httpContextAccessor.HttpContext.Response.Headers.Add(xxsChallange.FlagKey, xxsChallange.Flag);
+                }
+            }
+
+            return new DataTableResp<TransactionResp>(
+                recordsTotal: transactions.Count,
+                recordsFiltered: transactions.Count,
+                data: transactions
+                    .Skip(start)
+                    .Take(lenght)
+                    .ToList());
         }
 
         public override List<TransactionsByDayResp> GetTransactionsByDay(string userName)
@@ -149,35 +238,64 @@ namespace SecureBank.Ctf.Services
 
             List<TransactionsByDayResp> transactions;
 
-            try
+            if (_ctfOptions.CtfChallengeOptions.SqlInjection)
             {
-                transactions = _transactionDAO.GetTransactionsByDay(userName);
-            }
-            catch (Exception)
-            {
-                _httpContextAccessor.HttpContext.Response.Headers.Add(sqlInjectionChallange.FlagKey, sqlInjectionChallange.Flag);
-                return null;
-            }
-
-            List<TransactionsByDayResp> validTransactions = _transactionDAO.GetTransactionsByDayCtfCheck(userName);
-
-            if (validTransactions.Count != transactions.Count)
-            {
-                _httpContextAccessor.HttpContext.Response.Headers.Add(sqlInjectionChallange.FlagKey, sqlInjectionChallange.Flag);
-            }
-            else
-            {
-                foreach (var transaction in transactions)
+                try
                 {
-                    if (!validTransactions.Any(x => x.IsEqual(transaction)))
+                    transactions = _transactionDAO.GetTransactionsByDay(userName);
+                }
+                catch (Exception)
+                {
+                    _httpContextAccessor.HttpContext.Response.Headers.Add(sqlInjectionChallange.FlagKey, sqlInjectionChallange.Flag);
+                    return null;
+                }
+
+                List<TransactionsByDayResp> validTransactions = _transactionDAO.GetTransactionsByDayCtfCheck(userName);
+
+                if (validTransactions.Count != transactions.Count)
+                {
+                    _httpContextAccessor.HttpContext.Response.Headers.Add(sqlInjectionChallange.FlagKey, sqlInjectionChallange.Flag);
+                }
+                else
+                {
+                    foreach (var transaction in transactions)
                     {
-                        _httpContextAccessor.HttpContext.Response.Headers.Add(sqlInjectionChallange.FlagKey, sqlInjectionChallange.Flag);
-                        break;
+                        if (!validTransactions.Any(x => x.IsEqual(transaction)))
+                        {
+                            _httpContextAccessor.HttpContext.Response.Headers.Add(sqlInjectionChallange.FlagKey, sqlInjectionChallange.Flag);
+                            break;
+                        }
                     }
                 }
             }
+            else
+            {
+                transactions = _transactionDAO.GetTransactionsByDayCtfCheck(userName);
+            }
 
             return transactions;
+        }
+
+        public override string GetIndexViewName()
+        {
+            ActionContext actionContext = _actionContextAccessor.ActionContext;
+
+            string user = actionContext.HttpContext.GetUserName();
+
+            UserDBModel userDBModel = _userDAO.GetUser(user);
+            if (!userDBModel.Confirmed)
+            {
+                if (_ctfOptions.CtfChallengeOptions.UnconfirmedLogin)
+                {
+                    CtfChallangeModel ctfChallangeModel = _ctfOptions.CtfChallanges
+                        .Where(x => x.Type == CtfChallengeTypes.UnconfirmedLogin)
+                        .SingleOrDefault();
+
+                    actionContext.ModelState.AddModelError(string.Empty, ctfChallangeModel.Flag);
+                }
+            }
+
+            return base.GetIndexViewName();
         }
     }
 }

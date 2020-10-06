@@ -14,6 +14,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using SecureBank.Services;
+using SecureBank.Authorization;
+using System.Text.RegularExpressions;
 
 namespace SecureBank.Ctf.Services
 {
@@ -24,10 +26,17 @@ namespace SecureBank.Ctf.Services
 
         private readonly CtfOptions _ctfOptions;
 
-        public CtfAuthBL(IUserDAO userDAO, ITransactionDAO transactionDAO, IEmailSender emailSender,
-            IHttpContextAccessor httpContextAccessor, IOptions<CtfOptions> options,
-            IUrlHelperFactory urlHelperFactory, IActionContextAccessor actionContextAccessor, IOptions<AppSettings> appSettings)
-                : base(userDAO, transactionDAO, emailSender, httpContextAccessor, appSettings)
+        public CtfAuthBL(
+            IUserDAO userDAO,
+            ITransactionDAO transactionDAO,
+            IEmailSender emailSender,
+            IHttpContextAccessor httpContextAccessor,
+            IOptions<CtfOptions> options,
+            IUrlHelperFactory urlHelperFactory,
+            IActionContextAccessor actionContextAccessor,
+            ICookieService cookieService,
+            IOptions<AppSettings> appSettings)
+            : base(userDAO, transactionDAO, emailSender, cookieService, httpContextAccessor, appSettings)
         {
             _urlHelperFactory = urlHelperFactory;
             _actionContextAccessor = actionContextAccessor;
@@ -35,36 +44,83 @@ namespace SecureBank.Ctf.Services
             _ctfOptions = options.Value;
         }
 
-        public override string RegisterAdmin(UserModel userModel)
-        {
-            CtfChallangeModel hiddenPageChallange = _ctfOptions.CtfChallanges
-                .Where(x => x.Type == CtfChallengeTypes.HiddenPage)
-                .Single();
-
-            return hiddenPageChallange.Flag;
-        }
-
         public override Task<bool> Register(UserModel registrationModel)
         {
             if (registrationModel.Password.Length <= 3)
             {
-                CtfChallangeModel weakPasswordChallenge = _ctfOptions.CtfChallanges
-                    .Where(x => x.Type == CtfChallengeTypes.WeakPassword)
-                    .Single();
+                if (_ctfOptions.CtfChallengeOptions.WeakPassword)
+                {
+                    CtfChallangeModel weakPasswordChallenge = _ctfOptions.CtfChallanges
+                        .Where(x => x.Type == CtfChallengeTypes.WeakPassword)
+                        .Single();
 
-                _httpContextAccessor.HttpContext.Response.Headers.Add(weakPasswordChallenge.FlagKey, weakPasswordChallenge.Flag);
+                    _httpContextAccessor.HttpContext.Response.Headers.Add(weakPasswordChallenge.FlagKey, weakPasswordChallenge.Flag);
+                }
+                else
+                {
+                    return Task.FromResult(false);
+                }
             }
 
             if (registrationModel.UserRight != 0)
             {
-                CtfChallangeModel registrationRoleSetChallange = _ctfOptions.CtfChallanges
-                    .Where(x => x.Type == CtfChallengeTypes.RegistrationRoleSet)
-                    .Single();
+                if (_ctfOptions.CtfChallengeOptions.RegistrationRoleSet)
+                {
+                    CtfChallangeModel registrationRoleSetChallange = _ctfOptions.CtfChallanges
+                        .Where(x => x.Type == CtfChallengeTypes.RegistrationRoleSet)
+                        .Single();
 
-                _httpContextAccessor.HttpContext.Response.Headers.Add(registrationRoleSetChallange.FlagKey, registrationRoleSetChallange.Flag);
+                    _httpContextAccessor.HttpContext.Response.Headers.Add(registrationRoleSetChallange.FlagKey, registrationRoleSetChallange.Flag);
+                }
+                else
+                {
+                    registrationModel.UserRight = 0;
+                }
             }
 
             return base.Register(registrationModel);
+        }
+
+        protected override bool ValidateRegistrationModel(UserModel userModel)
+        {
+            if (userModel == null || string.IsNullOrEmpty(userModel.UserName) || string.IsNullOrEmpty(userModel.Password))
+            {
+                return false;
+            }
+
+            try
+            {
+                bool isEmailValid = Regex.IsMatch(userModel.UserName, EMAIL_REGEX_PATTERN, RegexOptions.IgnoreCase, TimeSpan.FromSeconds(5));
+                if (!isEmailValid)
+                {
+                    return false;
+                }
+            }
+            catch(Exception)
+            {
+                if(_ctfOptions.CtfChallengeOptions.reDOS)
+                {
+                    CtfChallangeModel reDOS = _ctfOptions.CtfChallanges
+                        .Where(x => x.Type == CtfChallengeTypes.reDOS)
+                        .Single();
+
+                    _httpContextAccessor.HttpContext.Response.Headers.Add(reDOS.FlagKey, reDOS.Flag);
+                }
+
+                return false;
+            }
+
+            return true;
+        }
+
+        protected override bool ValidatePassword(UserModel userModel)
+        {
+            if(_ctfOptions.CtfChallengeOptions.UnconfirmedLogin)
+            {
+                return base.ValidatePassword(userModel);
+            }
+
+            return _userDAO.ValidatePassword(userModel.UserName, userModel.Password, true);
         }
 
         public override Task Logout(string returnUrl)
@@ -73,14 +129,36 @@ namespace SecureBank.Ctf.Services
 
             if (!urlHelper.IsLocalUrl(returnUrl))
             {
-                CtfChallangeModel invalidRedirect = _ctfOptions.CtfChallanges
-                    .Where(x => x.Type == CtfChallengeTypes.InvalidRedirect)
-                    .Single();
+                if (_ctfOptions.CtfChallengeOptions.InvalidRedirect)
+                {
+                    CtfChallangeModel invalidRedirect = _ctfOptions.CtfChallanges
+                        .Where(x => x.Type == CtfChallengeTypes.InvalidRedirect)
+                        .Single();
 
-                _httpContextAccessor.HttpContext.Response.Cookies.Append(invalidRedirect.FlagKey, invalidRedirect.Flag);
+                    _httpContextAccessor.HttpContext.Response.Cookies.Append(invalidRedirect.FlagKey, invalidRedirect.Flag);
+                }
+                else
+                {
+                    returnUrl = "/";
+                }
             }
 
             return base.Logout(returnUrl);
+        }
+
+        public override IActionResult LoginAdmin()
+        {
+            if (!_ctfOptions.CtfChallengeOptions.HiddenPageLoginAdmin)
+            {
+                return base.LoginAdmin();
+            }
+
+
+            CtfChallangeModel hiddenPageModel = _ctfOptions.CtfChallanges
+                .Where(x => x.Type == CtfChallengeTypes.HiddenPage)
+                .SingleOrDefault();
+
+            return new OkObjectResult(new { Flag = hiddenPageModel.Flag });
         }
     }
 }

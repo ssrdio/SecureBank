@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SecureBank.Filters;
 using SecureBank.Interfaces;
 using SecureBank.Models.Auth;
 using System;
@@ -38,6 +39,13 @@ namespace SecureBank.Controllers.Api
         }
 
         [HttpGet]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public IActionResult LoginAdmin()
+        {
+            return _authBL.LoginAdmin();
+        }
+
+        [HttpGet]
         [ProducesResponseType(typeof(EmptyResult), StatusCodes.Status200OK)]
         public async Task<IActionResult> Logout()
         {
@@ -66,12 +74,10 @@ namespace SecureBank.Controllers.Api
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
+        [HiddenPage]
         [HttpPost]
-        public IActionResult RegisterAdmin([FromBody] UserModel userModel)
+        public void RegisterAdmin([FromBody] UserModel userModel)
         {
-            string result = _authBL.RegisterAdmin(userModel);
-
-            return Ok(result);
         }
 
         [HttpPost]

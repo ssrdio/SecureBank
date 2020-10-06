@@ -11,7 +11,7 @@ namespace SecureBank.Ctf
         {
             "<script>",
             "<iframe ",
-            " src= "
+            " src="
         };
     }
 }

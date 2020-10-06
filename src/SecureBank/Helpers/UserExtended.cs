@@ -16,21 +16,21 @@ namespace SecureBank.Helpers
         {
             IUserExtensions userExtensions = context.RequestServices.GetRequiredService<IUserExtensions>();
 
-            return userExtensions.IsAuthenticated(context.User);
+            return userExtensions.IsAuthenticated(context);
         }
 
         public static string GetUserName(this HttpContext context)
         {
             IUserExtensions userExtensions = context.RequestServices.GetRequiredService<IUserExtensions>();
 
-            return userExtensions.GetUserName(context.User);
+            return userExtensions.GetUserName(context);
         }
 
         public static string GetRole(this HttpContext context)
         {
             IUserExtensions userExtensions = context.RequestServices.GetRequiredService<IUserExtensions>();
 
-            return userExtensions.GetRole(context.User);
+            return userExtensions.GetRole(context);
         }
     }
 }

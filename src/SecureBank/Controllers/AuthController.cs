@@ -48,7 +48,6 @@ namespace SecureBank.Controllers
         [HttpGet]
         public IActionResult Register()
         {
-            ViewBag.LegalURL = _authBL.GetLegalURL();
             ViewBag.ConfirmMail = !_authBL.IgnoreMails();
 
             return View();

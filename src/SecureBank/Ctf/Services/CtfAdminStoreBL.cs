@@ -27,34 +27,20 @@ namespace SecureBank.Ctf.Services
         {
             DataTableResp<StoreItem> storeItems = await base.GetStoreItems();
 
-            bool xss = storeItems.Data.Any(x => CtfConstants.XXS_KEYVORDS.Any(c => (x.Name?.Contains(c) ?? false) || (x.Description?.Contains(c) ?? false)));
-            if (xss)
+            if (_ctfOptions.CtfChallengeOptions.TableXss)
             {
-                CtfChallangeModel xxsChallange = _ctfOptions.CtfChallanges
-                    .Where(x => x.Type == CtfChallengeTypes.Xss)
-                    .Single();
+                bool xss = storeItems.Data.Any(x => CtfConstants.XXS_KEYVORDS.Any(c => (x.Name?.Contains(c) ?? false) || (x.Description?.Contains(c) ?? false)));
+                if (xss)
+                {
+                    CtfChallangeModel xxsChallange = _ctfOptions.CtfChallanges
+                        .Where(x => x.Type == CtfChallengeTypes.Xss)
+                        .Single();
 
-                _httpContextAccessor.HttpContext.Response.Headers.Add(xxsChallange.FlagKey, xxsChallange.Flag);
+                    _httpContextAccessor.HttpContext.Response.Headers.Add(xxsChallange.FlagKey, xxsChallange.Flag);
+                }
             }
 
             return storeItems;
-        }
-
-        public override async Task<List<PurcahseHistoryItemResp>> GetAllPurchases()
-        {
-            List<PurcahseHistoryItemResp> purchases = await base.GetAllPurchases();
-
-            bool xss = purchases.Any(x => CtfConstants.XXS_KEYVORDS.Any(c => (x.Name?.Contains(c) ?? false) || (x.Description?.Contains(c) ?? false)));
-            if (xss)
-            {
-                CtfChallangeModel xxsChallange = _ctfOptions.CtfChallanges
-                    .Where(x => x.Type == CtfChallengeTypes.Xss)
-                    .Single();
-
-                _httpContextAccessor.HttpContext.Response.Headers.Add(xxsChallange.FlagKey, xxsChallange.Flag);
-            }
-
-            return purchases;
         }
     }
 }

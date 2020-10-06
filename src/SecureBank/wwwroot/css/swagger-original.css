@@ -1,0 +1,14 @@
+﻿.topbar-wrapper img[alt="Swagger UI"], .topbar-wrapper span {
+    visibility: hidden;
+}
+
+.topbar-wrapper .link:after {
+    content: 'SecureBank';
+    visibility: visible;
+    display: block;
+    position: absolute;
+    padding: 15px;
+    background: -moz-linear-gradient(left, #1d3ede, #01e6f8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}

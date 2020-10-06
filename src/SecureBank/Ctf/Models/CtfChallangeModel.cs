@@ -10,7 +10,12 @@ namespace SecureBank.Ctf.Models
         public string Title { get; set; }
         public CtfChallengeTypes Type { get; set; }
 
-        public string Flag { get; set; }
+        private string _flag;
+        public string Flag 
+        { 
+            get { return $"{_flag}.challenge_{Type.ToChallengeNumber()}"; }
+            set { _flag = value; }
+        }
         public string FlagKey { get; set; }
 
         public CtfChallangeCategories Category { get; set; }
@@ -40,8 +45,9 @@ namespace SecureBank.Ctf.Models
         MissingAuthentication = 40,
         RegistrationRoleSet = 41,
         ChangeRoleInCookie = 42,
+        UnconfirmedLogin = 43,
 
-        ExcaptionHandling = 50,
+        ExceptionHandling = 50,
 
         Xss = 60,
 
@@ -53,7 +59,11 @@ namespace SecureBank.Ctf.Models
         Ftp = 104,
         Swagger = 105,
         HiddenComment = 106,
-        Base2048Content = 107
+        Base2048Content = 107,
+
+        SimultaneousRequest = 121,
+        reDOS = 122,
+        FreeCredit = 123,
     }
 
     public static class CtfChallengeTypesExtensions

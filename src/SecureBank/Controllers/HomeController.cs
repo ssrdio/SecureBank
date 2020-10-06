@@ -4,34 +4,37 @@ using SecureBank.Helpers;
 using SecureBank.Ctf.Models;
 using Microsoft.Extensions.Options;
 using System.Linq;
+using SecureBank.Interfaces;
+using System.Threading.Tasks;
 
 namespace SecureBank.Controllers
 {
     [Authenticate]
     public class HomeController : MvcBaseContoller
     {
-        private readonly CtfOptions _ctfOptions;
-        public HomeController(IOptions<CtfOptions> options)
+        private readonly IHomeBL _homeService;
+
+        public HomeController(IHomeBL homeService)
         {
-            _ctfOptions = options.Value;
+            _homeService = homeService;
         }
 
         public IActionResult Index()
         {
-            if (_ctfOptions.CtfChallanges != null && _ctfOptions.CtfChallanges.Any())
-            {
-                ViewBag.HiddenComment = _ctfOptions.CtfChallanges.Where(x => x.Type == CtfChallengeTypes.HiddenComment)
-                    .Single().Flag;
-                ViewBag.Base = _ctfOptions.CtfChallanges
-                    .Where(x => x.Type == CtfChallengeTypes.Base2048Content)
-                    .Single().Flag;
-            }
+            _homeService.Index();
+
             return View();
         }
 
         public IActionResult Error()
         {
             return View();
+        }
+
+        [HttpGet]
+        public Task<IActionResult> DownloadAndroidApp()
+        {
+            return _homeService.DownloadAndroidApp();
         }
     }
 }

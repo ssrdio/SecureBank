@@ -9,13 +9,16 @@ namespace SecureBank.Ctf.Models
     {
         public List<CtfChallangeModel> CtfChallanges { get; set; }
 
+        public CtfChallengeOptions CtfChallengeOptions { get; set; }
+
         public CtfOptions()
         {
         }
 
-        public CtfOptions(List<CtfChallangeModel> ctfChallanges)
+        public CtfOptions(List<CtfChallangeModel> ctfChallanges, CtfChallengeOptions ctfChallengeOptions)
         {
             CtfChallanges = ctfChallanges;
+            CtfChallengeOptions = ctfChallengeOptions;
         }
     }
 }

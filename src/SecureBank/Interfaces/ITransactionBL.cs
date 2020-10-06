@@ -16,9 +16,6 @@ namespace SecureBank.Interfaces
 
         bool Create(TransactionDBModel transactionTable);
 
-        void Edit();
-        void Delete();
-
         DataTableResp<TransactionResp> GetTransactions(string userName, string search, int start, int lenght);
         List<TransactionsByDayResp> GetTransactionsByDay(string userName);
     }
