@@ -1,9 +1,9 @@
 ﻿{
   "iisSettings": {
     "windowsAuthentication": false, 
-    "anonymousAuthentication": true, 
+    "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:54662",
+      "applicationUrl": "http://localhost:1337",
       "sslPort": 0
     }
   },
@@ -18,7 +18,7 @@
     "BankWebPortal": {
       "commandName": "Project",
       "launchBrowser": false,
-      "applicationUrl": "http://localhost:16477",
+      "applicationUrl": "http://localhost:1337",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
