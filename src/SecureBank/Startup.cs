@@ -52,6 +52,11 @@ namespace SecureBank
                     options.BaseUrl = appSettings.BaseUrl;
                 });
             }
+            else 
+            {
+                throw new Exception("Appsettings cannot be null");
+            }
+
 
             DatabaseSettings customerDbSettings = Configuration.GetSection("DatabaseConnections:SecureBankMSSQL").Get<DatabaseSettings>();
             if (customerDbSettings != null)
