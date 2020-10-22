@@ -76,16 +76,14 @@
 
         $(document).ready(function () {
             $('.btnRegister').on('click', function (event) {
-                if (@Json.Serialize(!string.IsNullOrEmpty(ViewBag.LegalURL)))
-                {
-                    if (!$('#termsCheck').is(':checked')) {
-                        $('#termsNotAccepted').show();
-                        return;
-                    }
-                    else {
-                        $('#termsNotAccepted').hide();
-                    }
+                if (!$('#termsCheck').is(':checked')) {
+                    $('#termsNotAccepted').show();
+                    return;
                 }
+                else {
+                    $('#termsNotAccepted').hide();
+                }
+
                 if (document.getElementById("passwordConfirm").value.length < 5) {
                     document.getElementById('notEnoughChars').style.display = 'block';
                     document.getElementById('submitbutton').disabled = true;

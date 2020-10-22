@@ -10,3 +10,8 @@
 .vs/
 bin/
 obj/
+
+*.db
+
+meeting-2018.12.21.pdf
+swagger.css

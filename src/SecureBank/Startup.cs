@@ -21,6 +21,7 @@ using System.Linq;
 using SecureBank.Authorization;
 using System.IO;
 using Microsoft.Extensions.FileProviders;
+using SecureBank.Filters;
 
 namespace SecureBank
 {
@@ -94,7 +95,6 @@ namespace SecureBank
             services.AddScoped<IUploadFileBL, UploadFileBL>();
             services.AddScoped<IAdminBL, AdminBL>();
             services.AddScoped<IAdminStoreBL, AdminStoreBL>();
-            services.AddScoped<IHomeBL, HomeBL>();
 
             services.AddAuthorization(options => 
             {
@@ -120,9 +120,15 @@ namespace SecureBank
                 ctfOptions = services.ConfigureWithoutCtf(Configuration);
             }
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews(options => 
+            {
+                options.Filters.Add(new GlobalExceptionFilter());
+            });
 
-            services.AddDirectoryBrowser();
+            if (ctfOptions.CtfChallengeOptions.DirectoryBrowsing)
+            {
+                services.AddDirectoryBrowser();
+            }
 
             services.AddSwaggerGen(x =>
             {
@@ -143,10 +149,6 @@ namespace SecureBank
             if (ctfOptions?.CtfChallengeOptions?.ExceptionHandlingTransactionCreate == true)
             {
                 app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Error");
             }
 
             if (ctfOptions.CtfChallengeOptions.Swagger)
@@ -187,10 +189,10 @@ namespace SecureBank
             }
             app.UseStaticFiles();
 
-            if(ctfOptions.CtfChallengeOptions.Ftp)
+            if(ctfOptions.CtfChallengeOptions.DirectoryBrowsing)
             {
                 CtfChallangeModel ftpChallenge = ctfOptions.CtfChallanges
-                    .Where(x => x.Type == CtfChallengeTypes.Ftp)
+                    .Where(x => x.Type == CtfChallengeTypes.DirectoryBrowsing)
                     .Single();
 
                 string fullPath = Path.Combine(env.ContentRootPath, "Documents", SecureBankConstants.DIRECTORY_BROWSING_FILE_NAME);
@@ -225,11 +227,11 @@ namespace SecureBank
                 app.GenerateCtfdExport($"{AppContext.BaseDirectory}/Ctf");
             }
 
-            if (Configuration["SecureBank:Seed"] == "True")
+            if (Configuration["SeedingSettings:Seed"] == "True")
             {
-                if (!string.IsNullOrEmpty(Configuration["SecureBank:UserPassword"]))
+                if (!string.IsNullOrEmpty(Configuration["SeedingSettings:UserPassword"]))
                 {
-                    string password = Configuration["SecureBank:UserPassword"];
+                    string password = Configuration["SeedingSettings:UserPassword"];
 
                     app.SeedDatabase(password);
                 }
@@ -239,7 +241,7 @@ namespace SecureBank
                 }
             }
 
-            app.InitializeDatabase(Configuration["SecureBank:Admin"], Configuration["SecureBank:AdminPassword"]);
+            app.InitializeDatabase(Configuration["SeedingSettings:Admin"], Configuration["SeedingSettings:AdminPassword"]);
         }
     }
 }

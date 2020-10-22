@@ -10,12 +10,7 @@ namespace SecureBank.Ctf.Models
         public string Title { get; set; }
         public CtfChallengeTypes Type { get; set; }
 
-        private string _flag;
-        public string Flag 
-        { 
-            get { return $"{_flag}.challenge_{Type.ToChallengeNumber()}"; }
-            set { _flag = value; }
-        }
+        public string Flag { get; set; }
         public string FlagKey { get; set; }
 
         public CtfChallangeCategories Category { get; set; }
@@ -56,7 +51,7 @@ namespace SecureBank.Ctf.Models
         HiddenPage = 102,
 
         InvalidRedirect = 103,
-        Ftp = 104,
+        DirectoryBrowsing = 104,
         Swagger = 105,
         HiddenComment = 106,
         Base2048Content = 107,

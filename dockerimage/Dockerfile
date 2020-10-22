@@ -27,14 +27,6 @@ RUN apt-get update \
     && curl -sL https://deb.nodesource.com/setup_13.x | bash - \
     && apt-get install -y nodejs
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends vsftpd \
-    && mkdir -p /var/run/vsftpd/empty \
-    && mkdir -p /var/ftp/public \
-    && mv /etc/vsftpd.conf /etc/vsftpd.orig
-
-COPY dockerimage/ftp-files ./var/ftp/public/
-
 COPY dockerimage/entrypoint.sh ./entrypoint.sh
 RUN chmod o+x ./entrypoint.sh
 
@@ -51,8 +43,9 @@ COPY --from=maildev/maildev:1.1.0 /usr/src/app ./maildev
 EXPOSE 80
 EXPOSE 5000
 
+EXPOSE 1025
 EXPOSE 1080
-EXPOSE 20-21
-EXPOSE 50000-50100
+
+EXPOSE 1433
 
 ENTRYPOINT ["./entrypoint.sh"]

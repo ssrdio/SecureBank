@@ -51,7 +51,7 @@ namespace SecureBank.Ctf.Services
 
             if (transactionTable.SenderId != userName)
             {
-                if (!_ctfOptions.CtfChallengeOptions.InvalidModel)
+                if (!_ctfOptions.CtfChallengeOptions.InvalidModelTransaction)
                 {
                     return false;
                 }

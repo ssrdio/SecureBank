@@ -1,21 +1,4 @@
 ﻿@inject Microsoft.Extensions.Options.IOptions<SecureBank.Ctf.Models.CtfOptions> _ctfOptions
-<!--
-    <div id="video-modal" class="modal fade" role="dialog" style="display: none;">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">SecureBank</h5>
-                    <button type="button" class="custom-close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                </div>
-                <div class="modal-body">
-                    <video controls>
-                        <source src="~/videos/cybernight.mp4" type="video/mp4" />
-                        Your browser does not support videos
-                    </video>
-                </div>
-            </div>
-        </div>
-    </div>-->
 
 <div class="container-fluid gtco-banner-area">
     <div class="container">
@@ -315,7 +298,7 @@
                             et porta metus. Nulla mollis lobortis leet. Maecenas tincidunt, arcu sed ornare purus risus
                             . . .
                         </p>
-                        <a href="/Home/DownloadAndroidApp">DOWNLOAD <i class="fa fa-angle-right" aria-hidden="true"></i></a>
+                        <a href="#">READ MORE <i class="fa fa-angle-right" aria-hidden="true"></i></a>
                     </div>
                 </div>
             </div>
@@ -329,7 +312,7 @@
                             et porta metus. Nulla mollis lobortis leet. Maecenas tincidunt, arcu sed ornare purus risus
                             . . .
                         </p>
-                        <button id="video-modal-button" class="custom-button">Watch <i class="fa fa-angle-right" aria-hidden="true"></i></button>
+                        <a href="#">READ MORE <i class="fa fa-angle-right" aria-hidden="true"></i></a>
                     </div>
                 </div>
             </div>
@@ -420,66 +403,50 @@
 </div>
 
 @section Styles {
-<style>
-    .custom-close {
-        border: 0;
-        background: transparent;
-        font-size: 17px;
-        font-weight: bold;
-    }
-
-    .modal-content video {
-        width: 100%;
-        height: auto;
-    }
-
-    .custom-button {
-        background-image: -moz-linear-gradient(0deg, #06c6f9 0%, #38eaf9 100%);
-        background-image: -webkit-linear-gradient(0deg, #06c6f9 0%, #38eaf9 100%);
-        background-image: -ms-linear-gradient(0deg, #06c6f9 0%, #38eaf9 100%);
-        font-size: 18px;
-        font-family: "OpenSans-Semibold";
-        color: #fff;
-        border-radius: 50px;
-        padding: 3px 30px;
-        display: inline-block;
-        text-transform: uppercase;
-        padding-right: 5px;
-        text-decoration: none !important;
-        cursor: pointer;
-        border: 0px;
-    }
-
-        .custom-button .fa {
-            background: #fff;
-            border-radius: 50%;
-            height: 32px;
-            width: 32px;
-            color: #37eaf9;
-            font-size: 22px;
-            text-align: center;
-            padding-top: 5px;
-            margin-left: 15px;
+    <style>
+        .custom-close {
+            border: 0;
+            background: transparent;
+            font-size: 17px;
+            font-weight: bold;
         }
 
-    .news-title {
-        min-height: 55px;
-    }
-</style>
-}
+        .modal-content video {
+            width: 100%;
+            height: auto;
+        }
 
-@section Scripts {
-    <script>
-        $(document).ready(() => {
+        .custom-button {
+            background-image: -moz-linear-gradient(0deg, #06c6f9 0%, #38eaf9 100%);
+            background-image: -webkit-linear-gradient(0deg, #06c6f9 0%, #38eaf9 100%);
+            background-image: -ms-linear-gradient(0deg, #06c6f9 0%, #38eaf9 100%);
+            font-size: 18px;
+            font-family: "OpenSans-Semibold";
+            color: #fff;
+            border-radius: 50px;
+            padding: 3px 30px;
+            display: inline-block;
+            text-transform: uppercase;
+            padding-right: 5px;
+            text-decoration: none !important;
+            cursor: pointer;
+            border: 0px;
+        }
 
-            $('#video-modal-button').on('click', () => {
-                $('#video-modal').modal('show');
-            });
+            .custom-button .fa {
+                background: #fff;
+                border-radius: 50%;
+                height: 32px;
+                width: 32px;
+                color: #37eaf9;
+                font-size: 22px;
+                text-align: center;
+                padding-top: 5px;
+                margin-left: 15px;
+            }
 
-            $('#video-modal').on('hide.bs.modal', () => {
-                $('#video-modal').find('video').trigger('pause');
-            });
-
-        });
-    </script>
+        .news-title {
+            min-height: 55px;
+        }
+    </style>
 }

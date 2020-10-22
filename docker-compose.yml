@@ -9,6 +9,7 @@ services:
       - maildev
       - storeapi
     environment: 
+      - AppSettings:BaseUrl=http://localhost:1337
       - AppSettings:StoreEndpoint:ApiUrl=http://storeapi:80/api/Store/
       - AppSettings:StoreEndpoint:ApiToken=
       - AppSettings:SmtpCredentials:Ip=maildev
@@ -17,16 +18,50 @@ services:
       - AppSettings:SmtpCredentials:Password=
       - AppSettings:Ctf:Enabled=false
       - AppSettings:Ctf:Seed=example
-      - AppSettings:LegalURL=
+      - AppSettings:Ctf:GenerateCtfdExport=false
+      - AppSettings:Ctf:FlagFormat=ctf{{{0}}}
+#      - AppSettings:Ctf:FlagFormat=ctf{{{0}}}.challenge{1}"
+      - AppSettings:Ctf:UseRealChallengeName=true
+      - AppSettings:Ctf:Challenges:SqlInjection=true
+      - AppSettings:Ctf:Challenges:WeakPassword=true
+      - AppSettings:Ctf:Challenges:SensitiveDataExposureStore=true
+      - AppSettings:Ctf:Challenges:SensitiveDataExposureBalance=true
+      - AppSettings:Ctf:Challenges:SensitiveDataExposureProfileImage=true
+      - AppSettings:Ctf:Challenges:PathTraversal=true
+      - AppSettings:Ctf:Challenges:Enumeration=true
+      - AppSettings:Ctf:Challenges:XxeInjection=true
+      - AppSettings:Ctf:Challenges:MissingAuthentication=true
+      - AppSettings:Ctf:Challenges:RegistrationRoleSet=true
+      - AppSettings:Ctf:Challenges:ChangeRoleInCookie=true
+      - AppSettings:Ctf:Challenges:UnconfirmedLogin=true
+      - AppSettings:Ctf:Challenges:ExceptionHandlingTransactionCreate=true
+      - AppSettings:Ctf:Challenges:TableXss=true
+      - AppSettings:Ctf:Challenges:PortalSearchXss=true
+      - AppSettings:Ctf:Challenges:InvalidModelStore=true
+      - AppSettings:Ctf:Challenges:InvalidModelTransaction=true
+      - AppSettings:Ctf:Challenges:UnknownGeneration=true
+      - AppSettings:Ctf:Challenges:HiddenPageRegisterAdmin=true
+      - AppSettings:Ctf:Challenges:HiddenPageLoginAdmin=true
+      - AppSettings:Ctf:Challenges:InvalidRedirect=true
+      - AppSettings:Ctf:Challenges:DirectoryBrowsing=true
+      - AppSettings:Ctf:Challenges:Swagger=true
+      - AppSettings:Ctf:Challenges:Base2048Content=true
+      - AppSettings:Ctf:Challenges:SimultaneousRequest=true
+      - AppSettings:Ctf:Challenges:reDOS=true
+      - AppSettings:Ctf:Challenges:FreeCredit=true
       - DatabaseConnections:SecureBankMSSQL:UserId=sa
       - DatabaseConnections:SecureBankMSSQL:UserPass=Your_Password123
       - DatabaseConnections:SecureBankMSSQL:Server=mssql
       - DatabaseConnections:SecureBankMSSQL:ServerPort=1433
       - DatabaseConnections:SecureBankMSSQL:Database=securebank
+      - SeedingSettings:Seed=true
+      - SeedingSettings:Admin=admin@ssrd.io
+      - SeedingSettings:AdminPassword=admin
+      - SeedingSettings:UserPassword=test1
     volumes:
       -  ./logs/securebank:/app/logs
     ports: 
-      - 7000:80
+      - 1337:80
   
   storeapi:
     build: ./src/StoreAPI
@@ -43,7 +78,7 @@ services:
     volumes:
       - ./logs/storeapi:/app/logs
     ports:
-      - 7010:80
+      - 1338:80
   
   mssql:
     image: mcr.microsoft.com/mssql/server
@@ -64,15 +99,6 @@ services:
     ports: 
       - '1080:80'
       # - '1025:25'
-  
-  ftp:
-    image: inanimate/vsftpd-anon
-    container_name: ftp
-    ports:
-      - 20-21:20-21
-      - 65500-65515:65500-65515
-    volumes:
-      - ./ftp-files:/var/ftp:ro
 
 volumes: 
   mssql-data:

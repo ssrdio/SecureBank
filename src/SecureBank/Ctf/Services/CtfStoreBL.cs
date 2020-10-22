@@ -62,7 +62,7 @@ namespace SecureBank.Ctf.Services
 
             bool result = await base.BuyProduct(buyProductReq, userName);
 
-            if(_ctfOptions.CtfChallengeOptions.InvalidModel)
+            if(_ctfOptions.CtfChallengeOptions.InvalidModelStore)
             {
                 List<StoreItem> storeItems = await _storeAPICalls.GetStoreItemsAsync();
                 if (storeItems != null)
@@ -100,7 +100,7 @@ namespace SecureBank.Ctf.Services
             }
 
             double ammountToPay;
-            if (_ctfOptions.CtfChallengeOptions.InvalidModel)
+            if (_ctfOptions.CtfChallengeOptions.InvalidModelStore)
             {
                 ammountToPay = buyProductReq.Price * buyProductReq.Quantity;
             }

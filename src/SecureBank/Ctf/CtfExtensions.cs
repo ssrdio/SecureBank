@@ -57,8 +57,6 @@ namespace SecureBank.Ctf
 
             services.AddScoped<IPortalSearchBL, CtfPortalSearchBL>();
 
-            services.AddScoped<IHomeBL, CtfHomeBL>();
-
             services.AddScoped<IAuthorizeService, CtfAuthorizeService>();
 
             return new CtfOptions(
@@ -76,7 +74,7 @@ namespace SecureBank.Ctf
 
             string flag = null;
 
-            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate(), CtfChallengeTypes.SqlInjection.ToChallengeNumber());
             if (ctfChallengeOptions.SqlInjection)
             {
                 CtfChallangeModel sqlInjection = new CtfChallangeModel(
@@ -91,7 +89,7 @@ namespace SecureBank.Ctf
             #endregion
             #region BrokenAuthentication
 
-            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate(), CtfChallengeTypes.WeakPassword.ToChallengeNumber());
             if (ctfChallengeOptions.WeakPassword)
             {
                 CtfChallangeModel weakPassword = new CtfChallangeModel(
@@ -106,7 +104,7 @@ namespace SecureBank.Ctf
             #endregion
             #region SensitiveDataExposure
 
-            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate(), CtfChallengeTypes.SensitiveDataExposure.ToChallengeNumber());
             if (ctfChallengeOptions.SensitiveDataExposureBalance || ctfChallengeOptions.SensitiveDataExposureProfileImage || ctfChallengeOptions.SensitiveDataExposureStore)
             {
                 CtfChallangeModel sensitiveDataExposure = new CtfChallangeModel(
@@ -118,7 +116,7 @@ namespace SecureBank.Ctf
                 ctfChallanges.Add(sensitiveDataExposure);
             }
 
-            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate(), CtfChallengeTypes.PathTraversal.ToChallengeNumber());
             if (ctfChallengeOptions.PathTraversal)
             {
                 CtfChallangeModel pathTraversal = new CtfChallangeModel(
@@ -130,7 +128,7 @@ namespace SecureBank.Ctf
                 ctfChallanges.Add(pathTraversal);
             }
 
-            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate(), CtfChallengeTypes.Enumeration.ToChallengeNumber());
             if (ctfChallengeOptions.Enumeration)
             {
                 CtfChallangeModel enumeration = new CtfChallangeModel(
@@ -145,7 +143,7 @@ namespace SecureBank.Ctf
             #endregion
             #region XXE
 
-            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate(), CtfChallengeTypes.XxeInjection.ToChallengeNumber());
             if (ctfChallengeOptions.XxeInjection)
             {
                 CtfChallangeModel xxeInjection = new CtfChallangeModel(
@@ -160,7 +158,7 @@ namespace SecureBank.Ctf
             #endregion
             #region BrokenAccesControl
 
-            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate(), CtfChallengeTypes.RegistrationRoleSet.ToChallengeNumber());
             if (ctfChallengeOptions.RegistrationRoleSet)
             {
                 CtfChallangeModel registrationRoleSet = new CtfChallangeModel(
@@ -172,7 +170,7 @@ namespace SecureBank.Ctf
                 ctfChallanges.Add(registrationRoleSet);
             }
 
-            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate(), CtfChallengeTypes.MissingAuthentication.ToChallengeNumber());
             if (ctfChallengeOptions.MissingAuthentication)
             {
                 CtfChallangeModel missingAuth = new CtfChallangeModel(
@@ -184,7 +182,7 @@ namespace SecureBank.Ctf
                 ctfChallanges.Add(missingAuth);
             }
 
-            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate(), CtfChallengeTypes.ChangeRoleInCookie.ToChallengeNumber());
             if (ctfChallengeOptions.ChangeRoleInCookie)
             {
                 CtfChallangeModel changeRoleInCookie = new CtfChallangeModel(
@@ -196,7 +194,7 @@ namespace SecureBank.Ctf
                 ctfChallanges.Add(changeRoleInCookie);
             }
 
-            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate(), CtfChallengeTypes.UnconfirmedLogin.ToChallengeNumber());
             if (ctfChallengeOptions.UnconfirmedLogin)
             {
                 CtfChallangeModel unconfirmedLogin = new CtfChallangeModel(
@@ -211,7 +209,7 @@ namespace SecureBank.Ctf
             #endregion
             #region Security Misconfiguration
 
-            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate(), CtfChallengeTypes.ExceptionHandling.ToChallengeNumber());
             if (ctfChallengeOptions.ExceptionHandlingTransactionCreate)
             {
                 CtfChallangeModel exceptionHandlingMisconfiguration = new CtfChallangeModel(
@@ -226,7 +224,7 @@ namespace SecureBank.Ctf
             #endregion
             #region XSS
 
-            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate(), CtfChallengeTypes.Xss.ToChallengeNumber());
             if (ctfChallengeOptions.TableXss || ctfChallengeOptions.PortalSearchXss)
             {
                 CtfChallangeModel xxs = new CtfChallangeModel(
@@ -241,8 +239,8 @@ namespace SecureBank.Ctf
             #endregion
             #region Miscellaneous
 
-            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
-            if (ctfChallengeOptions.InvalidModel)
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate(), CtfChallengeTypes.InvalidModel.ToChallengeNumber());
+            if (ctfChallengeOptions.InvalidModelStore || ctfChallengeOptions.InvalidModelTransaction)
             {
                 CtfChallangeModel invalidModel = new CtfChallangeModel(
                     title: ctfConfig.UseRealChallengeName ? "Invalid Model" : $"Challenge {CtfChallengeTypes.InvalidModel.ToChallengeNumber()}",
@@ -253,7 +251,7 @@ namespace SecureBank.Ctf
                 ctfChallanges.Add(invalidModel);
             }
 
-            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate(), CtfChallengeTypes.UnknownGeneration.ToChallengeNumber());
             if (ctfChallengeOptions.UnknownGeneration)
             {
                 CtfChallangeModel unknown = new CtfChallangeModel(
@@ -265,7 +263,7 @@ namespace SecureBank.Ctf
                 ctfChallanges.Add(unknown);
             }
 
-            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate(), CtfChallengeTypes.HiddenPage.ToChallengeNumber());
             if (ctfChallengeOptions.HiddenPageLoginAdmin || ctfChallengeOptions.HiddenPageRegisterAdmin)
             {
                 CtfChallangeModel hiddenPage = new CtfChallangeModel(
@@ -277,7 +275,7 @@ namespace SecureBank.Ctf
                 ctfChallanges.Add(hiddenPage);
             }
 
-            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate(), CtfChallengeTypes.Base2048Content.ToChallengeNumber());
             if (ctfChallengeOptions.Base2048Content)
             {
                 string fullFlag = $"Quisque non pulvinar libero, eget malesuada nisi. Ut molestie id arcu a scelerisque. Mauris bibendum sapien elit. {flag} " +
@@ -293,7 +291,7 @@ namespace SecureBank.Ctf
                 ctfChallanges.Add(base2048Content);
             }
 
-            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate(), CtfChallengeTypes.InvalidRedirect.ToChallengeNumber());
             if (ctfChallengeOptions.InvalidRedirect)
             {
                 CtfChallangeModel invalidRedirect = new CtfChallangeModel(
@@ -305,7 +303,7 @@ namespace SecureBank.Ctf
                 ctfChallanges.Add(invalidRedirect);
             }
 
-            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate(), CtfChallengeTypes.Swagger.ToChallengeNumber());
             if (ctfChallengeOptions.Swagger)
             {
                 CtfChallangeModel swagger = new CtfChallangeModel(
@@ -317,31 +315,31 @@ namespace SecureBank.Ctf
                 ctfChallanges.Add(swagger);
             }
 
-            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
-            if (ctfChallengeOptions.Ftp)
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate(), CtfChallengeTypes.DirectoryBrowsing.ToChallengeNumber());
+            if (ctfChallengeOptions.DirectoryBrowsing)
             {
                 CtfChallangeModel ftp = new CtfChallangeModel(
-                    title: ctfConfig.UseRealChallengeName ? "FTP" : $"challenge_{CtfChallengeTypes.Ftp.ToChallengeNumber()}",
-                    type: CtfChallengeTypes.Ftp,
+                    title: ctfConfig.UseRealChallengeName ? "DirectoryBrowsing" : $"challenge_{CtfChallengeTypes.DirectoryBrowsing.ToChallengeNumber()}",
+                    type: CtfChallengeTypes.DirectoryBrowsing,
                     flag: string.IsNullOrEmpty(ctfConfig.FtpFlag) ? flag : ctfConfig.FtpFlag,
-                    flagKey: ctfConfig.UseRealChallengeName ? "ftp" : $"challenge_{CtfChallengeTypes.Ftp.ToChallengeNumber()}",
+                    flagKey: ctfConfig.UseRealChallengeName ? "DirectoryBrowsing" : $"challenge_{CtfChallengeTypes.DirectoryBrowsing.ToChallengeNumber()}",
                     category: CtfChallangeCategories.Miscellaneous);
                 ctfChallanges.Add(ftp);
             }
 
-            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate(), CtfChallengeTypes.SimultaneousRequest.ToChallengeNumber());
             if (ctfChallengeOptions.SimultaneousRequest)
             {
                 CtfChallangeModel simultaneousRequest = new CtfChallangeModel(
-                    title: ctfConfig.UseRealChallengeName ? "simultaneousRequest" : $"challenge_{CtfChallengeTypes.SimultaneousRequest.ToChallengeNumber()}",
+                    title: ctfConfig.UseRealChallengeName ? "SimultaneousRequest" : $"challenge_{CtfChallengeTypes.SimultaneousRequest.ToChallengeNumber()}",
                     type: CtfChallengeTypes.SimultaneousRequest,
                     flag: flag,
-                    flagKey: ctfConfig.UseRealChallengeName ? "simultaneousRequest" : $"challenge_{CtfChallengeTypes.SimultaneousRequest.ToChallengeNumber()}",
+                    flagKey: ctfConfig.UseRealChallengeName ? "SimultaneousRequest" : $"challenge_{CtfChallengeTypes.SimultaneousRequest.ToChallengeNumber()}",
                     category: CtfChallangeCategories.Miscellaneous);
                 ctfChallanges.Add(simultaneousRequest);
             }
 
-            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate(), CtfChallengeTypes.reDOS.ToChallengeNumber());
             if (ctfChallengeOptions.reDOS)
             {
                 CtfChallangeModel reDos = new CtfChallangeModel(
@@ -353,7 +351,7 @@ namespace SecureBank.Ctf
                 ctfChallanges.Add(reDos);
             }
 
-            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate());
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate(), CtfChallengeTypes.FreeCredit.ToChallengeNumber());
             if (ctfChallengeOptions.FreeCredit)
             {
                 CtfChallangeModel reDos = new CtfChallangeModel(
