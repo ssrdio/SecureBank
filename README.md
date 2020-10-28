@@ -7,7 +7,7 @@ SecureBank is a FinTech application which contains all OWASP TOP 10 security vul
 
 You can read more about SecureBank and OWASP top 10 vulnerabilities [here](https://ssrd.gitbook.io/securebank/).
 
-![alt text](preview.gif "SecureBankPreview")
+![alt text](https://raw.githubusercontent.com/ssrdio/SecureBank/master/preview.gif "SecureBankPreview")
 
 # Setup
 > You can setup SecureBank application from source code, or simply pull it from [Docker Hub](https://hub.docker.com/r/ssrd/securebank).
@@ -30,7 +30,71 @@ You can read more about SecureBank and OWASP top 10 vulnerabilities [here](https
 ## Docker with multiple containers
 1. Install [Docker](https://docs.docker.com/get-docker/)
 2. Install [Docker Compose](https://docs.docker.com/compose/install/)
-3. Run `docker-compose up`
+3. Clone SecureBank `git clone https://github.com/ssrdio/SecureBank.git`
+4. Run `docker-compose up`
+
+## Docker with single container
+1. Install [Docker](https://docs.docker.com/get-docker/)
+2. Install [Docker Compose](https://docs.docker.com/compose/install/)
+3. Create `docker-compose.yml`
+```
+version: '3'
+
+services:
+    securebank:
+        image: ssrd/securebank
+        environment: 
+            - AppSettings:BaseUrl=http://localhost:1337
+            - AppSettings:Ctf:Enabled=true
+            - AppSettings:Ctf:Seed=example
+            - AppSettings:Ctf:GenerateCtfdExport=false
+            - AppSettings:Ctf:FlagFormat=ctf{{{0}}}
+#            - AppSettings:Ctf:FlagFormat=ctf{{{0}}}.challenge{1}"
+            - AppSettings:Ctf:UseRealChallengeName=true
+            - AppSettings:Ctf:Challenges:SqlInjection=true
+            - AppSettings:Ctf:Challenges:WeakPassword=true
+            - AppSettings:Ctf:Challenges:SensitiveDataExposureStore=true
+            - AppSettings:Ctf:Challenges:SensitiveDataExposureBalance=true
+            - AppSettings:Ctf:Challenges:SensitiveDataExposureProfileImage=true
+            - AppSettings:Ctf:Challenges:PathTraversal=true
+            - AppSettings:Ctf:Challenges:Enumeration=true
+            - AppSettings:Ctf:Challenges:XxeInjection=true
+            - AppSettings:Ctf:Challenges:MissingAuthentication=true
+            - AppSettings:Ctf:Challenges:RegistrationRoleSet=true
+            - AppSettings:Ctf:Challenges:ChangeRoleInCookie=true
+            - AppSettings:Ctf:Challenges:UnconfirmedLogin=true
+            - AppSettings:Ctf:Challenges:ExceptionHandlingTransactionCreate=true
+            - AppSettings:Ctf:Challenges:TableXss=true
+            - AppSettings:Ctf:Challenges:PortalSearchXss=true
+            - AppSettings:Ctf:Challenges:InvalidModelStore=true
+            - AppSettings:Ctf:Challenges:InvalidModelTransaction=true
+            - AppSettings:Ctf:Challenges:UnknownGeneration=true
+            - AppSettings:Ctf:Challenges:HiddenPageRegisterAdmin=true
+            - AppSettings:Ctf:Challenges:HiddenPageLoginAdmin=true
+            - AppSettings:Ctf:Challenges:InvalidRedirect=true
+            - AppSettings:Ctf:Challenges:DirectoryBrowsing=true
+            - AppSettings:Ctf:Challenges:Swagger=true
+            - AppSettings:Ctf:Challenges:Base2048Content=true
+            - AppSettings:Ctf:Challenges:SimultaneousRequest=true
+            - AppSettings:Ctf:Challenges:reDOS=true
+            - AppSettings:Ctf:Challenges:FreeCredit=true
+            - SeedingSettings:Seed=false
+            - SeedingSettings:Admin=admin@ssrd.io
+            - SeedingSettings:AdminPassword=admin
+            - SeedingSettings:UserPassword=test1
+        ports: 
+            - 1337:80
+#            - 1338:5000
+#            - 1025:25
+            - 1080:1080
+#            - 1433:1433
+        volumes: 
+            -  ./logs/securebank:/app/SecureBank/logs
+            -  ./logs/storeapi:/app/StoreApi/logs
+            - ./ctf:/SecureBank/Ctf
+            - ./data:/var/opt/mssql/data
+```
+4. Run `docker-compose up`
 
 ## Default users:
 ```
