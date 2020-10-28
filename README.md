@@ -49,7 +49,6 @@ services:
             - AppSettings:Ctf:Seed=example
             - AppSettings:Ctf:GenerateCtfdExport=false
             - AppSettings:Ctf:FlagFormat=ctf{{{0}}}
-#            - AppSettings:Ctf:FlagFormat=ctf{{{0}}}.challenge{1}"
             - AppSettings:Ctf:UseRealChallengeName=true
             - AppSettings:Ctf:Challenges:SqlInjection=true
             - AppSettings:Ctf:Challenges:WeakPassword=true
@@ -84,10 +83,7 @@ services:
             - SeedingSettings:UserPassword=test1
         ports: 
             - 1337:80
-#            - 1338:5000
-#            - 1025:25
             - 1080:1080
-#            - 1433:1433
         volumes: 
             -  ./logs/securebank:/app/SecureBank/logs
             -  ./logs/storeapi:/app/StoreApi/logs
