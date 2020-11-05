@@ -29,7 +29,6 @@ namespace SecureBank.Ctf.Services
         public override DataTableResp<TransactionResp> GetTransactions()
         {
             DataTableResp<TransactionResp> transactions = base.GetTransactions();
-
             if (_ctfOptions.CtfChallengeOptions.TableXss)
             {
                 bool xss = transactions.Data.Any(x => CtfConstants.XXS_KEYVORDS.Any(c =>
@@ -45,14 +44,12 @@ namespace SecureBank.Ctf.Services
                     _httpContextAccessor.HttpContext.Response.Headers.Add(xssChallange.FlagKey, xssChallange.Flag);
                 }
             }
-
             return transactions;
         }
 
         public override DataTableResp<AdminUserInfoResp> GetUsers()
         {
             DataTableResp<AdminUserInfoResp> users = base.GetUsers();
-
             if (_ctfOptions.CtfChallengeOptions.TableXss)
             {
                 bool xss = users.Data.Any(x => CtfConstants.XXS_KEYVORDS.Any(c =>

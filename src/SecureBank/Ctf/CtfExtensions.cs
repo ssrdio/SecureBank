@@ -45,6 +45,7 @@ namespace SecureBank.Ctf
             {
                 ctfOptions.CtfChallanges = ctfChallenges;
                 ctfOptions.CtfChallengeOptions = appSettings.Ctf.Challenges;
+                ctfOptions.IsCtfEnabled = true;
             });
 
             services.AddScoped<IAdminBL, CtfAdminBL>();

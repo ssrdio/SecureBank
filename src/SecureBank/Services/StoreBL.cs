@@ -16,6 +16,7 @@ namespace SecureBank.Services
     {
         protected const string TRANSACTION_REASON = "product";
         protected const string TRANSACTION_RECIVER_ID = "store";
+        private readonly TimeSpan SIMULTANEOUS_REQUESTS_WAIT_FOR = new TimeSpan(0, 0, 5);
 
         protected readonly ITransactionDAO _transactionDAO;
         protected readonly StoreAPICalls _storeAPICalls;
@@ -55,14 +56,19 @@ namespace SecureBank.Services
             return true;
         }
 
-        protected virtual Task<bool> Pay(BuyProductReq buyProductReq, string userName)
+        protected virtual async Task<bool> Pay(BuyProductReq buyProductReq, string userName)
         {
             double accountBalance = _transactionDAO.GetAccountbalance(userName);
 
             double ammountToPay = buyProductReq.Price * buyProductReq.Quantity;
+            TimeSpan sleepFor = SIMULTANEOUS_REQUESTS_WAIT_FOR;
+            if (sleepFor.TotalMilliseconds > 0)
+            {
+                 await Task.Delay(sleepFor);
+            }
             if (accountBalance < ammountToPay)
             {
-                return Task.FromResult(false);
+                return false;
             }
 
             DepositRequest depositRequest = new DepositRequest
@@ -75,7 +81,7 @@ namespace SecureBank.Services
 
             bool payResult = _transactionDAO.Pay(depositRequest);
 
-            return Task.FromResult(payResult);
+            return payResult;
         }
 
         public virtual async Task<List<PurcahseHistoryItemResp>> GetPurcahseHistory(string userName)

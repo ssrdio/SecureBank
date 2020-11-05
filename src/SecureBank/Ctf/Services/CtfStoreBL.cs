@@ -50,9 +50,9 @@ namespace SecureBank.Ctf.Services
         public async override Task<bool> BuyProduct(BuyProductReq buyProductReq, string userName)
         {
             string cacheKey = string.Format(SIMULTANEOUS_REQUESTS_KEY, userName, buyProductReq.Id);
-            if(_memoryCache.TryGetValue(cacheKey, out string value))
+            if (_memoryCache.TryGetValue(cacheKey, out string value))
             {
-                if(!_ctfOptions.CtfChallengeOptions.SimultaneousRequest)
+                if (!_ctfOptions.CtfChallengeOptions.SimultaneousRequest)
                 {
                     return false;
                 }
@@ -62,13 +62,13 @@ namespace SecureBank.Ctf.Services
 
             bool result = await base.BuyProduct(buyProductReq, userName);
 
-            if(_ctfOptions.CtfChallengeOptions.InvalidModelStore)
+            if (_ctfOptions.CtfChallengeOptions.InvalidModelStore)
             {
                 List<StoreItem> storeItems = await _storeAPICalls.GetStoreItemsAsync();
                 if (storeItems != null)
                 {
                     CtfChallangeModel invalidModelChallange = _ctfOptions.CtfChallanges
-                        .Where(x => x.Type == CtfChallengeTypes.InvalidModel)
+                        .Where(x => x.Type == CtfChallengeTypes.InvalidStoreModel)
                         .Single();
 
                     StoreItem storeItem = storeItems
@@ -93,56 +93,59 @@ namespace SecureBank.Ctf.Services
         {
             double accountBalance = _transactionDAO.GetAccountbalance(userName);
             Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            double ammountToPay;
 
-            if (_ctfOptions.CtfChallengeOptions.SimultaneousRequest)
+            ammountToPay = buyProductReq.Price * buyProductReq.Quantity;
+
+
+            List<StoreItem> storeItems = await _storeAPICalls.GetStoreItemsAsync();
+            if (storeItems == null)
             {
-                stopwatch.Start();
+                return false;
             }
 
-            double ammountToPay;
+            StoreItem storeItem = storeItems
+                .Where(x => x.Id == buyProductReq.Id)
+                .SingleOrDefault();
+            if (storeItem == null)
+            {
+                return false;
+            }
             if (_ctfOptions.CtfChallengeOptions.InvalidModelStore)
             {
-                ammountToPay = buyProductReq.Price * buyProductReq.Quantity;
+                if (storeItem.Price != buyProductReq.Price)
+                {
+                    CtfChallangeModel invalidStoreModelRequest = _ctfOptions.CtfChallanges
+                           .Where(x => x.Type == CtfChallengeTypes.InvalidStoreModel)
+                           .SingleOrDefault();
+
+                    _httpContextAccessor.HttpContext.Response.Headers.Add(invalidStoreModelRequest.FlagKey, invalidStoreModelRequest.Flag);
+                }
             }
             else
             {
-                List<StoreItem> storeItems = await _storeAPICalls.GetStoreItemsAsync();
-                if (storeItems == null)
-                {
-                    return false;
-                }
-
-                StoreItem storeItem = storeItems
-                    .Where(x => x.Id == buyProductReq.Id)
-                    .SingleOrDefault();
-                if (storeItem == null)
-                {
-                    return false;
-                }
-
                 ammountToPay = storeItem.Price * buyProductReq.Quantity;
             }
 
-            if(_ctfOptions.CtfChallengeOptions.SimultaneousRequest)
+
+            stopwatch.Stop();
+
+            TimeSpan sleepFor = SIMULTANEOUS_REQUESTS_WAIT_FOR - stopwatch.Elapsed;
+            if (sleepFor.TotalMilliseconds > 0)
             {
-                stopwatch.Stop();
-
-                TimeSpan sleepFor = SIMULTANEOUS_REQUESTS_WAIT_FOR - stopwatch.Elapsed;
-                if (sleepFor.TotalMilliseconds > 0)
-                {
-                    await Task.Delay(sleepFor);
-                }
+                await Task.Delay(sleepFor);
             }
-
             if (accountBalance < ammountToPay)
             {
                 return false;
             }
 
-            if(_ctfOptions.CtfChallengeOptions.SimultaneousRequest)
+
+            double accountBalanceAfterWait = _transactionDAO.GetAccountbalance(userName);
+            if (accountBalanceAfterWait < ammountToPay)
             {
-                double accountBalanceAfterWait = _transactionDAO.GetAccountbalance(userName);
-                if(accountBalanceAfterWait < ammountToPay)
+                if (_ctfOptions.CtfChallengeOptions.SimultaneousRequest)
                 {
                     CtfChallangeModel simultaneousRequest = _ctfOptions.CtfChallanges
                         .Where(x => x.Type == CtfChallengeTypes.SimultaneousRequest)
@@ -165,7 +168,7 @@ namespace SecureBank.Ctf.Services
 
         public override Task<List<PurcahseHistoryItemResp>> GetPurcahseHistory(string userName)
         {
-            if(userName != _httpContextAccessor.HttpContext.GetUserName())
+            if (userName != _httpContextAccessor.HttpContext.GetUserName())
             {
                 if (_ctfOptions.CtfChallengeOptions.SensitiveDataExposureStore)
                 {

@@ -59,6 +59,7 @@ namespace SecureBank.Ctf.Models
         SimultaneousRequest = 121,
         reDOS = 122,
         FreeCredit = 123,
+        InvalidStoreModel = 124,
     }
 
     public static class CtfChallengeTypesExtensions

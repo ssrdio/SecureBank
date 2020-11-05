@@ -29,7 +29,7 @@ namespace SecureBank.Filters
 
                 context.HttpContext.Response.Headers.Add(unkonwChallange.FlagKey, unkonwChallange.Flag);
             }
-            else
+            else if(ctfOptions.IsCtfEnabled)
             {
                 context.Result = new NotFoundResult();
             }

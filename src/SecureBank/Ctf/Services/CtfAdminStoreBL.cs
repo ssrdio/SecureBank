@@ -26,7 +26,6 @@ namespace SecureBank.Ctf.Services
         public override async Task<DataTableResp<StoreItem>> GetStoreItems()
         {
             DataTableResp<StoreItem> storeItems = await base.GetStoreItems();
-
             if (_ctfOptions.CtfChallengeOptions.TableXss)
             {
                 bool xss = storeItems.Data.Any(x => CtfConstants.XXS_KEYVORDS.Any(c => (x.Name?.Contains(c) ?? false) || (x.Description?.Contains(c) ?? false)));

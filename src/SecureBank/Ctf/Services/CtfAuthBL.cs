@@ -96,9 +96,9 @@ namespace SecureBank.Ctf.Services
                     return false;
                 }
             }
-            catch(Exception)
+            catch (Exception)
             {
-                if(_ctfOptions.CtfChallengeOptions.reDOS)
+                if (_ctfOptions.CtfChallengeOptions.reDOS)
                 {
                     CtfChallangeModel reDOS = _ctfOptions.CtfChallanges
                         .Where(x => x.Type == CtfChallengeTypes.reDOS)
