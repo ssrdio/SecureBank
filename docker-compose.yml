@@ -27,6 +27,7 @@ services:
       - AppSettings:Ctf:Challenges:SensitiveDataExposureStore=true
       - AppSettings:Ctf:Challenges:SensitiveDataExposureBalance=true
       - AppSettings:Ctf:Challenges:SensitiveDataExposureProfileImage=true
+      - AppSettings:Ctf:Challenges:ExceptionHandlingTransactionUpload=true
       - AppSettings:Ctf:Challenges:PathTraversal=true
       - AppSettings:Ctf:Challenges:Enumeration=true
       - AppSettings:Ctf:Challenges:XxeInjection=true

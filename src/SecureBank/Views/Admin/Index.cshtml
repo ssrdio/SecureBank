@@ -32,17 +32,17 @@
                     {
                         data: 'senderId',
                         title: 'Sender',
-                        @if (!_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
+                        @if (_ctfOptions.Value.IsCtfEnabled && !_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
                     },
                     {
                         data: 'receiverId',
                         title: 'Receiver',
-                        @if (!_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
+                        @if (_ctfOptions.Value.IsCtfEnabled && !_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
                     },
                     {
                         data: 'dateTime',
                         title: 'Transaction time',
-                        @if (!_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
+                        @if (_ctfOptions.Value.IsCtfEnabled && !_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
                     },
                     {
                         data: 'amount',
@@ -54,7 +54,7 @@
                     {
                         data: 'reason',
                         title: 'Reason',
-                        @if (!_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
+                        @if (_ctfOptions.Value.IsCtfEnabled && !_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
                     },
                     {
                         data: "id",
@@ -75,22 +75,22 @@
                     {
                         data: 'username',
                         title: 'User name',
-                        @if (!_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
+                        @if (_ctfOptions.Value.IsCtfEnabled && !_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
                     },
                     {
                         data: 'name',
                         title: 'Name',
-                        @if (!_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
+                        @if (_ctfOptions.Value.IsCtfEnabled && !_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
                     },
                     {
                         data: 'surname',
                         title: 'Surname',
-                        @if (!_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
+                        @if (_ctfOptions.Value.IsCtfEnabled && !_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
                     },
                     {
                         data: 'role',
                         title: 'Role',
-                        @if (!_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
+                        @if (_ctfOptions.Value.IsCtfEnabled && !_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
                     }
                 ]
             });

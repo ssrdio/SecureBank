@@ -50,17 +50,17 @@
                     {
                         data: 'senderId',
                         title: 'Sender',
-                        @if (!_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
+                        @if (_ctfOptions.Value.IsCtfEnabled && !_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
                     },
                     {
                         data: 'receiverId',
                         title: 'Receiver',
-                        @if (!_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
+                        @if (_ctfOptions.Value.IsCtfEnabled && !_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
                     },
                     {
                         data: 'dateTime',
                         title: 'Transaction date',
-                        @if (!_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
+                        @if (_ctfOptions.Value.IsCtfEnabled && !_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
                     },
                     {
                         data: 'amount',
@@ -72,7 +72,7 @@
                     {
                         data: 'reason',
                         title: 'Reason',
-                        @if (!_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
+                        @if (_ctfOptions.Value.IsCtfEnabled && !_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
                     },
                     {
                         data: "id",

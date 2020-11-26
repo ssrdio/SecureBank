@@ -3,7 +3,7 @@
     ViewData["Title"] = "Register";
 }
 
-@inject Microsoft.Extensions.Options.IOptions<SecureBank.Ctf.Models.CtfChallengeOptions> _ctfChallengeOptions;
+@inject Microsoft.Extensions.Options.IOptions<SecureBank.Ctf.Models.CtfOptions> _ctfOptions;
 
 
 <div class="login_wrapper">
@@ -113,14 +113,14 @@
                     $(this).removeClass('is-visible');
                 }
             });
-            @if(_ctfChallengeOptions.Value.HiddenPageRegisterAdmin)
+
+            @if(!_ctfOptions.Value.IsCtfEnabled || _ctfOptions.Value.CtfChallengeOptions.HiddenPageRegisterAdmin)
             { 
                 <text>
-
                     //$('.btnRegister').on('click', function (event) {
                     //    $.ajax({
                     //        type: "POST",
-                    //        url: "/Auth/RegisterAdmin",
+                    //        url: "/api/Auth/RegisterAdmin",
                     //        data: JSON.stringify({ "UserName": $('.UserEmail').val(), "Password": $('.Password').val() }),
                     //        contentType: 'application/json',
                     //        success: data => {
@@ -142,7 +142,7 @@
                     //        }
                     //    });
                     //});
-                    </text>
+                </text>
             }
 
             //form validation

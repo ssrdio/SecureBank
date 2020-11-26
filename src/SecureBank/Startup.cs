@@ -146,50 +146,55 @@ namespace SecureBank
 
             CtfOptions ctfOptions = app.ApplicationServices.GetRequiredService<IOptions<CtfOptions>>().Value;
 
-            if (ctfOptions?.CtfChallengeOptions?.ExceptionHandlingTransactionCreate == true)
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            app.UseDeveloperExceptionPage();
 
-            if (ctfOptions.CtfChallengeOptions.Swagger)
+            app.UseSwagger();
+            app.UseSwaggerUI(x =>
             {
-                app.UseSwagger();
-                app.UseSwaggerUI(x =>
+                x.SwaggerEndpoint("/swagger/v1/swagger.json", "SecureBank API");
+
+                if (ctfOptions.CtfChallengeOptions.Swagger)
                 {
-                    x.SwaggerEndpoint("/swagger/v1/swagger.json", "SecureBank API");
-
                     CtfChallangeModel swaggerChallange = ctfOptions.CtfChallanges
                         .Where(x => x.Type == CtfChallengeTypes.Swagger)
                         .Single();
 
                     string swaggerCssPath = "css/swagger.css";
                     string css = @$"
-                        .topbar-wrapper img[alt='Swagger UI'], .topbar-wrapper span {{
-                            visibility: hidden;
-                        }}
+                    .topbar-wrapper img[alt='Swagger UI'], .topbar-wrapper span {{
+                        visibility: hidden;
+                    }}
 
-                        .topbar-wrapper .link:after {{
-                            content: 'SecureBank';
-                            /*flag: {swaggerChallange.Flag}*/
-                            visibility: visible;
-                            display: block;
-                            position: absolute;
-                            padding: 15px;
-                            background: -moz-linear-gradient(left, #1d3ede, #01e6f8);
-                            -webkit-background-clip: text;
-                            -webkit-text-fill-color: transparent;
-                        }}";
+                    .topbar-wrapper .link:after {{
+                        content: 'SecureBank';
+                        /*flag: {swaggerChallange.Flag}*/
+                        visibility: visible;
+                        display: block;
+                        position: absolute;
+                        padding: 15px;
+                        background: -moz-linear-gradient(left, #1d3ede, #01e6f8);
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                    }}";
 
                     string fullPath = Path.Combine(env.ContentRootPath, "wwwroot", swaggerCssPath);
 
                     File.WriteAllText(fullPath, css);
-                    
+
                     x.InjectStylesheet($"/{swaggerCssPath}");
-                });
-            }
+                }
+            });
+
             app.UseStaticFiles();
 
-            if(ctfOptions.CtfChallengeOptions.DirectoryBrowsing)
+            app.UseFileServer(new FileServerOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "Documents")),
+                RequestPath = "/docs",
+                EnableDirectoryBrowsing = true,
+            });
+
+            if (ctfOptions.IsCtfEnabled && ctfOptions.CtfChallengeOptions.DirectoryBrowsing)
             {
                 CtfChallangeModel ftpChallenge = ctfOptions.CtfChallanges
                     .Where(x => x.Type == CtfChallengeTypes.DirectoryBrowsing)
@@ -198,13 +203,6 @@ namespace SecureBank
                 string fullPath = Path.Combine(env.ContentRootPath, "Documents", SecureBankConstants.DIRECTORY_BROWSING_FILE_NAME);
 
                 File.WriteAllText(fullPath, ftpChallenge.Flag + new string(Enumerable.Repeat(' ', 3245).ToArray()));
-
-                app.UseFileServer(new FileServerOptions 
-                {
-                    FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "Documents")),
-                    RequestPath = "/docs",
-                    EnableDirectoryBrowsing = true,
-                });
             }
 
             app.UseRouting();

@@ -98,7 +98,7 @@ namespace SecureBank.Controllers
         [UnknownGeneration]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,SenderId,ReceiverId,DateTime,Reason,Amount,Reference")] TransactionDBModel transactionTable)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,SenderId,ReceiverId,TransactionDateTime,Reason,Amount,Reference")] TransactionDBModel transactionTable)
         {
 
             if (id != transactionTable.Id)

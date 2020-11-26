@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SecureBank.Interfaces;
 using SecureBank.Models.User;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace SecureBank.Controllers.Api
 {

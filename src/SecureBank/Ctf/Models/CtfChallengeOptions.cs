@@ -25,6 +25,7 @@ namespace SecureBank.Ctf.Models
         public bool UnconfirmedLogin { get; set; }
 
         public bool ExceptionHandlingTransactionCreate { get; set; }
+        public bool ExceptionHandlingTransactionUpload { get; set; }
 
         public bool TableXss { get; set; }
         public bool PortalSearchXss { get; set; }

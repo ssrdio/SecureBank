@@ -20,7 +20,7 @@
         </p>
         @if (Model.SearchString?.Length > 0)
         {
-            if (_ctfOptions.Value.CtfChallengeOptions.PortalSearchXss)
+            if (!_ctfOptions.Value.IsCtfEnabled || _ctfOptions.Value.CtfChallengeOptions.PortalSearchXss)
             {
                 <p>Results for search: @Html.Raw(@Model.SearchString)</p>
             }

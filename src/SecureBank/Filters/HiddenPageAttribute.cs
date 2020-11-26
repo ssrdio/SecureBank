@@ -4,9 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using SecureBank.Ctf.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace SecureBank.Filters
 {
@@ -21,7 +19,11 @@ namespace SecureBank.Filters
         {
             CtfOptions ctfOptions = context.HttpContext.RequestServices.GetRequiredService<IOptions<CtfOptions>>().Value;
 
-            if(ctfOptions.CtfChallengeOptions.HiddenPageRegisterAdmin)
+            if(!ctfOptions.IsCtfEnabled)
+            {
+                context.Result = new OkObjectResult("Admin Registration");
+            }
+            else if(ctfOptions.CtfChallengeOptions.HiddenPageRegisterAdmin)
             {
                 CtfChallangeModel hiddenPageChallange = ctfOptions.CtfChallanges
                     .Where(x => x.Type == CtfChallengeTypes.HiddenPage)

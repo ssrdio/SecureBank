@@ -1,5 +1,4 @@
-﻿using SecureBank.DAL.DAO;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using NLog;
 using SecureBank.DAL.DBModels;
@@ -9,13 +8,9 @@ using SecureBank.Models;
 using SecureBank.Models.Auth;
 using SecureBank.Models.Transaction;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using SecureBank.Authorization;
-using Microsoft.AspNetCore.Identity;
 using System.Text.RegularExpressions;
-using Microsoft.Extensions.Primitives;
 using Microsoft.AspNetCore.Mvc;
 
 namespace SecureBank.Services
@@ -76,11 +71,21 @@ namespace SecureBank.Services
 
             string token = EncoderUtils.Base64Encode(registrationModel.UserName);
 
+            string baseUrl;
+            if(!string.IsNullOrEmpty(_appSettings.BaseUrl))
+            {
+                baseUrl = _appSettings.BaseUrl;
+            }
+            else
+            {
+                baseUrl = GetCurrentDomain();
+            }
+
             string registrationMailSubject = "Confirm email";
             string registrationMailBody = $@"
                 Hi! <br/>
                 To confirm your email please follow the 
-                <a href='{_appSettings.BaseUrl}/Auth/ConfirmRegistration?token={token}'>link</a> 
+                <a href='{baseUrl}/Auth/ConfirmRegistration?token={token}'>link</a> 
                 <br/><br/><br/>
                 Best regards!";
 

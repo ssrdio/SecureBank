@@ -3,10 +3,8 @@ using Microsoft.Extensions.Options;
 using SecureBank.Ctf.Models;
 using SecureBank.Services;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace SecureBank.Ctf.Services
@@ -35,7 +33,25 @@ namespace SecureBank.Ctf.Services
 
             if(_ctfOptions.CtfChallengeOptions.XxeInjection)
             {
-                parsedXml = base.ParseXml(xml);
+                try
+                {
+                    parsedXml = base.ParseXml(xml);
+                }
+                catch(Exception ex)
+                {
+                    if(_ctfOptions.CtfChallengeOptions.ExceptionHandlingTransactionUpload)
+                    {
+                        CtfChallangeModel exceptionHandlingChallange = _ctfOptions.CtfChallanges
+                            .Where(x => x.Type == CtfChallengeTypes.ExceptionHandling)
+                            .Single();
+
+                        throw new Exception(exceptionHandlingChallange.Flag, ex);
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
 
                 if (parsedXml != null)
                 {

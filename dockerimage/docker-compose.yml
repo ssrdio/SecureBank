@@ -24,6 +24,7 @@ services:
             - AppSettings:Ctf:Challenges:ChangeRoleInCookie=true
             - AppSettings:Ctf:Challenges:UnconfirmedLogin=true
             - AppSettings:Ctf:Challenges:ExceptionHandlingTransactionCreate=true
+            - AppSettings:Ctf:Challenges:ExceptionHandlingTransactionUpload=true
             - AppSettings:Ctf:Challenges:TableXss=true
             - AppSettings:Ctf:Challenges:PortalSearchXss=true
             - AppSettings:Ctf:Challenges:InvalidModelStore=true

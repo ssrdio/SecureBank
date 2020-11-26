@@ -24,12 +24,12 @@
                     {
                         data: 'name',
                         title: 'Name',
-                        @if (!_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
+                        @if (_ctfOptions.Value.IsCtfEnabled && !_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
                     },
                     {
                         data: 'description',
                         title: 'Description',
-                        @if (!_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
+                        @if (_ctfOptions.Value.IsCtfEnabled && !_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
                     },
                     {
                         data: 'price',
@@ -41,7 +41,7 @@
                     {
                         data: 'installments',
                         title: 'Installs',
-                        @if (!_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
+                        @if (_ctfOptions.Value.IsCtfEnabled && !_ctfOptions.Value.CtfChallengeOptions.TableXss) { <text> render: $.fn.dataTable.render.text() </text> }
                     },
                     {
                         data: "id",

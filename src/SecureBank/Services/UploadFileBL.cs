@@ -51,9 +51,9 @@ namespace SecureBank.Services
                     }
                 }
             }
-            catch(Exception)
+            catch (Exception ex)
             {
-                return null;
+                throw;
             }
             
             return result;

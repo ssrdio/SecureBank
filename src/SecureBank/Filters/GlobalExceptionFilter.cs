@@ -12,7 +12,7 @@ namespace SecureBank.Filters
     {
         private readonly ILogger _logger = LogManager.GetLogger("global_exception");
 
-        public readonly string[] ALLOWD_INTERNAL_SERVER_ERRORS = { "/api/Transaction/Create" };
+        public readonly string[] ALLOWD_INTERNAL_SERVER_ERRORS = { "/api/Transaction/Create", "/Upload/UploadTansactions" };
 
         public void OnException(ExceptionContext context)
         {
