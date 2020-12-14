@@ -181,7 +181,7 @@ namespace SecureBank.Ctf.Services
                 catch (Exception)
                 {
                     _httpContextAccessor.HttpContext.Response.Headers.Add(sqlInjectionChallange.FlagKey, sqlInjectionChallange.Flag);
-                    return null;
+                    throw;
                 }
 
                 List<TransactionResp> validTransactions = _transactionDAO.GetTransactionsCtfCheck(userName, search);
