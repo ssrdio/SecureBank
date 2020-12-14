@@ -10,13 +10,34 @@ namespace SecureBank.Filters
 {
     public class GlobalExceptionFilter : IExceptionFilter
     {
-        private readonly ILogger _logger = LogManager.GetLogger("global_exception");
-
-        public readonly string[] ALLOWD_INTERNAL_SERVER_ERRORS = { "/api/Transaction/Create", "/Upload/UploadTansactions" };
+ private readonly ILogger _logger = LogManager.GetLogger("global_exception");
 
         public void OnException(ExceptionContext context)
         {
-            if(ALLOWD_INTERNAL_SERVER_ERRORS.Any(x => x == context.HttpContext.Request.Path))
+            CtfOptions ctfOptions = context.HttpContext.RequestServices.GetRequiredService<IOptions<CtfOptions>>().Value;
+
+            List<string> allowdErrors = new List<string>();
+
+            if(ctfOptions.IsCtfEnabled)
+            {
+                if (ctfOptions.CtfChallengeOptions.ExceptionHandlingTransactionCreate)
+                {
+                    allowdErrors.Add("/api/Transaction/Create");
+                }
+
+                if (ctfOptions.CtfChallengeOptions.ExceptionHandlingTransactionUpload)
+                {
+                    allowdErrors.Add("/Upload/UploadTansactions");
+                }
+            }
+            else
+            {
+                allowdErrors.Add("/api/Transaction/Create");
+                allowdErrors.Add("/Upload/UploadTansactions");
+            }
+
+
+            if(allowdErrors.Any(x => x == context.HttpContext.Request.Path))
             {
                 //Allow developer page exception
                 return;
