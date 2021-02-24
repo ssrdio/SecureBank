@@ -84,15 +84,14 @@ services:
   mssql:
     image: mcr.microsoft.com/mssql/server
     container_name: mssql
+    user: root
     environment: 
       - ACCEPT_EULA=y
       - SA_PASSWORD=Your_Password123
     # ports: 
     #   - 1433:1433
     volumes: 
-      - mssql-data:/var/opt/mssql/backups
-      - mssql-data:/var/opt/sqlserver
-      - mssql-data:/var/opt/mssql
+      - ./data:/var/opt/mssql/data
 
   maildev:
     image: maildev/maildev:1.1.0

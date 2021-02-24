@@ -24,7 +24,7 @@ You can read more about SecureBank and OWASP top 10 vulnerabilities [here](https
 
 ## From Docker
 1. Install [Docker](https://docs.docker.com/get-docker/)
-2. Execute `docker run -d -p 80:80 -p 5000:5000 -p 1080:1080 ssrd/securebank`
+2. Execute `docker run -d -p 1337:80 -p 5000:5000 -p 1080:1080 -e 'SeedingSettings:Admin=admin@ssrd.io' -e 'SeedingSettings:AdminPassword=admin' ssrd/securebank`
 3. Open [http://localhost:80](http://localhost:80)
 
 ## Docker with multiple containers
@@ -39,7 +39,6 @@ You can read more about SecureBank and OWASP top 10 vulnerabilities [here](https
 3. Create `docker-compose.yml`
 ```
 version: '3'
-
 services:
     securebank:
         image: ssrd/securebank
@@ -78,7 +77,7 @@ services:
             - AppSettings:Ctf:Challenges:SimultaneousRequest=true
             - AppSettings:Ctf:Challenges:reDOS=true
             - AppSettings:Ctf:Challenges:FreeCredit=true
-            - SeedingSettings:Seed=false
+            - SeedingSettings:Seed=true
             - SeedingSettings:Admin=admin@ssrd.io
             - SeedingSettings:AdminPassword=admin
             - SeedingSettings:UserPassword=test1
@@ -101,14 +100,14 @@ yoda@ssrd.io:test
 tester@ssrd.io:test
 ```
 ## Ports 
-- 80 on this port SecureBank is accessible 
+- 1337 on this port SecureBank is accessible 
 - 1080 is maildev server for user registration
 - 5000 is hidden API
 
 ## CTF-Mode
 If you want to run SecureBank in CTF mode we have also prepared this option. It will create CTFd compatible export file.
 
-Run  `docker run -d -p 80:80 -p 5000:5000 -e 'AppSettings:Ctf:Enabled=true' -e 'AppSettings:Ctf:Seed=example' ssrd/securebank`
+Run  `docker run -d -p 1337:80 -p 5000:5000 -p 1080:1080 -e 'AppSettings:Ctf:Enabled=true' -e 'AppSettings:Ctf:Seed=example' -e 'SeedingSettings:Admin=admin@ssrd.io' -e 'SeedingSettings:AdminPassword=admin' ssrd/securebank`
 
 ## Custom training
 For custom training you can contact us at [training[at]ssrd.io](training@ssrd.io)

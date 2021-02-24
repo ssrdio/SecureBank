@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS securebank
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS securebank
 WORKDIR /app
 
 COPY src/SecureBank/SecureBank.csproj ./
@@ -8,7 +8,7 @@ COPY src/SecureBank/ ./
 
 RUN dotnet publish --output /app/out --configuration Release --runtime linux-x64 -p:EnvironmentName=Production;
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS storeapi
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS storeapi
 WORKDIR /app
 
 COPY src/StoreAPI/StoreAPI.csproj ./

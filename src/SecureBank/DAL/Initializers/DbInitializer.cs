@@ -105,8 +105,11 @@ namespace SecureBank.DAL.Initializers
         {
             if (_context.UserData.Any())
             {
+                _logger.Info($"Skip seeding users");
                 return null; // DB seeded
             }
+
+            _logger.Info($"Seeding users");
 
             List<UserDBModel> sampleUsers = new List<UserDBModel>
             {
