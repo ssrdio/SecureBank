@@ -22,7 +22,7 @@ On the image below you can review how the application is built from the infrastr
 ## From source
 > Make sure that you have Microsoft SQL Server DB available. You can install or run it inside docker.
 
-1. Install [.NET Core 3.1 SDK](https://dotnet.microsoft.com/download/dotnet-core/3.1)
+1. Install [.NET 5.0 SDK](https://dotnet.microsoft.com/download/dotnet/5.0)
 2. Install [Visual Studio 2019](https://visualstudio.microsoft.com/downloads/) or just run with  [Visual Studio Code](https://code.visualstudio.com/download)
 3. Clone from GitHub
 4. Navigate to directory SecureBank -> src
@@ -31,7 +31,7 @@ On the image below you can review how the application is built from the infrastr
 
 ## From Docker
 1. Install [Docker](https://docs.docker.com/get-docker/)
-2. Execute `docker run -d -p 1337:80 -p 5000:5000 -p 1080:1080 -e 'SeedingSettings:Admin=admin@ssrd.io' -e 'SeedingSettings:AdminPassword=admin' ssrd/securebank`
+2. Execute `docker run -d -p 80:80 -p 5000:5000 -p 1080:1080 -e 'SeedingSettings:Admin=admin@ssrd.io' -e 'SeedingSettings:AdminPassword=admin' ssrd/securebank`
 3. Open [http://localhost:80](http://localhost:80)
 
 ## Docker with multiple containers
@@ -50,7 +50,7 @@ services:
     securebank:
         image: ssrd/securebank
         environment: 
-            - AppSettings:BaseUrl=http://localhost:1337
+            - AppSettings:BaseUrl=http://localhost:80
             - AppSettings:Ctf:Enabled=true
             - AppSettings:Ctf:Seed=example
             - AppSettings:Ctf:GenerateCtfdExport=false
@@ -89,7 +89,7 @@ services:
             - SeedingSettings:AdminPassword=admin
             - SeedingSettings:UserPassword=test1
         ports: 
-            - 1337:80
+            - 80:80
             - 1080:1080
         volumes: 
             -  ./logs/securebank:/app/SecureBank/logs
@@ -107,14 +107,14 @@ yoda@ssrd.io:test
 tester@ssrd.io:test
 ```
 ## Ports 
-- 1337 on this port SecureBank is accessible 
+- 80 on this port SecureBank is accessible 
 - 1080 is maildev server for user registration
 - 5000 is hidden API
 
 ## CTF-Mode
 If you want to run SecureBank in CTF mode we have also prepared this option. It will create CTFd compatible export file.
 
-Run  `docker run -d -p 1337:80 -p 5000:5000 -p 1080:1080 -e 'AppSettings:Ctf:Enabled=true' -e 'AppSettings:Ctf:Seed=example' -e 'SeedingSettings:Admin=admin@ssrd.io' -e 'SeedingSettings:AdminPassword=admin' ssrd/securebank`
+Run  `docker run -d -p 80:80 -p 5000:5000 -p 1080:1080 -e 'AppSettings:Ctf:Enabled=true' -e 'AppSettings:Ctf:Seed=example' -e 'SeedingSettings:Admin=admin@ssrd.io' -e 'SeedingSettings:AdminPassword=admin' ssrd/securebank`
 
 ## Custom training
 For custom training you can contact us at [training[at]ssrd.io](training@ssrd.io)

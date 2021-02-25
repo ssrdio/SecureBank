@@ -247,7 +247,7 @@ namespace SecureBank
                 app.GenerateCtfdExport($"{AppContext.BaseDirectory}/Ctf");
             }
 
-            if (Configuration["SeedingSettings:Seed"].ToLower() == "true")
+            if (Configuration["SeedingSettings:Seed"]?.ToLower() == "true")
             {
                 if (!string.IsNullOrEmpty(Configuration["SeedingSettings:UserPassword"]))
                 {
