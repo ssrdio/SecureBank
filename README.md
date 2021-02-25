@@ -12,6 +12,10 @@ You can read more about SecureBank and OWASP top 10 vulnerabilities [here](https
 # Setup
 > You can setup SecureBank application from source code, or simply pull it from [Docker Hub](https://hub.docker.com/r/ssrd/securebank).
 
+# Infrastructure
+On the image below you can review how the application is built from the infrastructure point of view.
+![alt text](https://raw.githubusercontent.com/ssrdio/SecureBank/master/infra.png "Docker infrastructure")
+
 ## From source
 > Make sure that you have Microsoft SQL Server DB available. You can install or run it inside docker.
 
