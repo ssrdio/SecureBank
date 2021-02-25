@@ -125,16 +125,13 @@ namespace SecureBank
                 options.Filters.Add(new GlobalExceptionFilter());
             });
 
-            if (ctfOptions.CtfChallengeOptions.DirectoryBrowsing)
-            {
-                services.AddDirectoryBrowser();
-            }
+            services.AddDirectoryBrowser();
 
             services.AddSwaggerGen(x =>
             {
                 x.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "BankWeb API", Version = "v1" });
 
-                string xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml");
+                string xmlPath = Path.Combine(AppContext.BaseDirectory, $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml");
                 x.IncludeXmlComments(xmlPath);
             });
         }
@@ -187,23 +184,48 @@ namespace SecureBank
 
             app.UseStaticFiles();
 
-            app.UseFileServer(new FileServerOptions
+            FileServerOptions fileServerOptions;
+
+            if (ctfOptions.IsCtfEnabled)
             {
-                FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "Documents")),
-                RequestPath = "/docs",
-                EnableDirectoryBrowsing = true,
-            });
+                if(ctfOptions.CtfChallengeOptions.DirectoryBrowsing)
+                {
+                    CtfChallangeModel ftpChallenge = ctfOptions.CtfChallanges
+                        .Where(x => x.Type == CtfChallengeTypes.DirectoryBrowsing)
+                        .Single();
 
-            if (ctfOptions.IsCtfEnabled && ctfOptions.CtfChallengeOptions.DirectoryBrowsing)
-            {
-                CtfChallangeModel ftpChallenge = ctfOptions.CtfChallanges
-                    .Where(x => x.Type == CtfChallengeTypes.DirectoryBrowsing)
-                    .Single();
+                    string fullPath = Path.Combine(env.ContentRootPath, "Documents", SecureBankConstants.DIRECTORY_BROWSING_FILE_NAME);
 
-                string fullPath = Path.Combine(env.ContentRootPath, "Documents", SecureBankConstants.DIRECTORY_BROWSING_FILE_NAME);
+                    File.WriteAllText(fullPath, ftpChallenge.Flag + new string(Enumerable.Repeat(' ', 3245).ToArray()));
 
-                File.WriteAllText(fullPath, ftpChallenge.Flag + new string(Enumerable.Repeat(' ', 3245).ToArray()));
+                    fileServerOptions = new FileServerOptions
+                    {
+                        FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "Documents")),
+                        RequestPath = "/docs",
+                        EnableDirectoryBrowsing = true,
+                    };
+                }
+                else
+                {
+                    fileServerOptions = new FileServerOptions
+                    {
+                        FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "Documents")),
+                        RequestPath = "/docs/legal.pdf",
+                        EnableDirectoryBrowsing = false,
+                    };
+                }
             }
+            else
+            {
+                fileServerOptions = new FileServerOptions
+                {
+                    FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "Documents")),
+                    RequestPath = "/docs",
+                    EnableDirectoryBrowsing = true,
+                };
+            }
+
+            app.UseFileServer(fileServerOptions);
 
             app.UseRouting();
 
