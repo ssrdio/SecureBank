@@ -87,7 +87,7 @@ services:
             - SeedingSettings:Seed=true
             - SeedingSettings:Admin=admin@ssrd.io
             - SeedingSettings:AdminPassword=admin
-            - SeedingSettings:UserPassword=test1
+            - SeedingSettings:UserPassword=test
         ports: 
             - 80:80
             - 1080:1080
