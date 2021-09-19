@@ -103,12 +103,6 @@ namespace SecureBank.DAL.Initializers
 
         private List<string> AddUsers(string userPassword)
         {
-            if (_context.UserData.Any())
-            {
-                _logger.Info($"Skip seeding users");
-                return null; // DB seeded
-            }
-
             _logger.Info($"Seeding users");
 
             List<UserDBModel> sampleUsers = new List<UserDBModel>
@@ -129,6 +123,10 @@ namespace SecureBank.DAL.Initializers
 
             foreach (UserDBModel user in sampleUsers)
             {
+                if(_context.UserData.Any(t=>t.UserName == user.UserName))
+                {
+                    continue;
+                }
                 user.Password = userPassword;
                 user.Confirmed = true;
 

@@ -39,7 +39,7 @@ services:
             - AppSettings:Ctf:Challenges:SimultaneousRequest=true
             - AppSettings:Ctf:Challenges:reDOS=true
             - AppSettings:Ctf:Challenges:FreeCredit=true
-            - SeedingSettings:Seed=false
+            - SeedingSettings:Seed=true
             - SeedingSettings:Admin=admin@ssrd.io
             - SeedingSettings:AdminPassword=admin
             - SeedingSettings:UserPassword=test1
