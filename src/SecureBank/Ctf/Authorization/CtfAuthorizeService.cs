@@ -5,7 +5,6 @@ using SecureBank.Authorization;
 using SecureBank.Ctf.Models;
 using SecureBank.DAL.DBModels;
 using SecureBank.Helpers;
-using SecureBank.Helpers.Authorization;
 using SecureBank.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -35,7 +34,7 @@ namespace SecureBank.Ctf.Authorization
             IEnumerable<Claim> claims = _cookieService.GetClaims(context.HttpContext);
 
             string userName = claims
-                .Where(x => x.Type == CookieConstants.USERNAME_CALIM_TYPE)
+                .Where(x => x.Type == CookieConstants.USERNAME_CLAIM_TYPE)
                 .Select(x => x.Value)
                 .SingleOrDefault();
 

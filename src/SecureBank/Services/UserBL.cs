@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace SecureBank.Services
 {
@@ -49,6 +50,30 @@ namespace SecureBank.Services
             return accountBalance;
         }
 
+        public virtual async Task<bool> SetProfileImageUrl(string username, string url)
+        {
+            // User can set the profile picture as any URL, intended to get images from
+            // another server, but can actually do get requests in name of server instead.
+            // CWE-918: Server-Side Request Forgery (SSRF)
+            try
+            {
+                // Response from get request.
+                byte[] responseBytes = await new HttpClient().GetByteArrayAsync(url);
+
+                // Setting the path of file.
+                string contentRootPath = _webHostEnvironment.ContentRootPath;
+                string path = System.IO.Path.Combine(contentRootPath, BASE_FOLDER);
+                string userPath = System.IO.Path.Combine(path, username);
+
+                await System.IO.File.WriteAllBytesAsync(userPath, responseBytes);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public virtual byte[] GetProfileImage(string userName)
         {
             if (string.IsNullOrEmpty(userName))
@@ -81,7 +106,7 @@ namespace SecureBank.Services
                         data = System.IO.File.ReadAllBytes(userPath);
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     _logger.Error(ex, "Failed to get user image");
                     return Array.Empty<byte>();

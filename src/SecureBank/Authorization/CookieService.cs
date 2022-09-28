@@ -131,9 +131,9 @@ namespace SecureBank.Authorization
         {
             Claim[] claims = new[]
             {
-                new Claim(CookieConstants.AUTHENTICATED_CALIM_TYPE, "True"),
-                new Claim(CookieConstants.USERNAME_CALIM_TYPE, EncoderUtils.Base64Decode(GetUserName(cookie))),
-                new Claim(CookieConstants.ROLE_CALIM_TYPE, GetRole(cookie)),
+                new Claim(CookieConstants.AUTHENTICATED_CLAIM_TYPE, "True"),
+                new Claim(CookieConstants.USERNAME_CLAIM_TYPE, EncoderUtils.Base64Decode(GetUserName(cookie))),
+                new Claim(CookieConstants.ROLE_CLAIM_TYPE, GetRole(cookie)),
             };
 
             return claims;

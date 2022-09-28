@@ -14,7 +14,11 @@ namespace SecureBank.Controllers
 
         private readonly IAuthBL _authBL;
 
-        public AuthController(IUserDAO userDAO, ITransactionDAO transactionDAO, IEmailSender emailSender, IAuthBL authBL)
+        public AuthController(
+            IUserDAO userDAO,
+            ITransactionDAO transactionDAO,
+            IEmailSender emailSender,
+            IAuthBL authBL)
         {
             _userDAO = userDAO;
             _emailSender = emailSender;

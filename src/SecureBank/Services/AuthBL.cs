@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using SecureBank.Authorization;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace SecureBank.Services
 {
@@ -27,7 +28,8 @@ namespace SecureBank.Services
 
         protected readonly ILogger _accessLogger = LogManager.GetLogger("accessLogger");
 
-        protected const string EMAIL_REGEX_PATTERN = @"^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$";
+        protected const string EMAIL_REGEX_PATTERN =
+            @"^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$";
 
         public AuthBL(
             IUserDAO userDAO,
@@ -47,38 +49,44 @@ namespace SecureBank.Services
 
             _appSettings = appSettings.Value;
         }
+        private string ContextScheme =>
+            _httpContextAccessor.HttpContext.Request.Scheme;
+        private string ContextHost =>
+            _httpContextAccessor.HttpContext.Request.Host.ToString();
+        private string GetCurrentDomain =>
+            $"{ContextScheme}://{ContextHost}";
 
-        private string GetCurrentDomain()
-        {
-            return $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}";
-        }
 
         public virtual async Task<bool> Register(UserModel registrationModel)
         {
             bool isModelValid = ValidateRegistrationModel(registrationModel);
-            if(!isModelValid)
+            if (!isModelValid)
             {
                 return false;
             }
 
             bool registerUserResult = _userDAO.RegisterUser(registrationModel);
-            if(!registerUserResult)
+            if (!registerUserResult)
             {
                 return false;
             }
 
             bool addWelcomeBonusResult = AddwelcomeBonus(registrationModel.UserName);
+            if(addWelcomeBonusResult)
+            {
+                _accessLogger.Info($"Giving welcome bonus to {registrationModel.UserName}");
+            }
 
             string token = EncoderUtils.Base64Encode(registrationModel.UserName);
 
             string baseUrl;
-            if(!string.IsNullOrEmpty(_appSettings.BaseUrl))
+            if (!string.IsNullOrEmpty(_appSettings.BaseUrl))
             {
                 baseUrl = _appSettings.BaseUrl;
             }
             else
             {
-                baseUrl = GetCurrentDomain();
+                baseUrl = GetCurrentDomain;
             }
 
             string registrationMailSubject = "Confirm email";
@@ -89,25 +97,30 @@ namespace SecureBank.Services
                 <br/><br/><br/>
                 Best regards!";
 
-            if(_appSettings.IgnoreEmails)
+            if (_appSettings.IgnoreEmails)
             {
                 return await ConfirmRegistration(token);
             }
 
-            await _emailSender.SendEmailAsync(registrationModel.UserName, registrationMailSubject, registrationMailBody);
+            await _emailSender.SendEmailAsync(
+                registrationModel.UserName,
+                registrationMailSubject,
+                registrationMailBody);
 
             return true;
         }
 
         protected virtual bool ValidateRegistrationModel(UserModel userModel)
         {
-            if (userModel == null || string.IsNullOrEmpty(userModel.UserName) || string.IsNullOrEmpty(userModel.Password))
+            if (userModel == null ||
+                string.IsNullOrEmpty(userModel.UserName) ||
+                string.IsNullOrEmpty(userModel.Password))
             {
                 return false;
             }
 
             bool isEmailValid = Regex.IsMatch(userModel.UserName, EMAIL_REGEX_PATTERN);
-            if(!isEmailValid)
+            if (!isEmailValid)
             {
                 return false;
             }
@@ -152,7 +165,9 @@ namespace SecureBank.Services
 
         public virtual Task<UserModel> Login(UserModel loginModel)
         {
-            if (loginModel == null || string.IsNullOrEmpty(loginModel.UserName) || string.IsNullOrEmpty(loginModel.Password))
+            if (loginModel == null ||
+                string.IsNullOrEmpty(loginModel.UserName) ||
+                string.IsNullOrEmpty(loginModel.Password))
             {
                 return Task.FromResult<UserModel>(null);
             }
@@ -164,7 +179,7 @@ namespace SecureBank.Services
                 Password = loginModel.Password
             };
 
-            _accessLogger.Info($"{Newtonsoft.Json.JsonConvert.SerializeObject(accessLogModel)}");
+            _accessLogger.Info($"{JsonConvert.SerializeObject(accessLogModel)}");
 
             bool passwordValid = ValidatePassword(loginModel);
             if (!passwordValid)
@@ -175,7 +190,7 @@ namespace SecureBank.Services
             UserDBModel userModel = _userDAO.GetUser(loginModel.UserName);
 
             string cookie = _cookieService.CreateCookie(userModel, _httpContextAccessor.HttpContext);
-            if(string.IsNullOrEmpty(cookie))
+            if (string.IsNullOrEmpty(cookie))
             {
                 return Task.FromResult<UserModel>(null);
             }
@@ -202,7 +217,8 @@ namespace SecureBank.Services
 
         public virtual async Task<bool> PasswordRecovery(UserModel passwordRecoveryModel)
         {
-            if (passwordRecoveryModel == null || string.IsNullOrEmpty(passwordRecoveryModel.UserName))
+            if (passwordRecoveryModel == null ||
+                string.IsNullOrEmpty(passwordRecoveryModel.UserName))
             {
                 return false;
             }
@@ -215,14 +231,19 @@ namespace SecureBank.Services
             _userDAO.UpdatePasswordToken(passwordRecoveryModel.UserName, token);
 
             string passwordRecoverySubject = "Password recovery email";
+            string passwordRecoveryFollow =
+                $"{_appSettings.BaseUrl}/Auth/recover?token={EncoderUtils.Base64Encode(token)}";
             string passwordRecoveryBody = $@"
                 Hi! <br/>
                 You requested password recovery to complete request follow 
-                <a href='{_appSettings.BaseUrl}/Auth/recover?token={EncoderUtils.Base64Encode(token)}'>link</a>
+                <a href='{passwordRecoveryFollow}'>link</a>
                 <br/><br/><br/>
                 Best regards!";
 
-            await _emailSender.SendEmailAsync(passwordRecoveryModel.UserName, passwordRecoverySubject, passwordRecoveryBody);
+            await _emailSender.SendEmailAsync(
+                passwordRecoveryModel.UserName,
+                passwordRecoverySubject,
+                passwordRecoveryBody);
 
             return true;
         }
@@ -243,7 +264,9 @@ namespace SecureBank.Services
         }
         public virtual Task<bool> RecoverPassword(UserModel passwordRecoveryModel)
         {
-            if (passwordRecoveryModel == null || string.IsNullOrEmpty(passwordRecoveryModel.Token) || string.IsNullOrEmpty(passwordRecoveryModel.Password))
+            if (passwordRecoveryModel == null ||
+                string.IsNullOrEmpty(passwordRecoveryModel.Token) ||
+                string.IsNullOrEmpty(passwordRecoveryModel.Password))
             {
                 return Task.FromResult(false);
             }

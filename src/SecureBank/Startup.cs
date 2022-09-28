@@ -125,13 +125,16 @@ namespace SecureBank
                 options.Filters.Add(new GlobalExceptionFilter());
             });
 
-            services.AddDirectoryBrowser();
+            if (ctfOptions.CtfChallengeOptions.DirectoryBrowsing)
+            {
+                services.AddDirectoryBrowser();
+            }
 
             services.AddSwaggerGen(x =>
             {
                 x.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "BankWeb API", Version = "v1" });
 
-                string xmlPath = Path.Combine(AppContext.BaseDirectory, $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml");
+                string xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml");
                 x.IncludeXmlComments(xmlPath);
             });
         }
@@ -184,48 +187,23 @@ namespace SecureBank
 
             app.UseStaticFiles();
 
-            FileServerOptions fileServerOptions;
-
-            if (ctfOptions.IsCtfEnabled)
+            app.UseFileServer(new FileServerOptions
             {
-                if(ctfOptions.CtfChallengeOptions.DirectoryBrowsing)
-                {
-                    CtfChallangeModel ftpChallenge = ctfOptions.CtfChallanges
-                        .Where(x => x.Type == CtfChallengeTypes.DirectoryBrowsing)
-                        .Single();
+                FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "Documents")),
+                RequestPath = "/docs",
+                EnableDirectoryBrowsing = true,
+            });
 
-                    string fullPath = Path.Combine(env.ContentRootPath, "Documents", SecureBankConstants.DIRECTORY_BROWSING_FILE_NAME);
-
-                    File.WriteAllText(fullPath, ftpChallenge.Flag + new string(Enumerable.Repeat(' ', 3245).ToArray()));
-
-                    fileServerOptions = new FileServerOptions
-                    {
-                        FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "Documents")),
-                        RequestPath = "/docs",
-                        EnableDirectoryBrowsing = true,
-                    };
-                }
-                else
-                {
-                    fileServerOptions = new FileServerOptions
-                    {
-                        FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "Documents")),
-                        RequestPath = "/docs/legal.pdf",
-                        EnableDirectoryBrowsing = false,
-                    };
-                }
-            }
-            else
+            if (ctfOptions.IsCtfEnabled && ctfOptions.CtfChallengeOptions.DirectoryBrowsing)
             {
-                fileServerOptions = new FileServerOptions
-                {
-                    FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "Documents")),
-                    RequestPath = "/docs",
-                    EnableDirectoryBrowsing = true,
-                };
-            }
+                CtfChallangeModel ftpChallenge = ctfOptions.CtfChallanges
+                    .Where(x => x.Type == CtfChallengeTypes.DirectoryBrowsing)
+                    .Single();
 
-            app.UseFileServer(fileServerOptions);
+                string fullPath = Path.Combine(env.ContentRootPath, "Documents", SecureBankConstants.DIRECTORY_BROWSING_FILE_NAME);
+
+                File.WriteAllText(fullPath, ftpChallenge.Flag + new string(Enumerable.Repeat(' ', 3245).ToArray()));
+            }
 
             app.UseRouting();
 
@@ -247,7 +225,7 @@ namespace SecureBank
                 app.GenerateCtfdExport($"{AppContext.BaseDirectory}/Ctf");
             }
 
-            if (Configuration["SeedingSettings:Seed"]?.ToLower() == "true")
+            if (Configuration["SeedingSettings:Seed"].ToLower() == "true")
             {
                 if (!string.IsNullOrEmpty(Configuration["SeedingSettings:UserPassword"]))
                 {

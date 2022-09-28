@@ -30,7 +30,7 @@ namespace SecureBank.Ctf.CTFd
 
         private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
 
-        private CTFdBaseModel<CTFdAlembicVersionModel> GetAlembicVersion()
+        private static CTFdBaseModel<CTFdAlembicVersionModel> GetAlembicVersion()
         {
             CTFdAlembicVersionModel cTFdAlembicVersion = new CTFdAlembicVersionModel(
                 versionNum: ALEMBIC_VERSION_2_2_0);
@@ -38,7 +38,7 @@ namespace SecureBank.Ctf.CTFd
             return new CTFdBaseModel<CTFdAlembicVersionModel>(cTFdAlembicVersion);
         }
 
-        private CTFdBaseModel<CTFdChallengeModel> GetChallanges(List<CtfChallangeModel> ctfChallanges)
+        private static CTFdBaseModel<CTFdChallengeModel> GetChallanges(List<CtfChallangeModel> ctfChallanges)
         {
             List<CTFdChallengeModel> cTFdChallanges = ctfChallanges
                 .Select(x => new CTFdChallengeModel(
@@ -55,7 +55,7 @@ namespace SecureBank.Ctf.CTFd
             return new CTFdBaseModel<CTFdChallengeModel>(cTFdChallanges);
         }
 
-        private CTFdBaseModel<CTFdFlagModel> GetFlags(List<CtfChallangeModel> ctfChallanges)
+        private static CTFdBaseModel<CTFdFlagModel> GetFlags(List<CtfChallangeModel> ctfChallanges)
         {
             int flagIndex = 1;
 
@@ -117,7 +117,7 @@ namespace SecureBank.Ctf.CTFd
             string json = JsonConvert.SerializeObject(model, jsonSerializerSettings);
             byte[] data = Encoding.UTF8.GetBytes(json);
 
-            await zipStream.WriteAsync(data, 0, data.Length);
+            await zipStream.WriteAsync(data);
         }
     }
 }

@@ -13,15 +13,16 @@ namespace SecureBank.Filters
 {
     public class GlobalExceptionFilter : IExceptionFilter
     {
- private readonly ILogger _logger = LogManager.GetLogger("global_exception");
+        private readonly ILogger _logger = LogManager.GetLogger("global_exception");
 
         public void OnException(ExceptionContext context)
         {
-            CtfOptions ctfOptions = context.HttpContext.RequestServices.GetRequiredService<IOptions<CtfOptions>>().Value;
+            CtfOptions ctfOptions = context.HttpContext.RequestServices
+                .GetRequiredService<IOptions<CtfOptions>>().Value;
 
             List<string> allowdErrors = new List<string>();
 
-            if(ctfOptions.IsCtfEnabled)
+            if (ctfOptions.IsCtfEnabled)
             {
                 if (ctfOptions.CtfChallengeOptions.ExceptionHandlingTransactionCreate)
                 {
@@ -40,7 +41,7 @@ namespace SecureBank.Filters
             }
 
 
-            if(allowdErrors.Any(x => x == context.HttpContext.Request.Path))
+            if (allowdErrors.Any(x => x == context.HttpContext.Request.Path))
             {
                 //Allow developer page exception
                 return;

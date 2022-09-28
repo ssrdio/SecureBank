@@ -14,7 +14,8 @@ WORKDIR /app
 COPY --from=build-env /app/out ./
 
 COPY entrypoint.sh ./entrypoint.sh
-RUN chmod +x ./entrypoint.sh
 
 #ENTRYPOINT ["dotnet", "SecureBank.dll"]
-ENTRYPOINT ["./entrypoint.sh"]
+
+# More universal way of invoking entrypoint
+ENTRYPOINT ["bash","entrypoint.sh"]

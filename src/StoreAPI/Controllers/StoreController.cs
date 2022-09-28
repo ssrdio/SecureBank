@@ -17,7 +17,7 @@ namespace StoreAPI.Controllers
     public class StoreController : Controller
     {
         private readonly StoreContext _storeContext;
-        static ILogger _logger = LogManager.GetCurrentClassLogger();
+        static readonly ILogger _logger = LogManager.GetCurrentClassLogger();
 
         public StoreController(StoreContext storeContext)
         {
@@ -32,7 +32,7 @@ namespace StoreAPI.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateStoreItem([FromBody]StoreItemTable item)
+        public ActionResult CreateStoreItem([FromBody] StoreItemTable item)
         {
             _logger.Trace($"New store item added, id: {item.Id}");
             _storeContext.StoreItems.Add(item);
@@ -42,7 +42,7 @@ namespace StoreAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> EditStoreItem([FromBody]StoreItemTable item)
+        public async Task<ActionResult> EditStoreItem([FromBody] StoreItemTable item)
         {
             _logger.Trace($"Checking if store item with id {item.Id} exists, so it can be edited.");
             var storeItem = await _storeContext.StoreItems
@@ -58,7 +58,7 @@ namespace StoreAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ConfirmEditItem([FromBody]StoreItemTable item)
+        public async Task<IActionResult> ConfirmEditItem([FromBody] StoreItemTable item)
         {
             var storeItem = await _storeContext.StoreItems.FindAsync(item.Id);
             storeItem.Name = item.Name;
@@ -73,7 +73,7 @@ namespace StoreAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> DeleteItem([FromBody]StoreItemTable item)
+        public async Task<ActionResult> DeleteItem([FromBody] StoreItemTable item)
         {
             _logger.Trace($"Checking if store item with id {item.Id} exists, so it can be deleted.");
             var storeItem = await _storeContext.StoreItems
@@ -89,7 +89,7 @@ namespace StoreAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ConfirmDeleteItem([FromBody]StoreItemTable item)
+        public async Task<IActionResult> ConfirmDeleteItem([FromBody] StoreItemTable item)
         {
             var storeItem = await _storeContext.StoreItems.FindAsync(item.Id);
             _storeContext.StoreItems.Remove(storeItem);
@@ -100,11 +100,13 @@ namespace StoreAPI.Controllers
         }
 
         [HttpPost]
-        public ActionResult CheckoutBasket([FromBody]List<PurcahseItemReq> purchases)
+        public ActionResult CheckoutBasket([FromBody] List<PurcahseItemReq> purchases)
         {
-            foreach(var purchase in purchases)
+            foreach (var purchase in purchases)
             {
-                var storeItem = _storeContext.StoreItems.FirstOrDefault(t => t.Id == purchase.StoreItemId);
+                var storeItem = _storeContext.StoreItems
+                    .FirstOrDefault(t => t.Id == purchase.StoreItemId);
+
                 if (storeItem == null)
                 {
                     return BadRequest();
@@ -126,7 +128,7 @@ namespace StoreAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult GetAllPurchases([FromQuery]string user)
+        public ActionResult GetAllPurchases([FromQuery] string user)
         {
             var purchaseItems = _storeContext.Purchases
                 .Where(purchase => purchase.Username == user)
@@ -174,7 +176,7 @@ namespace StoreAPI.Controllers
         }
 
         [HttpPost]
-        public int GetPurchaseId([FromBody]User user)
+        public int GetPurchaseId([FromBody] User user)
         {
             var purchaseItems = _storeContext.Purchases
                 .Where(purchase => purchase.Username == user.Username)
@@ -187,8 +189,9 @@ namespace StoreAPI.Controllers
                 return 0;
             }
 
-            _logger.Trace($"Returned next purchaseId ({purchaseItems[purchaseItems.Count - 1].StoreItemId + 1}) for user {user.Username}.");
-            return purchaseItems[purchaseItems.Count - 1].StoreItemId + 1;
+            _logger.Trace($"Returned next purchaseId ({purchaseItems[^1].StoreItemId + 1}) "
+                + "for user {user.Username}.");
+            return purchaseItems[^1].StoreItemId + 1;
         }
     }
 }

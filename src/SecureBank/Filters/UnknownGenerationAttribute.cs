@@ -19,17 +19,20 @@ namespace SecureBank.Filters
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            CtfOptions ctfOptions = context.HttpContext.RequestServices.GetRequiredService<IOptions<CtfOptions>>().Value;
+            CtfOptions ctfOptions =
+                context.HttpContext.RequestServices
+                .GetRequiredService<IOptions<CtfOptions>>().Value;
 
-            if(ctfOptions.CtfChallengeOptions.UnknownGeneration)
+            if (ctfOptions.CtfChallengeOptions.UnknownGeneration)
             {
                 CtfChallangeModel unkonwChallange = ctfOptions.CtfChallanges
                     .Where(x => x.Type == CtfChallengeTypes.UnknownGeneration)
                     .Single();
 
-                context.HttpContext.Response.Headers.Add(unkonwChallange.FlagKey, unkonwChallange.Flag);
+                context.HttpContext.Response.Headers
+                    .Add(unkonwChallange.FlagKey, unkonwChallange.Flag);
             }
-            else if(ctfOptions.IsCtfEnabled)
+            else if (ctfOptions.IsCtfEnabled)
             {
                 context.Result = new NotFoundResult();
             }

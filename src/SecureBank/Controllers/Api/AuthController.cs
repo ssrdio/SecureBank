@@ -73,12 +73,12 @@ namespace SecureBank.Controllers.Api
             return Ok(new EmptyResult());
         }
 
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [HiddenPage]
-        [HttpPost]
-        public void RegisterAdmin([FromBody] UserModel userModel)
-        {
-        }
+        //[ApiExplorerSettings(IgnoreApi = true)]
+        //[HiddenPage]
+        //[HttpPost]
+        //public void RegisterAdmin([FromBody] UserModel userModel)
+        //{
+        //}
 
         [HttpPost]
         [ProducesResponseType(typeof(EmptyResult), StatusCodes.Status200OK)]

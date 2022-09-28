@@ -17,13 +17,15 @@ namespace SecureBank.Filters
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            CtfOptions ctfOptions = context.HttpContext.RequestServices.GetRequiredService<IOptions<CtfOptions>>().Value;
+            CtfOptions ctfOptions =
+                context.HttpContext.RequestServices
+                .GetRequiredService<IOptions<CtfOptions>>().Value;
 
-            if(!ctfOptions.IsCtfEnabled)
+            if (!ctfOptions.IsCtfEnabled)
             {
                 context.Result = new OkObjectResult("Admin Registration");
             }
-            else if(ctfOptions.CtfChallengeOptions.HiddenPageRegisterAdmin)
+            else if (ctfOptions.CtfChallengeOptions.HiddenPageRegisterAdmin)
             {
                 CtfChallangeModel hiddenPageChallange = ctfOptions.CtfChallanges
                     .Where(x => x.Type == CtfChallengeTypes.HiddenPage)

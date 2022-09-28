@@ -1,4 +1,5 @@
-﻿using NLog;
+﻿using Newtonsoft.Json;
+using NLog;
 using SecureBank.Interfaces;
 using SecureBank.Models;
 using SecureBank.Models.Store;
@@ -41,6 +42,8 @@ namespace SecureBank.Services
             StoreItem resp = await _storeAPICalls.CreateStoreItemAsync(storeItem);
             if(resp == null)
             {
+                _logger.Error("Failed to create new store item.\n"
+                    + JsonConvert.SerializeObject(storeItem) );
                 return false;
             }
 

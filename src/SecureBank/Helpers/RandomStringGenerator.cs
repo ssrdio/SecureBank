@@ -30,7 +30,7 @@ namespace SecureBank.Helpers
         }
 
         //https://andrewlock.net/why-is-string-gethashcode-different-each-time-i-run-my-program-in-net-core/
-        private int GetDeterministicHashCode(string str)
+        private static int GetDeterministicHashCode(string str)
         {
             unchecked
             {

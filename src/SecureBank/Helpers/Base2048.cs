@@ -20,19 +20,19 @@ namespace SecureBank.Helpers
         }
         private const int BITS_PER_CHAR = 11; // Base2048 is an 11-bit encoding
         private const int BITS_PER_BYTE = 8;
-        string[] pairStrings = new string[] 
+        readonly string[] pairStrings = new string[] 
         {
             "8:A[a{ÆÇÐÑØÙÞàæçðñøùþÿĐĒĦĨıĲĸĹŁŃŊŌŒŔŦŨƀƠƢƯƱǄǝǞǤǦǶǸȜȞȠȦȴʰͰʹͶ͸ͻ;Ϳ΀Α΢ΣΪαϊϏϐϗϰϳϴϷϹϺЀЂЃЄЇЈЌЏЙКйкѐђѓєїјќџѶѸ҂ҊӁӃӐӔӖӘӚӠӢӨӪӶӸӺ԰Ա՗աևא׫װ׳ؠآاـفً٠٪ٮٰٱٵٹۀہۂۃۓەۖۮ۽ۿ܀ܐܑܒܰݍަޱ޲߀߫ࠀࠖࡀ࡙ࡠ࡫ࢠࢵࢶࢾऄऩपऱलऴवऺऽाॐ॑ॠॢ०॰ॲঁঅ঍এ঑ও঩প঱ল঳শ঺ঽাৎ৏ৠৢ০৲৴৺ৼ৽ਅ਋ਏ਑ਓ਩ਪ਱ਲਲ਼ਵਸ਼ਸ਺ੜ੝੦ੰੲੵઅ઎એ઒ઓ઩પ઱લ઴વ઺ઽાૐ૑ૠૢ૦૰ૹૺଅ଍ଏ଑ଓ଩ପ଱ଲ଴ଵ଺ଽାୟୢ୦୰ୱ୸ஃ஄அ஋எ஑ஒஔக஖ங஛ஜ஝ஞ஠ண஥ந஫ம஺ௐ௑௦௳అ఍ఎ఑ఒ఩ప఺ఽాౘ౛ౠౢ౦౰౸౿ಀಁಅ಍ಎ಑ಒ಩ಪ಴ವ಺ಽಾೞ೟ೠೢ೦೰ೱೳഅ഍എ഑ഒ഻ഽാൎ൏ൔൗ൘ൢ൦൹ൺ඀අ඗ක඲ඳ඼ල඾ව෇෦෰กัาำเๆ๐๚ກ຃ຄ຅ງຉຊ຋ຍຎດຘນຠມ຤ລ຦ວຨສຬອັາຳຽ຾ເ໅໐໚ໞ໠ༀ༁༠༴ཀགྷང཈ཉཌྷཎདྷནབྷམཛྷཝཀྵཪ཭ྈྍကဦဧါဿ၊ၐၖ",
             "08" 
         };
-        Dictionary<int, char[]> lookupE = new Dictionary<int, char[]>();
-        Dictionary<char, int[]> lookupD = new Dictionary<char, int[]>();
+        readonly Dictionary<int, char[]> lookupE = new Dictionary<int, char[]>();
+        readonly Dictionary<char, int[]> lookupD = new Dictionary<char, int[]>();
         public void Decompress()
         {
             for (int i = 0; i < pairStrings.Length; i++)
             {
                 List<char> codes = new List<char>();
-                for (int j = 0; j < pairStrings[i].Length; j = j + 2)
+                for (int j = 0; j < pairStrings[i].Length; j += 2)
                 {
                     int first = pairStrings[i][j];
                     int second = pairStrings[i][j + 1];
@@ -107,8 +107,6 @@ namespace SecureBank.Helpers
             int numUint8s = 0;
             int uint8 = 0;
             int numUint8Bits = 0;
-            int z = 0;
-            int numZBits = 0;
             for (int i = 0; i < length; i++)
             {
                 char chr = text[i];
@@ -117,8 +115,8 @@ namespace SecureBank.Helpers
                     throw new Exception($"Unrecognised Bas2048 character: {chr}");
                 }
                 int[] lookup = lookupD[chr];
-                numZBits = lookup[0];
-                z = lookup[1];
+                int numZBits = lookup[0];
+                int z = lookup[1];
 
                 if (numZBits != BITS_PER_CHAR && i != length - 1)
                 {

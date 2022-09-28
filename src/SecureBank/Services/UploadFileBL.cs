@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using NLog;
 using SecureBank.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ namespace SecureBank.Services
 {
     public class UploadFileBL : IUploadFileBL
     {
+        protected readonly ILogger _accessLogger = LogManager.GetLogger("accessLogger");
         public string UploadFile(MemoryStream stream)
         {
             string xmlStringContent = Encoding.UTF8.GetString(stream.ToArray());
@@ -53,6 +55,7 @@ namespace SecureBank.Services
             }
             catch (Exception ex)
             {
+                _accessLogger.Error(ex);
                 throw;
             }
             

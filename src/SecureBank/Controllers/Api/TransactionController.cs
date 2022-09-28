@@ -37,7 +37,10 @@ namespace SecureBank.Controllers.Api
 
         [HttpGet]
         [ProducesResponseType(typeof(DataTableResp<TransactionResp>), StatusCodes.Status200OK)]
-        public IActionResult GetTransactions([FromQuery] int start, [FromQuery] int length, [FromQuery(Name = "search[value]")] string search)
+        public IActionResult GetTransactions(
+            [FromQuery] int start,
+            [FromQuery] int length,
+            [FromQuery(Name = "search[value]")] string search)
         {
             DataTableResp<TransactionResp> dataTableResp = _transactionBL.GetTransactions(
                 HttpContext.GetUserName(), search, start, length);

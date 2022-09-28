@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
-using SecureBank.Authorization;
+using SecureBank.Helpers.Authorization;
 using SecureBank.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
 
-namespace SecureBank.Helpers.Authorization
+namespace SecureBank.Authorization
 {
     public class AuthorizeService : IAuthorizeService
     {
@@ -22,26 +22,26 @@ namespace SecureBank.Helpers.Authorization
         public virtual bool AuthorizeAdmin(AuthorizationFilterContext context)
         {
             bool isCookieValid = _cookieService.ValidateCookie(context.HttpContext);
-            if(!isCookieValid)
+            if (!isCookieValid)
             {
                 return false;
             }
 
             IEnumerable<Claim> claims = _cookieService.GetClaims(context.HttpContext);
-            if(claims == null)
+            if (claims == null)
             {
                 return false;
             }
 
             Claim roleCalim = claims
-                .Where(x => x.Type == CookieConstants.ROLE_CALIM_TYPE)
+                .Where(x => x.Type == CookieConstants.ROLE_CLAIM_TYPE)
                 .SingleOrDefault();
-            if(roleCalim == null)
+            if (roleCalim == null)
             {
                 return false;
             }
 
-            if(roleCalim.Value != CookieConstants.ADMIN_ROLE_STRING)
+            if (roleCalim.Value != CookieConstants.ADMIN_ROLE_STRING)
             {
                 return false;
             }

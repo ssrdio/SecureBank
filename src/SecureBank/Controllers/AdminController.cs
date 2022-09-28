@@ -8,6 +8,7 @@ namespace SecureBank.Controllers
     public class AdminController : MvcBaseContoller
     {
         private readonly IAdminBL _adminBL;
+
         public AdminController(IAdminBL adminBL)
         {
             _adminBL = adminBL;

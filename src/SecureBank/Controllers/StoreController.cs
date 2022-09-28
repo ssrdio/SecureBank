@@ -28,9 +28,18 @@ namespace SecureBank.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> ItemDetails([FromQuery] int itemId)
+        {
+            StoreItem storeItems = await _storeBL.GetStoreItem(itemId);
+
+            return View(storeItems);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> History()
         {
-            List<PurcahseHistoryItemResp> purchasedItems = await _storeBL.GetPurcahseHistory(HttpContext.GetUserName());
+            List<PurcahseHistoryItemResp> purchasedItems =
+                await _storeBL.GetPurcahseHistory(HttpContext.GetUserName());
 
             return View(purchasedItems);
         }

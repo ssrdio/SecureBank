@@ -12,5 +12,6 @@ namespace SecureBank.Interfaces
         Task<List<PurcahseHistoryItemResp>> GetPurcahseHistory(string userName);
 
         Task<bool> BuyProduct(BuyProductReq buyProductReq, string userName);
+        Task<StoreItem> GetStoreItem(int id);
     }
 }

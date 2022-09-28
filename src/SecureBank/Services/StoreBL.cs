@@ -102,5 +102,12 @@ namespace SecureBank.Services
 
             return storeItems;
         }
+
+        public virtual async Task<StoreItem> GetStoreItem(int id)
+        {
+            List<StoreItem> storeItems = await _storeAPICalls.GetStoreItemsAsync();
+
+            return storeItems.First(item => item.Id == id);
+        }
     }
 }

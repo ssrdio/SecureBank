@@ -12,5 +12,6 @@ namespace SecureBank.Interfaces
         byte[] GetProfileImage(string userName);
 
         List<string> FindUsers(string search);
+        Task<bool> SetProfileImageUrl(string username, string url);
     }
 }

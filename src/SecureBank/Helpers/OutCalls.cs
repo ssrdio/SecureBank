@@ -17,7 +17,7 @@ namespace SecureBank.Helpers
     {
         internal static ILogger _logger = LogManager.GetCurrentClassLogger();
         protected HttpClient _client = new HttpClient();
-        private string _baseUrl = "";
+        private readonly string _baseUrl = "";
 
         public OutCalls(string serviceUrl)
         {
@@ -40,7 +40,9 @@ namespace SecureBank.Helpers
             try
             {
                 string postData = JsonConvert.SerializeObject(obj);
-                HttpResponseMessage response = await _client.PostAsync(_baseUrl + url, new StringContent(postData, Encoding.UTF8, "application/json"));
+                HttpResponseMessage response = await _client.PostAsync(
+                    _baseUrl + url,
+                    new StringContent(postData, Encoding.UTF8, "application/json"));
                 string responseContent = await response.Content.ReadAsStringAsync();
 
                 if (response.IsSuccessStatusCode)
