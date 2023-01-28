@@ -56,7 +56,7 @@ namespace SecureBank.Ctf.Services
                     return false;
                 }
 
-                CtfChallangeModel invalidModelChallenge = _ctfOptions.CtfChallanges
+                CtfChallengeModel invalidModelChallenge = _ctfOptions.CtfChallanges
                     .Where(x => x.Type == CtfChallengeTypes.InvalidModel)
                     .Single();
 
@@ -98,7 +98,7 @@ namespace SecureBank.Ctf.Services
                         }
                         catch (Exception ex)
                         {
-                            CtfChallangeModel exceptionHandlingChallange = _ctfOptions.CtfChallanges
+                            CtfChallengeModel exceptionHandlingChallange = _ctfOptions.CtfChallanges
                                 .Where(x => x.Type == CtfChallengeTypes.ExceptionHandling)
                                 .Single();
 
@@ -121,7 +121,7 @@ namespace SecureBank.Ctf.Services
             {
                 if(transaction.ReceiverId == SecureBankConstants.CREDIT_USERNAME)
                 {
-                    CtfChallangeModel freeCredit = _ctfOptions.CtfChallanges
+                    CtfChallengeModel freeCredit = _ctfOptions.CtfChallanges
                         .Where(x => x.Type == CtfChallengeTypes.FreeCredit)
                         .SingleOrDefault();
 
@@ -149,7 +149,7 @@ namespace SecureBank.Ctf.Services
             {
                 if (_ctfOptions.CtfChallengeOptions.Enumeration)
                 {
-                    CtfChallangeModel enumerationChallange = _ctfOptions.CtfChallanges
+                    CtfChallengeModel enumerationChallange = _ctfOptions.CtfChallanges
                         .Where(x => x.Type == CtfChallengeTypes.Enumeration)
                         .Single();
 
@@ -170,7 +170,7 @@ namespace SecureBank.Ctf.Services
 
             if (_ctfOptions.CtfChallengeOptions.SqlInjection)
             {
-                CtfChallangeModel sqlInjectionChallange = _ctfOptions.CtfChallanges
+                CtfChallengeModel sqlInjectionChallange = _ctfOptions.CtfChallanges
                     .Where(x => x.Type == CtfChallengeTypes.SqlInjection)
                     .Single();
 
@@ -213,7 +213,7 @@ namespace SecureBank.Ctf.Services
                     (x.SenderId?.Contains(c) ?? false) || (x.ReceiverId?.Contains(c) ?? false) || (x.Reason?.Contains(c) ?? false) || (x.Reference?.Contains(c) ?? false)));
                 if (xss)
                 {
-                    CtfChallangeModel xxsChallange = _ctfOptions.CtfChallanges
+                    CtfChallengeModel xxsChallange = _ctfOptions.CtfChallanges
                         .Where(x => x.Type == CtfChallengeTypes.Xss)
                         .Single();
 
@@ -232,7 +232,7 @@ namespace SecureBank.Ctf.Services
 
         public override List<TransactionsByDayResp> GetTransactionsByDay(string userName)
         {
-            CtfChallangeModel sqlInjectionChallange = _ctfOptions.CtfChallanges
+            CtfChallengeModel sqlInjectionChallange = _ctfOptions.CtfChallanges
                 .Where(x => x.Type == CtfChallengeTypes.SqlInjection)
                 .Single();
 
@@ -287,7 +287,7 @@ namespace SecureBank.Ctf.Services
             {
                 if (_ctfOptions.CtfChallengeOptions.UnconfirmedLogin)
                 {
-                    CtfChallangeModel ctfChallangeModel = _ctfOptions.CtfChallanges
+                    CtfChallengeModel ctfChallangeModel = _ctfOptions.CtfChallanges
                         .Where(x => x.Type == CtfChallengeTypes.UnconfirmedLogin)
                         .SingleOrDefault();
 

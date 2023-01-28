@@ -27,7 +27,7 @@ namespace SecureBank.Filters
             }
             else if (ctfOptions.CtfChallengeOptions.HiddenPageRegisterAdmin)
             {
-                CtfChallangeModel hiddenPageChallange = ctfOptions.CtfChallanges
+                CtfChallengeModel hiddenPageChallange = ctfOptions.CtfChallenges
                     .Where(x => x.Type == CtfChallengeTypes.HiddenPage)
                     .Single();
 

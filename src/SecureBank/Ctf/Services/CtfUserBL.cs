@@ -50,7 +50,7 @@ namespace SecureBank.Ctf.Services
             {
                 if(userName != loggedInUserName)
                 {
-                    CtfChallangeModel sensitiveDataExposure = _ctfOptions.CtfChallanges
+                    CtfChallengeModel sensitiveDataExposure = _ctfOptions.CtfChallanges
                         .Where(x => x.Type == CtfChallengeTypes.SensitiveDataExposure)
                         .Single();
 
@@ -73,7 +73,7 @@ namespace SecureBank.Ctf.Services
             {
                 if (userName != null && CTF_FILES.Contains(userName))
                 {
-                    CtfChallangeModel pathTraversal = _ctfOptions.CtfChallanges
+                    CtfChallengeModel pathTraversal = _ctfOptions.CtfChallanges
                         .Where(x => x.Type == CtfChallengeTypes.PathTraversal)
                         .Single();
 
@@ -92,7 +92,7 @@ namespace SecureBank.Ctf.Services
             {
                 if (userName != loggedInUserName)
                 {
-                    CtfChallangeModel sensitiveDataExposure = _ctfOptions.CtfChallanges
+                    CtfChallengeModel sensitiveDataExposure = _ctfOptions.CtfChallanges
                         .Where(x => x.Type == CtfChallengeTypes.SensitiveDataExposure)
                         .Single();
 

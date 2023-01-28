@@ -48,11 +48,11 @@ namespace SecureBank.Ctf.Authorization
                 {
                     CtfOptions ctfOptions = context.HttpContext.RequestServices.GetRequiredService<IOptions<CtfOptions>>().Value;
 
-                    CtfChallangeModel ctfChallange = ctfOptions.CtfChallanges
+                    CtfChallengeModel ctfChallenge = ctfOptions.CtfChallenges
                         .Where(x => x.Type == CtfChallengeTypes.ChangeRoleInCookie)
                         .Single();
 
-                    context.HttpContext.Response.Headers.Add(ctfChallange.FlagKey, ctfChallange.Flag);
+                    context.HttpContext.Response.Headers.Add(ctfChallenge.FlagKey, ctfChallenge.Flag);
                 }
             }
             else
@@ -75,7 +75,7 @@ namespace SecureBank.Ctf.Authorization
 
             if (ctfOptions.CtfChallengeOptions.MissingAuthentication)
             {
-                CtfChallangeModel missingAuth = ctfOptions.CtfChallanges
+                CtfChallengeModel missingAuth = ctfOptions.CtfChallenges
                     .Where(x => x.Type == CtfChallengeTypes.MissingAuthentication)
                     .Single();
 

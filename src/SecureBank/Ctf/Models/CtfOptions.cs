@@ -8,7 +8,7 @@ namespace SecureBank.Ctf.Models
     public class CtfOptions
     {
         public bool IsCtfEnabled { get; set; }
-        public List<CtfChallangeModel> CtfChallanges { get; set; }
+        public List<CtfChallengeModel> CtfChallenges { get; set; }
 
         public CtfChallengeOptions CtfChallengeOptions { get; set; }
 
@@ -16,9 +16,9 @@ namespace SecureBank.Ctf.Models
         {
         }
 
-        public CtfOptions(List<CtfChallangeModel> ctfChallanges, CtfChallengeOptions ctfChallengeOptions)
+        public CtfOptions(List<CtfChallengeModel> ctfChallenges, CtfChallengeOptions ctfChallengeOptions)
         {
-            CtfChallanges = ctfChallanges;
+            CtfChallenges = ctfChallenges;
             CtfChallengeOptions = ctfChallengeOptions;
         }
     }

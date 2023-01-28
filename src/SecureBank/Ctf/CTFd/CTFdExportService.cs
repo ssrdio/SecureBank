@@ -17,10 +17,10 @@ namespace SecureBank.Ctf.CTFd
     {
         private const string ALEMBIC_VERSION_2_2_0 = "080d29b15cd3";
 
-        private const int CTFD_CHALLANGE_VALUE = 10;
+        private const int CTFD_CHALLENGE_VALUE = 10;
 
-        private const string CTFD_CHALLANGE_TYPE = "standard";
-        private const string CTFD_CHALLANGE_STATE = "visible";
+        private const string CTFD_CHALLENGE_TYPE = "standard";
+        private const string CTFD_CHALLENGE_STATE = "visible";
 
         private const string CTFD_FLAG_TYPE = "static";
 
@@ -38,28 +38,28 @@ namespace SecureBank.Ctf.CTFd
             return new CTFdBaseModel<CTFdAlembicVersionModel>(cTFdAlembicVersion);
         }
 
-        private static CTFdBaseModel<CTFdChallengeModel> GetChallanges(List<CtfChallangeModel> ctfChallanges)
+        private static CTFdBaseModel<CTFdChallengeModel> GetChallenges(List<CtfChallengeModel> ctfChallenges)
         {
-            List<CTFdChallengeModel> cTFdChallanges = ctfChallanges
+            List<CTFdChallengeModel> cTFdChallenges = ctfChallenges
                 .Select(x => new CTFdChallengeModel(
                     id: (int)x.Type,
                     name: x.Title,
                     description: "",
                     maxAttempts: 0,
-                    value: CTFD_CHALLANGE_VALUE,
+                    value: CTFD_CHALLENGE_VALUE,
                     category: x.Category.ToString(),
-                    type: CTFD_CHALLANGE_TYPE,
-                    state: CTFD_CHALLANGE_STATE))
+                    type: CTFD_CHALLENGE_TYPE,
+                    state: CTFD_CHALLENGE_STATE))
                 .ToList();
 
-            return new CTFdBaseModel<CTFdChallengeModel>(cTFdChallanges);
+            return new CTFdBaseModel<CTFdChallengeModel>(cTFdChallenges);
         }
 
-        private static CTFdBaseModel<CTFdFlagModel> GetFlags(List<CtfChallangeModel> ctfChallanges)
+        private static CTFdBaseModel<CTFdFlagModel> GetFlags(List<CtfChallengeModel> ctfChallenges)
         {
             int flagIndex = 1;
 
-            List<CTFdFlagModel> cTFdFlags = ctfChallanges
+            List<CTFdFlagModel> cTFdFlags = ctfChallenges
                 .Select(x => new CTFdFlagModel(
                     id: flagIndex++,
                     challengeId: (int)x.Type,
@@ -71,7 +71,7 @@ namespace SecureBank.Ctf.CTFd
             return new CTFdBaseModel<CTFdFlagModel>(cTFdFlags);
         }
 
-        public async Task Export(string path, List<CtfChallangeModel> ctfChallanges)
+        public async Task Export(string path, List<CtfChallengeModel> ctfChallenges)
         {
             if (!Directory.Exists(path))
             {
@@ -94,16 +94,16 @@ namespace SecureBank.Ctf.CTFd
             CTFdBaseModel<CTFdAlembicVersionModel> alembicVersion = GetAlembicVersion();
             await WriteZipDbEntry(zipArchive, ALEMBIC_VERSION_ENTRY_NAME, alembicVersion);
 
-            CTFdBaseModel<CTFdChallengeModel> challanges = GetChallanges(ctfChallanges);
-            await WriteZipDbEntry(zipArchive, CHALLENGES_ENTRY_NAME, challanges);
+            CTFdBaseModel<CTFdChallengeModel> challenges = GetChallenges(ctfChallenges);
+            await WriteZipDbEntry(zipArchive, CHALLENGES_ENTRY_NAME, challenges);
 
-            CTFdBaseModel<CTFdFlagModel> flags = GetFlags(ctfChallanges);
+            CTFdBaseModel<CTFdFlagModel> flags = GetFlags(ctfChallenges);
             await WriteZipDbEntry(zipArchive, FLAGS_ENTRY_NAME, flags);
         }
 
         private static async Task WriteZipDbEntry<T>(ZipArchive zipArchive, string entryName, CTFdBaseModel<T> model)
         {
-            JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
+            JsonSerializerSettings jsonSerializeSettings = new JsonSerializerSettings
             {
                 ContractResolver = new DefaultContractResolver
                 {
@@ -114,7 +114,7 @@ namespace SecureBank.Ctf.CTFd
 
             using Stream zipStream = zipArchive.CreateEntry(entryName, CompressionLevel.Fastest).Open();
 
-            string json = JsonConvert.SerializeObject(model, jsonSerializerSettings);
+            string json = JsonConvert.SerializeObject(model, jsonSerializeSettings);
             byte[] data = Encoding.UTF8.GetBytes(json);
 
             await zipStream.WriteAsync(data);

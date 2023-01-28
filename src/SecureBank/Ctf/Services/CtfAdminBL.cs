@@ -37,11 +37,11 @@ namespace SecureBank.Ctf.Services
                     || (x.ReceiverSurname?.Contains(c) ?? false)));
                 if (xss)
                 {
-                    CtfChallangeModel xssChallange = _ctfOptions.CtfChallanges
+                    CtfChallengeModel xssChallenge = _ctfOptions.CtfChallenges
                         .Where(x => x.Type == CtfChallengeTypes.Xss)
                         .Single();
 
-                    _httpContextAccessor.HttpContext.Response.Headers.Add(xssChallange.FlagKey, xssChallange.Flag);
+                    _httpContextAccessor.HttpContext.Response.Headers.Add(xssChallenge.FlagKey, xssChallenge.Flag);
                 }
             }
             return transactions;
@@ -56,11 +56,11 @@ namespace SecureBank.Ctf.Services
                     (x.Name?.Contains(c) ?? false) || (x.Surname?.Contains(c) ?? false) || (x.Username?.Contains(c) ?? false)));
                 if (xss)
                 {
-                    CtfChallangeModel xxsChallange = _ctfOptions.CtfChallanges
+                    CtfChallengeModel xxsChallenge = _ctfOptions.CtfChallenges
                         .Where(x => x.Type == CtfChallengeTypes.Xss)
                         .Single();
 
-                    _httpContextAccessor.HttpContext.Response.Headers.Add(xxsChallange.FlagKey, xxsChallange.Flag);
+                    _httpContextAccessor.HttpContext.Response.Headers.Add(xxsChallenge.FlagKey, xxsChallenge.Flag);
                 }
             }
 

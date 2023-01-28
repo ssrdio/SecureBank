@@ -67,7 +67,7 @@ namespace SecureBank.Ctf.Services
                 List<StoreItem> storeItems = await _storeAPICalls.GetStoreItemsAsync();
                 if (storeItems != null)
                 {
-                    CtfChallangeModel invalidModelChallange = _ctfOptions.CtfChallanges
+                    CtfChallengeModel invalidModelChallange = _ctfOptions.CtfChallenges
                         .Where(x => x.Type == CtfChallengeTypes.InvalidStoreModel)
                         .Single();
 
@@ -116,7 +116,7 @@ namespace SecureBank.Ctf.Services
             {
                 if (storeItem.Price != buyProductReq.Price)
                 {
-                    CtfChallangeModel invalidStoreModelRequest = _ctfOptions.CtfChallanges
+                    CtfChallengeModel invalidStoreModelRequest = _ctfOptions.CtfChallenges
                            .Where(x => x.Type == CtfChallengeTypes.InvalidStoreModel)
                            .SingleOrDefault();
 
@@ -147,7 +147,7 @@ namespace SecureBank.Ctf.Services
             {
                 if (_ctfOptions.CtfChallengeOptions.SimultaneousRequest)
                 {
-                    CtfChallangeModel simultaneousRequest = _ctfOptions.CtfChallanges
+                    CtfChallengeModel simultaneousRequest = _ctfOptions.CtfChallenges
                         .Where(x => x.Type == CtfChallengeTypes.SimultaneousRequest)
                         .SingleOrDefault();
 
@@ -172,7 +172,7 @@ namespace SecureBank.Ctf.Services
             {
                 if (_ctfOptions.CtfChallengeOptions.SensitiveDataExposureStore)
                 {
-                    CtfChallangeModel sensitiveDataExpusure = _ctfOptions.CtfChallanges
+                    CtfChallengeModel sensitiveDataExpusure = _ctfOptions.CtfChallenges
                         .Where(x => x.Type == CtfChallengeTypes.SensitiveDataExposure)
                         .Single();
 

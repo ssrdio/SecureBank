@@ -155,7 +155,7 @@ namespace SecureBank
 
                 if (ctfOptions.CtfChallengeOptions.Swagger)
                 {
-                    CtfChallangeModel swaggerChallange = ctfOptions.CtfChallanges
+                    CtfChallengeModel swaggerChallange = ctfOptions.CtfChallanges
                         .Where(x => x.Type == CtfChallengeTypes.Swagger)
                         .Single();
 
@@ -196,7 +196,7 @@ namespace SecureBank
 
             if (ctfOptions.IsCtfEnabled && ctfOptions.CtfChallengeOptions.DirectoryBrowsing)
             {
-                CtfChallangeModel ftpChallenge = ctfOptions.CtfChallanges
+                CtfChallengeModel ftpChallenge = ctfOptions.CtfChallanges
                     .Where(x => x.Type == CtfChallengeTypes.DirectoryBrowsing)
                     .Single();
 

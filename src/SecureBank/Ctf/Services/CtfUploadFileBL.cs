@@ -41,7 +41,7 @@ namespace SecureBank.Ctf.Services
                 {
                     if(_ctfOptions.CtfChallengeOptions.ExceptionHandlingTransactionUpload)
                     {
-                        CtfChallangeModel exceptionHandlingChallange = _ctfOptions.CtfChallanges
+                        CtfChallengeModel exceptionHandlingChallange = _ctfOptions.CtfChallenges
                             .Where(x => x.Type == CtfChallengeTypes.ExceptionHandling)
                             .Single();
 
@@ -61,7 +61,7 @@ namespace SecureBank.Ctf.Services
                     }
                     catch (Exception)
                     {
-                        CtfChallangeModel xxeChallange = _ctfOptions.CtfChallanges
+                        CtfChallengeModel xxeChallange = _ctfOptions.CtfChallenges
                             .Where(x => x.Type == CtfChallengeTypes.XxeInjection)
                             .Single();
 

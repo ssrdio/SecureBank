@@ -50,7 +50,7 @@ namespace SecureBank.Ctf.Services
             {
                 if (_ctfOptions.CtfChallengeOptions.WeakPassword)
                 {
-                    CtfChallangeModel weakPasswordChallenge = _ctfOptions.CtfChallanges
+                    CtfChallengeModel weakPasswordChallenge = _ctfOptions.CtfChallenges
                         .Where(x => x.Type == CtfChallengeTypes.WeakPassword)
                         .Single();
 
@@ -66,7 +66,7 @@ namespace SecureBank.Ctf.Services
             {
                 if (_ctfOptions.CtfChallengeOptions.RegistrationRoleSet)
                 {
-                    CtfChallangeModel registrationRoleSetChallange = _ctfOptions.CtfChallanges
+                    CtfChallengeModel registrationRoleSetChallange = _ctfOptions.CtfChallenges
                         .Where(x => x.Type == CtfChallengeTypes.RegistrationRoleSet)
                         .Single();
 
@@ -100,7 +100,7 @@ namespace SecureBank.Ctf.Services
             {
                 if (_ctfOptions.CtfChallengeOptions.reDOS)
                 {
-                    CtfChallangeModel reDOS = _ctfOptions.CtfChallanges
+                    CtfChallengeModel reDOS = _ctfOptions.CtfChallenges
                         .Where(x => x.Type == CtfChallengeTypes.reDOS)
                         .Single();
 
@@ -131,7 +131,7 @@ namespace SecureBank.Ctf.Services
             {
                 if (_ctfOptions.CtfChallengeOptions.InvalidRedirect)
                 {
-                    CtfChallangeModel invalidRedirect = _ctfOptions.CtfChallanges
+                    CtfChallengeModel invalidRedirect = _ctfOptions.CtfChallenges
                         .Where(x => x.Type == CtfChallengeTypes.InvalidRedirect)
                         .Single();
 
@@ -154,7 +154,7 @@ namespace SecureBank.Ctf.Services
             }
 
 
-            CtfChallangeModel hiddenPageModel = _ctfOptions.CtfChallanges
+            CtfChallengeModel hiddenPageModel = _ctfOptions.CtfChallenges
                 .Where(x => x.Type == CtfChallengeTypes.HiddenPage)
                 .SingleOrDefault();
 

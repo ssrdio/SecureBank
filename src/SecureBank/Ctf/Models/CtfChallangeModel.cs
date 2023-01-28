@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace SecureBank.Ctf.Models
 {
-    public class CtfChallangeModel
+    public class CtfChallengeModel
     {
         public string Title { get; set; }
         public CtfChallengeTypes Type { get; set; }
@@ -13,9 +13,9 @@ namespace SecureBank.Ctf.Models
         public string Flag { get; set; }
         public string FlagKey { get; set; }
 
-        public CtfChallangeCategories Category { get; set; }
+        public CtfChallengeCategories Category { get; set; }
 
-        public CtfChallangeModel(string title, CtfChallengeTypes type, string flag, string flagKey, CtfChallangeCategories category)
+        public CtfChallengeModel(string title, CtfChallengeTypes type, string flag, string flagKey, CtfChallengeCategories category)
         {
             Title = title;
             Type = type;
@@ -70,13 +70,13 @@ namespace SecureBank.Ctf.Models
         }
     }
 
-    public enum CtfChallangeCategories
+    public enum CtfChallengeCategories
     {
         Injection = 1,
         BrokenAuthentication = 2,
         SensitiveDataExposure = 3,
         XXE = 4,
-        BrokenAccesControl = 5,
+        BrokenAccessControl = 5,
         SecurityMisconfiguration = 6,
         XSS = 7,
         InsecureDeserialization = 8,

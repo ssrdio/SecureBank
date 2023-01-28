@@ -25,7 +25,7 @@ namespace SecureBank.Filters
 
             if (ctfOptions.CtfChallengeOptions.UnknownGeneration)
             {
-                CtfChallangeModel unkonwChallange = ctfOptions.CtfChallanges
+                CtfChallengeModel unkonwChallange = ctfOptions.CtfChallenges
                     .Where(x => x.Type == CtfChallengeTypes.UnknownGeneration)
                     .Single();
 

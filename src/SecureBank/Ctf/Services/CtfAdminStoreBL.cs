@@ -31,7 +31,7 @@ namespace SecureBank.Ctf.Services
                 bool xss = storeItems.Data.Any(x => CtfConstants.XXS_KEYVORDS.Any(c => (x.Name?.Contains(c) ?? false) || (x.Description?.Contains(c) ?? false)));
                 if (xss)
                 {
-                    CtfChallangeModel xxsChallange = _ctfOptions.CtfChallanges
+                    CtfChallengeModel xxsChallange = _ctfOptions.CtfChallenges
                         .Where(x => x.Type == CtfChallengeTypes.Xss)
                         .Single();
 
