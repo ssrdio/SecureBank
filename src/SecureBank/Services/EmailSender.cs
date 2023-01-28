@@ -17,9 +17,9 @@ namespace SecureBank.Services
         private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
         private readonly AppSettings _appSettings;
 
-        public EmailSender(IOptions<AppSettings> appsettings)
+        public EmailSender(IOptions<AppSettings> appSettings)
         {
-            _appSettings = appsettings.Value;
+            _appSettings = appSettings.Value;
         }
 
         public Task SendEmailAsync(string email, string subject, string htmlMessage)

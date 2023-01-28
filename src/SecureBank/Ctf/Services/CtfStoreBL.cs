@@ -24,7 +24,7 @@ namespace SecureBank.Ctf.Services
         /// username
         /// productId
         /// </summary>
-        private const string SIMULTANEOUS_REQUESTS_KEY = "simultenous_{0}_{1}";
+        private const string SIMULTANEOUS_REQUESTS_KEY = "simultaneous_{0}_{1}";
 
         private readonly TimeSpan SIMULTANEOUS_REQUESTS_WAIT_FOR = new TimeSpan(0, 0, 1);
         private readonly TimeSpan LOCK_BUY_REQUEST_FOR = new TimeSpan(0, 0, 1);
@@ -67,7 +67,7 @@ namespace SecureBank.Ctf.Services
                 List<StoreItem> storeItems = await _storeAPICalls.GetStoreItemsAsync();
                 if (storeItems != null)
                 {
-                    CtfChallengeModel invalidModelChallange = _ctfOptions.CtfChallenges
+                    CtfChallengeModel invalidModelChallenge = _ctfOptions.CtfChallenges
                         .Where(x => x.Type == CtfChallengeTypes.InvalidStoreModel)
                         .Single();
 
@@ -78,7 +78,7 @@ namespace SecureBank.Ctf.Services
                     {
                         if (storeItem.Price != buyProductReq.Price)
                         {
-                            _httpContextAccessor.HttpContext.Response.Headers.Add(invalidModelChallange.FlagKey, invalidModelChallange.Flag);
+                            _httpContextAccessor.HttpContext.Response.Headers.Add(invalidModelChallenge.FlagKey, invalidModelChallenge.Flag);
                         }
                     }
                 }
@@ -91,12 +91,12 @@ namespace SecureBank.Ctf.Services
 
         protected override async Task<bool> Pay(BuyProductReq buyProductReq, string userName)
         {
-            double accountBalance = _transactionDAO.GetAccountbalance(userName);
+            double accountBalance = _transactionDAO.GetAccountBalance(userName);
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            double ammountToPay;
+            double amountToPay;
 
-            ammountToPay = buyProductReq.Price * buyProductReq.Quantity;
+            amountToPay = buyProductReq.Price * buyProductReq.Quantity;
 
 
             List<StoreItem> storeItems = await _storeAPICalls.GetStoreItemsAsync();
@@ -125,7 +125,7 @@ namespace SecureBank.Ctf.Services
             }
             else
             {
-                ammountToPay = storeItem.Price * buyProductReq.Quantity;
+                amountToPay = storeItem.Price * buyProductReq.Quantity;
             }
 
 
@@ -136,14 +136,14 @@ namespace SecureBank.Ctf.Services
             {
                 await Task.Delay(sleepFor);
             }
-            if (accountBalance < ammountToPay)
+            if (accountBalance < amountToPay)
             {
                 return false;
             }
 
 
-            double accountBalanceAfterWait = _transactionDAO.GetAccountbalance(userName);
-            if (accountBalanceAfterWait < ammountToPay)
+            double accountBalanceAfterWait = _transactionDAO.GetAccountBalance(userName);
+            if (accountBalanceAfterWait < amountToPay)
             {
                 if (_ctfOptions.CtfChallengeOptions.SimultaneousRequest)
                 {
@@ -157,7 +157,7 @@ namespace SecureBank.Ctf.Services
 
             DepositRequest depositRequest = new DepositRequest
             {
-                Amount = ammountToPay,
+                Amount = amountToPay,
                 Reason = TRANSACTION_REASON,
                 ReceiverId = TRANSACTION_RECIVER_ID,
                 SenderId = userName
@@ -166,17 +166,17 @@ namespace SecureBank.Ctf.Services
             return _transactionDAO.Pay(depositRequest);
         }
 
-        public override Task<List<PurcahseHistoryItemResp>> GetPurcahseHistory(string userName)
+        public override Task<List<PurcahseHistoryItemResp>> GetPurchaseHistory(string userName)
         {
             if (userName != _httpContextAccessor.HttpContext.GetUserName())
             {
                 if (_ctfOptions.CtfChallengeOptions.SensitiveDataExposureStore)
                 {
-                    CtfChallengeModel sensitiveDataExpusure = _ctfOptions.CtfChallenges
+                    CtfChallengeModel sensitiveDataExposure = _ctfOptions.CtfChallenges
                         .Where(x => x.Type == CtfChallengeTypes.SensitiveDataExposure)
                         .Single();
 
-                    _httpContextAccessor.HttpContext.Response.Headers.Add(sensitiveDataExpusure.FlagKey, sensitiveDataExpusure.Flag);
+                    _httpContextAccessor.HttpContext.Response.Headers.Add(sensitiveDataExposure.FlagKey, sensitiveDataExposure.Flag);
                 }
                 else
                 {
@@ -184,7 +184,7 @@ namespace SecureBank.Ctf.Services
                 }
             }
 
-            return base.GetPurcahseHistory(userName);
+            return base.GetPurchaseHistory(userName);
         }
     }
 }

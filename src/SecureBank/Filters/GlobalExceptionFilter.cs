@@ -31,13 +31,13 @@ namespace SecureBank.Filters
 
                 if (ctfOptions.CtfChallengeOptions.ExceptionHandlingTransactionUpload)
                 {
-                    allowdErrors.Add("/Upload/UploadTansactions");
+                    allowdErrors.Add("/Upload/UploadTransactions");
                 }
             }
             else
             {
                 allowdErrors.Add("/api/Transaction/Create");
-                allowdErrors.Add("/Upload/UploadTansactions");
+                allowdErrors.Add("/Upload/UploadTransactions");
             }
 
 

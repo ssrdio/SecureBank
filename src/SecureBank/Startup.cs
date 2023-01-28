@@ -155,7 +155,7 @@ namespace SecureBank
 
                 if (ctfOptions.CtfChallengeOptions.Swagger)
                 {
-                    CtfChallengeModel swaggerChallange = ctfOptions.CtfChallanges
+                    CtfChallengeModel swaggerChallenge = ctfOptions.CtfChallenges
                         .Where(x => x.Type == CtfChallengeTypes.Swagger)
                         .Single();
 
@@ -167,7 +167,7 @@ namespace SecureBank
 
                     .topbar-wrapper .link:after {{
                         content: 'SecureBank';
-                        /*flag: {swaggerChallange.Flag}*/
+                        /*flag: {swaggerChallenge.Flag}*/
                         visibility: visible;
                         display: block;
                         position: absolute;
@@ -196,7 +196,7 @@ namespace SecureBank
 
             if (ctfOptions.IsCtfEnabled && ctfOptions.CtfChallengeOptions.DirectoryBrowsing)
             {
-                CtfChallengeModel ftpChallenge = ctfOptions.CtfChallanges
+                CtfChallengeModel ftpChallenge = ctfOptions.CtfChallenges
                     .Where(x => x.Type == CtfChallengeTypes.DirectoryBrowsing)
                     .Single();
 

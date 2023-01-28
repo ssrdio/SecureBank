@@ -15,7 +15,7 @@ namespace SecureBank.Ctf.CTFd.Models
         public string Category { get; set; }
         public string Type { get; set; }
         public string State { get; set; }
-        public CTFdChallengePrequsites Requirements { get; set; }
+        public CTFdChallengePerquisites Requirements { get; set; }
 
         public CTFdChallengeModel(long id, string name, string description, int maxAttempts, int value, string category,
             string type, string state)
@@ -30,11 +30,11 @@ namespace SecureBank.Ctf.CTFd.Models
             State = state;
         }
 
-        public class CTFdChallengePrequsites
+        public class CTFdChallengePerquisites
         {
             public List<long> Prerequisites { get; set; }
 
-            public CTFdChallengePrequsites(List<long> prerequisites)
+            public CTFdChallengePerquisites(List<long> prerequisites)
             {
                 Prerequisites = prerequisites;
             }

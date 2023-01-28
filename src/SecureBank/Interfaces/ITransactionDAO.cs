@@ -10,7 +10,7 @@ namespace SecureBank.Interfaces
     public interface ITransactionDAO
     {
         TransactionDBModel Get(int id);
-        double GetAccountbalance(string userName);
+        double GetAccountBalance(string userName);
         List<TransactionResp> GetTransactions();
         RevenueAndExpenses GetRevenueAndExpenses(string myUsername);
         List<TransactionsByDayResp> GetTransactionsByDay(string myUsername);

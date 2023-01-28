@@ -25,9 +25,9 @@ namespace SecureBank.Services
 
             loremIpsumText = loremIpsumText.ToLower();
 
-            string[] splited = loremIpsumText.Split(" ");
+            string[] split = loremIpsumText.Split(" ");
 
-            portalSearchModel.Results = splited
+            portalSearchModel.Results = split
                 .Where(t => t.StartsWith(search.ToLower()))
                 .ToList();
 

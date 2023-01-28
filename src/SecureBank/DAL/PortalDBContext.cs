@@ -18,7 +18,7 @@ namespace SecureBank.DAL
         public DbSet<SessionDBModel> Sessions { get; set; }
         public DbSet<TransactionDBModel> Transactions { get; set; }
 
-        public DbSet<TransactionsByDayResp> TransactionsGroupdByDay { get; set; }
+        public DbSet<TransactionsByDayResp> TransactionsGroupedByDay { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

@@ -32,7 +32,7 @@ namespace SecureBank.Ctf.Services
                     bool hasXss = CtfConstants.XXS_KEYVORDS.Any(x => search.ToUpper().Contains(x.ToUpper()));
                     if (hasXss)
                     {
-                        CtfChallengeModel xssChallenge = _ctfOptions.CtfChallanges
+                        CtfChallengeModel xssChallenge = _ctfOptions.CtfChallenges
                             .Where(x => x.Type == CtfChallengeTypes.Xss)
                             .Single();
 

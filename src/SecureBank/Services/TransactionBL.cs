@@ -39,7 +39,7 @@ namespace SecureBank.Services
                 return false;
             }
 
-            double accountBalance = _transactionDAO.GetAccountbalance(transaction.SenderId);
+            double accountBalance = _transactionDAO.GetAccountBalance(transaction.SenderId);
             if (accountBalance < 0)
             {
                 return false;

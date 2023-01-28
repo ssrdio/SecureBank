@@ -42,7 +42,7 @@ namespace SecureBank.Services
 
         public virtual AccountBalanceResp GetAmount(string userName)
         {
-            double balance = _transactionDAO.GetAccountbalance(userName);
+            double balance = _transactionDAO.GetAccountBalance(userName);
 
             AccountBalanceResp accountBalance = new AccountBalanceResp(
                 balance: Math.Round(balance, 3));

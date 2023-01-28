@@ -10,6 +10,6 @@ namespace SecureBank.DAL.DBModels
     {
         [Key]
         public string UserId { get; set; }
-        public double AvaliableFunds { get; set; }
+        public double AvailableFunds { get; set; }
     }
 }

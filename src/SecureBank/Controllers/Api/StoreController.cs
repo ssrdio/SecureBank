@@ -38,7 +38,7 @@ namespace SecureBank.Controllers.Api
                 username = HttpContext.GetUserName();
             }
 
-            List<PurcahseHistoryItemResp> history = await _storeBL.GetPurcahseHistory(username);
+            List<PurcahseHistoryItemResp> history = await _storeBL.GetPurchaseHistory(username);
 
             return Ok(history);
         }

@@ -66,11 +66,11 @@ namespace SecureBank.Ctf.Services
             {
                 if (_ctfOptions.CtfChallengeOptions.RegistrationRoleSet)
                 {
-                    CtfChallengeModel registrationRoleSetChallange = _ctfOptions.CtfChallenges
+                    CtfChallengeModel registrationRoleSetChallenge = _ctfOptions.CtfChallenges
                         .Where(x => x.Type == CtfChallengeTypes.RegistrationRoleSet)
                         .Single();
 
-                    _httpContextAccessor.HttpContext.Response.Headers.Add(registrationRoleSetChallange.FlagKey, registrationRoleSetChallange.Flag);
+                    _httpContextAccessor.HttpContext.Response.Headers.Add(registrationRoleSetChallenge.FlagKey, registrationRoleSetChallenge.Flag);
                 }
                 else
                 {

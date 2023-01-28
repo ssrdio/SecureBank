@@ -27,11 +27,11 @@ namespace SecureBank.Filters
             }
             else if (ctfOptions.CtfChallengeOptions.HiddenPageRegisterAdmin)
             {
-                CtfChallengeModel hiddenPageChallange = ctfOptions.CtfChallenges
+                CtfChallengeModel hiddenPageChallenge = ctfOptions.CtfChallenges
                     .Where(x => x.Type == CtfChallengeTypes.HiddenPage)
                     .Single();
 
-                context.Result = new OkObjectResult(hiddenPageChallange.Flag);
+                context.Result = new OkObjectResult(hiddenPageChallenge.Flag);
             }
             else
             {

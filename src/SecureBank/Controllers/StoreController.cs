@@ -39,7 +39,7 @@ namespace SecureBank.Controllers
         public async Task<IActionResult> History()
         {
             List<PurcahseHistoryItemResp> purchasedItems =
-                await _storeBL.GetPurcahseHistory(HttpContext.GetUserName());
+                await _storeBL.GetPurchaseHistory(HttpContext.GetUserName());
 
             return View(purchasedItems);
         }

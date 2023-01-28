@@ -26,7 +26,7 @@ namespace SecureBank.DAL.DAO
                 .SingleOrDefault();
         }
 
-        public virtual double GetAccountbalance(string userName)
+        public virtual double GetAccountBalance(string userName)
         {
             double income = _customerContext.Transactions.Where(t => t.ReceiverId == userName).Sum(t => t.Amount);
             double outcome = _customerContext.Transactions.Where(t => t.SenderId == userName).Sum(t => t.Amount);
@@ -72,7 +72,7 @@ namespace SecureBank.DAL.DAO
                     WHERE senderId='{myUsername}'
                     GROUP BY TransactionDateTime";
 
-            List<TransactionsByDayResp> withdrawals = _customerContext.TransactionsGroupdByDay
+            List<TransactionsByDayResp> withdrawals = _customerContext.TransactionsGroupedByDay
                 .FromSqlRaw(withdrawalQuery)
                 .ToList();
 
@@ -82,7 +82,7 @@ namespace SecureBank.DAL.DAO
                     WHERE receiverId='{myUsername}'
                     GROUP BY TransactionDateTime";
 
-            List<TransactionsByDayResp> deposits = _customerContext.TransactionsGroupdByDay
+            List<TransactionsByDayResp> deposits = _customerContext.TransactionsGroupedByDay
                 .FromSqlRaw(depositQuery)
                 .ToList();
 

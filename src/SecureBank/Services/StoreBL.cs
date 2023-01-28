@@ -58,15 +58,15 @@ namespace SecureBank.Services
 
         protected virtual async Task<bool> Pay(BuyProductReq buyProductReq, string userName)
         {
-            double accountBalance = _transactionDAO.GetAccountbalance(userName);
+            double accountBalance = _transactionDAO.GetAccountBalance(userName);
 
-            double ammountToPay = buyProductReq.Price * buyProductReq.Quantity;
+            double amountToPay = buyProductReq.Price * buyProductReq.Quantity;
             TimeSpan sleepFor = SIMULTANEOUS_REQUESTS_WAIT_FOR;
             if (sleepFor.TotalMilliseconds > 0)
             {
                  await Task.Delay(sleepFor);
             }
-            if (accountBalance < ammountToPay)
+            if (accountBalance < amountToPay)
             {
                 return false;
             }
@@ -84,7 +84,7 @@ namespace SecureBank.Services
             return payResult;
         }
 
-        public virtual async Task<List<PurcahseHistoryItemResp>> GetPurcahseHistory(string userName)
+        public virtual async Task<List<PurcahseHistoryItemResp>> GetPurchaseHistory(string userName)
         {
             UserInfoReq userInfoReq = new UserInfoReq
             {

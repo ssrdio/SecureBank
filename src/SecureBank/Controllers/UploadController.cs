@@ -18,7 +18,7 @@ namespace SecureBank.Controllers
             _uploadFileBL = uploadFileBL;
         }
 
-        public async Task<IActionResult> UploadTansactions()
+        public async Task<IActionResult> UploadTransactions()
         {
             ViewBag.Success = false;
 

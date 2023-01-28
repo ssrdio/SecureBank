@@ -56,7 +56,7 @@ namespace SecureBank.Ctf.Services
                     return false;
                 }
 
-                CtfChallengeModel invalidModelChallenge = _ctfOptions.CtfChallanges
+                CtfChallengeModel invalidModelChallenge = _ctfOptions.CtfChallenges
                     .Where(x => x.Type == CtfChallengeTypes.InvalidModel)
                     .Single();
 
@@ -98,11 +98,11 @@ namespace SecureBank.Ctf.Services
                         }
                         catch (Exception ex)
                         {
-                            CtfChallengeModel exceptionHandlingChallange = _ctfOptions.CtfChallanges
+                            CtfChallengeModel exceptionHandlingChallenge = _ctfOptions.CtfChallenges
                                 .Where(x => x.Type == CtfChallengeTypes.ExceptionHandling)
                                 .Single();
 
-                            throw new Exception(exceptionHandlingChallange.Flag, ex);
+                            throw new Exception(exceptionHandlingChallenge.Flag, ex);
                         }
                     }
                     else
@@ -121,7 +121,7 @@ namespace SecureBank.Ctf.Services
             {
                 if(transaction.ReceiverId == SecureBankConstants.CREDIT_USERNAME)
                 {
-                    CtfChallengeModel freeCredit = _ctfOptions.CtfChallanges
+                    CtfChallengeModel freeCredit = _ctfOptions.CtfChallenges
                         .Where(x => x.Type == CtfChallengeTypes.FreeCredit)
                         .SingleOrDefault();
 
@@ -149,11 +149,11 @@ namespace SecureBank.Ctf.Services
             {
                 if (_ctfOptions.CtfChallengeOptions.Enumeration)
                 {
-                    CtfChallengeModel enumerationChallange = _ctfOptions.CtfChallanges
+                    CtfChallengeModel enumerationChallenge = _ctfOptions.CtfChallenges
                         .Where(x => x.Type == CtfChallengeTypes.Enumeration)
                         .Single();
 
-                    _httpContextAccessor.HttpContext.Response.Headers.Add(enumerationChallange.FlagKey, enumerationChallange.Flag);
+                    _httpContextAccessor.HttpContext.Response.Headers.Add(enumerationChallenge.FlagKey, enumerationChallenge.Flag);
                 }
                 else
                 {
@@ -170,7 +170,7 @@ namespace SecureBank.Ctf.Services
 
             if (_ctfOptions.CtfChallengeOptions.SqlInjection)
             {
-                CtfChallengeModel sqlInjectionChallange = _ctfOptions.CtfChallanges
+                CtfChallengeModel sqlInjectionChallenge = _ctfOptions.CtfChallenges
                     .Where(x => x.Type == CtfChallengeTypes.SqlInjection)
                     .Single();
 
@@ -180,7 +180,7 @@ namespace SecureBank.Ctf.Services
                 }
                 catch (Exception)
                 {
-                    _httpContextAccessor.HttpContext.Response.Headers.Add(sqlInjectionChallange.FlagKey, sqlInjectionChallange.Flag);
+                    _httpContextAccessor.HttpContext.Response.Headers.Add(sqlInjectionChallenge.FlagKey, sqlInjectionChallenge.Flag);
                     throw;
                 }
 
@@ -188,7 +188,7 @@ namespace SecureBank.Ctf.Services
 
                 if (validTransactions.Count != transactions.Count)
                 {
-                    _httpContextAccessor.HttpContext.Response.Headers.Add(sqlInjectionChallange.FlagKey, sqlInjectionChallange.Flag);
+                    _httpContextAccessor.HttpContext.Response.Headers.Add(sqlInjectionChallenge.FlagKey, sqlInjectionChallenge.Flag);
                 }
                 else
                 {
@@ -196,7 +196,7 @@ namespace SecureBank.Ctf.Services
                     {
                         if (!validTransactions.Any(x => x.IsEqual(transaction)))
                         {
-                            _httpContextAccessor.HttpContext.Response.Headers.Add(sqlInjectionChallange.FlagKey, sqlInjectionChallange.Flag);
+                            _httpContextAccessor.HttpContext.Response.Headers.Add(sqlInjectionChallenge.FlagKey, sqlInjectionChallenge.Flag);
                             break;
                         }
                     }
@@ -213,11 +213,11 @@ namespace SecureBank.Ctf.Services
                     (x.SenderId?.Contains(c) ?? false) || (x.ReceiverId?.Contains(c) ?? false) || (x.Reason?.Contains(c) ?? false) || (x.Reference?.Contains(c) ?? false)));
                 if (xss)
                 {
-                    CtfChallengeModel xxsChallange = _ctfOptions.CtfChallanges
+                    CtfChallengeModel xxsChallenge = _ctfOptions.CtfChallenges
                         .Where(x => x.Type == CtfChallengeTypes.Xss)
                         .Single();
 
-                    _httpContextAccessor.HttpContext.Response.Headers.Add(xxsChallange.FlagKey, xxsChallange.Flag);
+                    _httpContextAccessor.HttpContext.Response.Headers.Add(xxsChallenge.FlagKey, xxsChallenge.Flag);
                 }
             }
 
@@ -232,7 +232,7 @@ namespace SecureBank.Ctf.Services
 
         public override List<TransactionsByDayResp> GetTransactionsByDay(string userName)
         {
-            CtfChallengeModel sqlInjectionChallange = _ctfOptions.CtfChallanges
+            CtfChallengeModel sqlInjectionChallenge = _ctfOptions.CtfChallenges
                 .Where(x => x.Type == CtfChallengeTypes.SqlInjection)
                 .Single();
 
@@ -246,7 +246,7 @@ namespace SecureBank.Ctf.Services
                 }
                 catch (Exception)
                 {
-                    _httpContextAccessor.HttpContext.Response.Headers.Add(sqlInjectionChallange.FlagKey, sqlInjectionChallange.Flag);
+                    _httpContextAccessor.HttpContext.Response.Headers.Add(sqlInjectionChallenge.FlagKey, sqlInjectionChallenge.Flag);
                     return null;
                 }
 
@@ -254,7 +254,7 @@ namespace SecureBank.Ctf.Services
 
                 if (validTransactions.Count != transactions.Count)
                 {
-                    _httpContextAccessor.HttpContext.Response.Headers.Add(sqlInjectionChallange.FlagKey, sqlInjectionChallange.Flag);
+                    _httpContextAccessor.HttpContext.Response.Headers.Add(sqlInjectionChallenge.FlagKey, sqlInjectionChallenge.Flag);
                 }
                 else
                 {
@@ -262,7 +262,7 @@ namespace SecureBank.Ctf.Services
                     {
                         if (!validTransactions.Any(x => x.IsEqual(transaction)))
                         {
-                            _httpContextAccessor.HttpContext.Response.Headers.Add(sqlInjectionChallange.FlagKey, sqlInjectionChallange.Flag);
+                            _httpContextAccessor.HttpContext.Response.Headers.Add(sqlInjectionChallenge.FlagKey, sqlInjectionChallenge.Flag);
                             break;
                         }
                     }
@@ -287,11 +287,11 @@ namespace SecureBank.Ctf.Services
             {
                 if (_ctfOptions.CtfChallengeOptions.UnconfirmedLogin)
                 {
-                    CtfChallengeModel ctfChallangeModel = _ctfOptions.CtfChallanges
+                    CtfChallengeModel ctfChallengeModel = _ctfOptions.CtfChallenges
                         .Where(x => x.Type == CtfChallengeTypes.UnconfirmedLogin)
                         .SingleOrDefault();
 
-                    actionContext.ModelState.AddModelError(string.Empty, ctfChallangeModel.Flag);
+                    actionContext.ModelState.AddModelError(string.Empty, ctfChallengeModel.Flag);
                 }
             }
 

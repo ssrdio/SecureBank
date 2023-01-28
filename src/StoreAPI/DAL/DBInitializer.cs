@@ -26,8 +26,8 @@ namespace StoreAPI.DAL
                 }
                 catch (Exception ex)
                 {
-                    ILoggerFactory loggerfactory = services.GetRequiredService<ILoggerFactory>();
-                    ILogger logger = loggerfactory.CreateLogger(typeof(DBInitializer));
+                    ILoggerFactory loggerFactory = services.GetRequiredService<ILoggerFactory>();
+                    ILogger logger = loggerFactory.CreateLogger(typeof(DBInitializer));
 
                     logger.LogError(ex, "An error occurred while seeding the database.");
                     return;
@@ -44,8 +44,8 @@ namespace StoreAPI.DAL
                 var services = scope.ServiceProvider;
 
 
-                ILoggerFactory loggerfactory = services.GetRequiredService<ILoggerFactory>();
-                ILogger logger = loggerfactory.CreateLogger(typeof(DBInitializer));
+                ILoggerFactory loggerFactory = services.GetRequiredService<ILoggerFactory>();
+                ILogger logger = loggerFactory.CreateLogger(typeof(DBInitializer));
 
                 try
                 {

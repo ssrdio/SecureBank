@@ -89,13 +89,13 @@ namespace SecureBank.Services
         {
             string url = "AdminGetAllPurchases";
 
-            List<PurcahseHistoryItemResp> purcahseHistory = await _outCalls.GetData<List<PurcahseHistoryItemResp>>(url);
-            if (purcahseHistory == null)
+            List<PurcahseHistoryItemResp> purchaseHistory = await _outCalls.GetData<List<PurcahseHistoryItemResp>>(url);
+            if (purchaseHistory == null)
             {
                 return new List<PurcahseHistoryItemResp>();
             }
 
-            return purcahseHistory;
+            return purchaseHistory;
         }
 
         public Task<int> GetPurchaseIdAsync(UserInfoReq user)

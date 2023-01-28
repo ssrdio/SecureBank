@@ -41,11 +41,11 @@ namespace SecureBank.Ctf.Services
                 {
                     if(_ctfOptions.CtfChallengeOptions.ExceptionHandlingTransactionUpload)
                     {
-                        CtfChallengeModel exceptionHandlingChallange = _ctfOptions.CtfChallenges
+                        CtfChallengeModel exceptionHandlingChallenge = _ctfOptions.CtfChallenges
                             .Where(x => x.Type == CtfChallengeTypes.ExceptionHandling)
                             .Single();
 
-                        throw new Exception(exceptionHandlingChallange.Flag, ex);
+                        throw new Exception(exceptionHandlingChallenge.Flag, ex);
                     }
                     else
                     {
@@ -61,13 +61,13 @@ namespace SecureBank.Ctf.Services
                     }
                     catch (Exception)
                     {
-                        CtfChallengeModel xxeChallange = _ctfOptions.CtfChallenges
+                        CtfChallengeModel xxeChallenge = _ctfOptions.CtfChallenges
                             .Where(x => x.Type == CtfChallengeTypes.XxeInjection)
                             .Single();
 
                         if (CTF_XEE_FILES.Any(x => xml.Contains(x)))
                         {
-                            _httpContextAccessor.HttpContext.Response.Headers.Add(xxeChallange.FlagKey, xxeChallange.Flag);
+                            _httpContextAccessor.HttpContext.Response.Headers.Add(xxeChallenge.FlagKey, xxeChallenge.Flag);
                         }
                     }
                 }

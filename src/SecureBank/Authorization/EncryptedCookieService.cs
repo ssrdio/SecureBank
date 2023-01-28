@@ -37,11 +37,11 @@ namespace SecureBank.Authorization
             random.NextBytes(byteArray);
 
             string cookieHash = Sha256HashUtils.ComputeSha256Hash(byteArray);
-            string inrole = user.Role.ToString();
+            string inRole = user.Role.ToString();
 
             if (user.Role > ADMIN_ROLE)
             {
-                inrole = ADMIN_ROLE_COOKIE_VALUE;
+                inRole = ADMIN_ROLE_COOKIE_VALUE;
             }
 
             IUserDAO userDAO = context.RequestServices.GetRequiredService<IUserDAO>();
@@ -51,7 +51,7 @@ namespace SecureBank.Authorization
                 return null;
             }
 
-            string allCookie = string.Format(COOKIE_FORMAT, EncoderUtils.Base64Encode(user.UserName), cookieHash, inrole);
+            string allCookie = string.Format(COOKIE_FORMAT, EncoderUtils.Base64Encode(user.UserName), cookieHash, inRole);
 
             string encodedCookie = _protector.Protect(allCookie);
 

@@ -71,7 +71,7 @@ namespace SecureBank.Services
                 return false;
             }
 
-            bool addWelcomeBonusResult = AddwelcomeBonus(registrationModel.UserName);
+            bool addWelcomeBonusResult = AddWelcomeBonus(registrationModel.UserName);
             if(addWelcomeBonusResult)
             {
                 _accessLogger.Info($"Giving welcome bonus to {registrationModel.UserName}");
@@ -128,7 +128,7 @@ namespace SecureBank.Services
             return true;
         }
 
-        private bool AddwelcomeBonus(string username)
+        private bool AddWelcomeBonus(string username)
         {
             DepositRequest depositRequest = new DepositRequest
             {

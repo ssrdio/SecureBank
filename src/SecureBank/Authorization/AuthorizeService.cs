@@ -33,15 +33,15 @@ namespace SecureBank.Authorization
                 return false;
             }
 
-            Claim roleCalim = claims
+            Claim roleClaim = claims
                 .Where(x => x.Type == CookieConstants.ROLE_CLAIM_TYPE)
                 .SingleOrDefault();
-            if (roleCalim == null)
+            if (roleClaim == null)
             {
                 return false;
             }
 
-            if (roleCalim.Value != CookieConstants.ADMIN_ROLE_STRING)
+            if (roleClaim.Value != CookieConstants.ADMIN_ROLE_STRING)
             {
                 return false;
             }
