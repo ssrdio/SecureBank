@@ -29,7 +29,7 @@ namespace SecureBank.Services
         protected readonly ILogger _accessLogger = LogManager.GetLogger("accessLogger");
 
         protected const string EMAIL_REGEX_PATTERN =
-            @"^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$";
+            @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
 
         public AuthBL(
             IUserDAO userDAO,
