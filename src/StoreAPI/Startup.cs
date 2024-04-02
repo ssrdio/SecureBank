@@ -28,7 +28,7 @@ namespace StoreAPI
             if (storeDbSettings != null && !String.IsNullOrEmpty(storeDbSettings.Database))
             {
                 // configure mssql
-                string storeConnectionString = string.Format("Server={0},{1};Database={2};User Id={3};Password={4}",
+                string storeConnectionString = string.Format("Server={0},{1};Database={2};User Id={3};Password={4};TrustServerCertificate=True",
                   storeDbSettings.Server,
                   storeDbSettings.ServerPort,
                   storeDbSettings.Database,
