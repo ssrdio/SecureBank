@@ -364,6 +364,21 @@ namespace SecureBank.Ctf
                 ctfChallenges.Add(reDos);
             }
             #endregion
+            #region InsecureDeserialization
+
+            flag = string.Format(ctfConfig.FlagFormat, stringGenerator.Generate(), CtfChallengeTypes.InsecureDeserialization.ToChallengeNumber());
+            if (ctfChallengeOptions.InsecureDeserialization)
+            {
+                CtfChallengeModel insecureDeserialization = new CtfChallengeModel(
+                    title: ctfConfig.UseRealChallengeName ? "Insecure Deserialization" : $"Challenge {CtfChallengeTypes.InsecureDeserialization.ToChallengeNumber()}",
+                    type: CtfChallengeTypes.InsecureDeserialization,
+                    flag: flag,
+                    flagKey: ctfConfig.UseRealChallengeName ? "insecure_deserialization" : $"challenge_{CtfChallengeTypes.InsecureDeserialization.ToChallengeNumber()}",
+                    category: CtfChallengeCategories.Miscellaneous);
+                ctfChallenges.Add(insecureDeserialization);
+            }
+
+            #endregion
 
             return ctfChallenges;
         }

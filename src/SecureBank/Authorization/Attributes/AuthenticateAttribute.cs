@@ -17,7 +17,6 @@ namespace SecureBank.Helpers.Authorization.Attributes
         {
             IAuthorizeService authorizeService = (IAuthorizeService)context.HttpContext.RequestServices.GetService(typeof(IAuthorizeService));
             authorizeService.AuthorizeNormal(context);
-            context.Result = new InsecureAllowUnauthorizedResult();
         }
     }
 }

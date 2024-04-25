@@ -46,5 +46,6 @@ namespace SecureBank.Ctf.Models
         public bool reDOS { get; set; }
 
         public bool FreeCredit { get; set; }
+        public bool InsecureDeserialization { get; set; }
     }
 }
