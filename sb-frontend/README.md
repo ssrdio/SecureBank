@@ -14,6 +14,9 @@ As a security researcher or developer, I want to interact with a realistic-looki
 
 ## Project Brief (Front End)
 
+This project aims to redesign the frontend of SecureBank, an open-source educational tool showcasing security vulnerabilities. The redesign will leverage a modern web  development tech stack (TypeScript, React, Next.js, Tailwind CSS), to create a visually appealing and user-friendly interface that emulates a real banking website, enabling users to explore and learn from common security flaws in a seemingly safe environment. 
+
+The new frontend will include a login/signup flow, a dashboard with account overview and recent transactions, a transaction history view, and potentially additional features like a product store and search functionality.
 
 ## Application
 
@@ -78,18 +81,17 @@ tester@ssrd.io:test
 
 ## Next Steps (TODO List)
 
-[x] Fork main repo and create Frontend Branch
-[x] Initialise NextJs App
-[ ] Create pre-auth routes 
-[ ] Build basic landing page 
-[ ] Build Login Page
-[ ] Build Signup Page
-[ ] Create post-auth routes 
-[ ] Build Basic Dashboard View
-[ ] Develop Transactions Overview
-[ ] Create Store Page
-[ ] Integrate with SecureBank back end endpoints 
-
+- [x] Fork main repo and create Frontend Branch
+- [x] Initialise NextJs App
+- [ ] Create pre-auth routes 
+- [ ] Build basic landing page 
+- [ ] Build Login Page
+- [ ] Build Signup Page
+- [ ] Create post-auth routes 
+- [ ] Build Basic Dashboard View
+- [ ] Develop Transactions Overview
+- [ ] Create Store Page
+- [ ] Integrate with SecureBank back end endpoints 
 
 ## References
 
