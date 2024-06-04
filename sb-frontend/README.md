@@ -1,36 +1,98 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# SecureBank - Front End 
 
-## Getting Started
+## Overview
+SecureBank is an open source project in .NET core with some security flaws. Its purpose is to learn how to write a good code from the bad practices found during penetration testing.
 
-First, run the development server:
+**SecureBank**'s objective is to show how developers fail to protect their environment due to a lack of knowledge about the applied ecosystem. 
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+We will determine the docker deployment of micro service solutions and where developers misconfigured their systems. Not only security in the configuration, we still have OWASP Top 10* Web Application Security risks out in the wild. Therefore, we will also present those vulnerabilities in the SecureBank application.
+
+## User Story 
+
+As a security researcher or developer, I want to interact with a realistic-looking banking application, So that I can learn about common security vulnerabilities and how to mitigate them.
+
+
+## Project Brief (Front End)
+
+
+## Application
+
+### Existing Architecture 
+![[Pasted image 20240604165831.png]]
+
+
+### Tech Stack - New Front End 
+
+Typescript, React, Next.js 14, Tailwind CSS, Shadcn 
+
+
+```
+admin@ssrd.io:admin
+developer@ssrd.io:test
+yoda@ssrd.io:test
+tester@ssrd.io:test
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Routes 
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### Pre-authorisation 
+- Landing Page
+	- Top Nav 
+		- Home, About, Login, Signup 
+	- Project Description 
+	- Hero Banner 
+		- Github Repo link 
+	- Footer 
+- Login
+	- Username 
+	- Password 
+	- Forgot your password 
+	- Register as new user (link to signup page)
+- Signup 
+	- Email 
+	- Password
+	- Confirm Password
+	- T&Cs 
+	- Register button 
+### Post-auth 
 
-## Learn More
+``` 
 
-To learn more about Next.js, take a look at the following resources:
+// working 
+admin@ssrd.io:admin
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+// couldn't log in with the credentials below, maybe something to look into 
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+developer@ssrd.io:test
+yoda@ssrd.io:test
+tester@ssrd.io:test
+```
 
-## Deploy on Vercel
+* Transactions
+	* Sender, Receiver, Transaction Date, Amount (EUR), Reason
+	* Ability to upload transactions 
+* Store
+	* Name, Price, Description, Times bought
+* Search 
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Next Steps (TODO List)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+[x] Fork main repo and create Frontend Branch
+[x] Initialise NextJs App
+[ ] Create pre-auth routes 
+[ ] Build basic landing page 
+[ ] Build Login Page
+[ ] Build Signup Page
+[ ] Create post-auth routes 
+[ ] Build Basic Dashboard View
+[ ] Develop Transactions Overview
+[ ] Create Store Page
+[ ] Integrate with SecureBank back end endpoints 
+
+
+## References
+
+https://github.com/ssrdio/SecureBank
+https://ssrd.gitbook.io/securebank
+
