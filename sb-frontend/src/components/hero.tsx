@@ -3,8 +3,6 @@ import { MoveRight, Github } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
-
-
 export default function Hero() {
     return (
   <div className="w-full  py-20 lg:py-40">
@@ -22,16 +20,20 @@ export default function Hero() {
                                 An educational open source project in .NET core, with some security flaws. Can you spot them?
             </p>
           </div>
-          <div className="flex flex-row gap-4">
-                            <Button size="lg" className="gap-4">
-             Learn More <MoveRight className="w-4 h-4" />
+          <div className="flex flex-row gap-2">
+                <Button  className="gap-2 p-4">
+                    Learn More
+                    <MoveRight className="w-4 h-4" />
             </Button>
-                            <Button size="lg" className="gap-4" variant="outline">
-              Github Repo <Github className="w-4 h-4" />
+                <Button
+                  className="gap-2 p-4" variant="outline">
+                    GitHub
+                    <Github className="w-4 h-4" />
             </Button>
           </div>
         </div>
-        <div className="bg-muted rounded-md aspect-square"></div>
+            <div className="bg-muted rounded-md aspect-square">
+        </div>
       </div>
     </div>
         </div>

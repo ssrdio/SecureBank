@@ -83,8 +83,8 @@ tester@ssrd.io:test
 
 - [x] Fork main repo and create Frontend Branch
 - [x] Initialise NextJs App
-- [ ] Create pre-auth routes 
 - [ ] Build basic landing page 
+- [ ] Create pre-auth routes 
 - [ ] Build Login Page
 - [ ] Build Signup Page
 - [ ] Create post-auth routes 
