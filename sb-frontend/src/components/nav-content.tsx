@@ -1,3 +1,4 @@
+import { ModeToggle } from "./mode-toggle";
 import { buttonVariants } from "./ui/button";
 
 interface RouteProps {
@@ -40,6 +41,8 @@ export function NavContent() {
         {route.label}
       </a>
     ))}
+          
+          <ModeToggle />
   </nav>
   )
 }

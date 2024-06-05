@@ -2,6 +2,8 @@
 import { MoveRight, Github } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
+import HeroImage from "../../public/hero-img/card-illustration.png";
 
 export default function Hero() {
     return (
@@ -32,7 +34,12 @@ export default function Hero() {
             </Button>
           </div>
         </div>
-            <div className="bg-muted rounded-md aspect-square">
+            <div className="aspect-square">
+              <Image
+                src={HeroImage}
+                alt="Credit Card Image"
+              />
+            
         </div>
       </div>
     </div>
