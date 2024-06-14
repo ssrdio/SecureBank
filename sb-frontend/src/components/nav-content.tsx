@@ -28,7 +28,7 @@ interface RouteProps {
 
 export function NavContent() {
   return (
-      <nav className="hidden md:flex gap-2">
+      <nav className="flex gap-2 py-2 border-b w-full">
     {routeList.map((route: RouteProps, i) => (
       <a
         rel="noreferrer noopener"
