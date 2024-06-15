@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS securebank
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS securebank
 WORKDIR /app
 
 COPY src/SecureBank/SecureBank.csproj ./
@@ -18,7 +18,7 @@ COPY src/StoreAPI/ ./
 
 RUN dotnet publish --output /app/out --configuration Release --runtime linux-x64 -p:EnvironmentName=Production;
 
-FROM mcr.microsoft.com/mssql/server:2019-CU3-ubuntu-16.04
+FROM mcr.microsoft.com/mssql/server:2022-latest
 
 USER root
 
