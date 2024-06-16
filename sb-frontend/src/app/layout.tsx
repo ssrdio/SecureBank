@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import { DesktopNav } from "@/components/navbar";
+import Footer from "@/components/footer";
 
 export const metadata: Metadata = {
   title: "SecureBank",
@@ -23,7 +24,8 @@ export default function RootLayout({
               disableTransitionOnChange
         >
           <DesktopNav /> 
-            {children}
+          {children}
+          <Footer/>
           </ThemeProvider>
           </body>
       </html>

@@ -1,13 +1,12 @@
 
 import { MoveRight, Github } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
-import HeroImage from "../../public/hero-img/hero-image.jpeg";
+import HeroImage from "../../public/hero-img/hero-image-5.jpeg";
 
 export default function Hero() {
   return (
-    <div className="w-full py-10 lg:p-10 lg:py-20 relative">
+    <div className="w-full py-10 lg:p-10 lg:py-20 relative rounded-lg">
       <Image
         src={HeroImage}
         alt="Hero background"
@@ -26,7 +25,7 @@ export default function Hero() {
                                         Welcome to award winning banking
                     </h1>
                         <p className="text-md leading-relaxed tracking-tight text-primary-foreground max-w-md text-left">
-                          See why we're tusted by over a million customers across Europe.*
+                          See why we're trusted by over a million customers across Europe.*
                     </p>
                   </div>
                   <div className="flex flex-row gap-2">
