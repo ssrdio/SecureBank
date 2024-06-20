@@ -60,10 +60,10 @@ export default function Footer() {
           <div className="flex gap-8 flex-col items-start">
             <div className="flex gap-2 flex-col">
               <h2 className="text-3xl md:text-5xl tracking-tighter max-w-xl font-regular text-left">
-                SecureBank
+                Fortress
               </h2>
               <p className="text-sm max-w-lg leading-relaxed tracking-tight text-background/75 text-left">
-                * SecureBank is an Open Source project to highlight OWASP's Top Ten most common security vulnerabilities. This is a fictional Bank website to be used for educational purposes only. 
+                * Fortress is a fictional bank, built as part of Secure Bank, an Open Source project to highlight OWASP's Top Ten most common security vulnerabilities. This is a fictional Bank website to be used for educational purposes only. 
               </p>
             </div>
             <div className="flex gap-20 flex-row">
