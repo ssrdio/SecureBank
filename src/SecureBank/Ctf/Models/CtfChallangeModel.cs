@@ -60,6 +60,7 @@ namespace SecureBank.Ctf.Models
         reDOS = 122,
         FreeCredit = 123,
         InvalidStoreModel = 124,
+        InsecureDeserialization = 125,
     }
 
     public static class CtfChallengeTypesExtensions
