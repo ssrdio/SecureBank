@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import LoginImage from "../../public/hero-img/hero-image-2.jpeg";
+import router from 'next/router'
 
 type Props = {}
 
@@ -21,24 +22,34 @@ export default function LoginForm({ }: Props) {
     }
   
     const handleSubmit = async (event: { preventDefault: () => void }) => {
-      event.preventDefault()
+        event.preventDefault();
       if (!validateEmail(email)) {
         setError('Invalid email address')
-        return
+          return;
       }
       try {
-          const response = await fetch('http://localhost:1337/api/Auth/Login', { 
-                method: 'POST',
-                headers: {
+          const response = await fetch('http://localhost:1337/api/Auth/Login', {
+              method: 'POST',
+              headers: {
                   'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ UserName: email, Password: password }),
-              })
-        window.location.href = "/Transactions"
-      } catch (err) {
-        setError('Login failed. Please check your credentials and try again.')
-      }
-    }
+              },
+              body: JSON.stringify({
+                  UserName: email,
+                  Password: password
+              }),
+          });
+          console.log('Response status:', response.status);
+          console.log(response);
+          if (!response.ok) {
+            throw new Error('Login failed'); // Throw error for non-successful response
+          }
+      
+          router.push('/Transactions'); // Redirect upon successful login
+        } catch (err) {
+          console.error('Error occurred during login:', err);
+          setError('Login failed. Please check your credentials and try again.');
+        }
+      };
 
     
     return (
@@ -60,7 +71,8 @@ export default function LoginForm({ }: Props) {
                 placeholder="m@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required
+                                required
+                                autoComplete="current-password"
               />
             </div>
             <div className="grid gap-2">
