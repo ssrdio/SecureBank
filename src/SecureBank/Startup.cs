@@ -153,6 +153,9 @@ namespace SecureBank
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            
+            app.UseCors();
+            
             AppSettings appSettings = Configuration.GetSection("AppSettings").Get<AppSettings>();
 
             CtfOptions ctfOptions = app.ApplicationServices.GetRequiredService<IOptions<CtfOptions>>().Value;
@@ -223,7 +226,6 @@ namespace SecureBank
 
             app.UseEndpoints(routes =>
             {
-                app.UseCors();
                 routes.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
