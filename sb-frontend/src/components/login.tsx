@@ -35,7 +35,7 @@ export default function LoginForm({ }: Props) {
               },
               body: JSON.stringify({
                   UserName: email,
-                  Password: password
+                  Password: password,
               }),
           });
           console.log('Response status:', response.status);
@@ -44,7 +44,7 @@ export default function LoginForm({ }: Props) {
             throw new Error('Login failed'); // Throw error for non-successful response
           }
       
-          router.push('/Transactions'); // Redirect upon successful login
+          router.push('http://localhost:30000/transactions'); // Redirect upon successful login
         } catch (err) {
           console.error('Error occurred during login:', err);
           setError('Login failed. Please check your credentials and try again.');

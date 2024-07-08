@@ -41,6 +41,16 @@ namespace SecureBank
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                    policy =>
+                    {
+                        policy.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
+                    });
+            });
+
+
             AppSettings appSettings = Configuration.GetSection("AppSettings").Get<AppSettings>();
 
             if (appSettings != null)
@@ -137,6 +147,7 @@ namespace SecureBank
                 string xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml");
                 x.IncludeXmlComments(xmlPath);
             });
+    });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -205,12 +216,14 @@ namespace SecureBank
                 File.WriteAllText(fullPath, ftpChallenge.Flag + new string(Enumerable.Repeat(' ', 3245).ToArray()));
             }
 
+
             app.UseRouting();
 
             app.UseAuthorization();
 
             app.UseEndpoints(routes =>
             {
+                app.UseCors();
                 routes.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
