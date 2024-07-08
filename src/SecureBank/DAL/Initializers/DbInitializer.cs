@@ -123,6 +123,12 @@ namespace SecureBank.DAL.Initializers
                 new UserDBModel{ Name="Peggy", Surname="Justice", UserName="peggy.justice@ssrd.io"},
                 new UserDBModel{ Name="Laura", Surname="Norman", UserName="laura.norman@ssrd.io"},
                 new UserDBModel{ Name="Nino", Surname="Olivetto", UserName="nino.olivetto@ssrd.io"},
+                new UserDBModel{ Name="Electricity", Surname="Non Stop d.o.o.", UserName="electricity@ssrd.io"},
+                new UserDBModel{ Name="Water", Surname="d.o.o.", UserName="water@ssrd.io"},
+                new UserDBModel{ Name="Telephone", Surname="bird d.o.o.", UserName="internet@ssrd.io"},
+                new UserDBModel{ Name="Gas", Surname="imporeted only d.o.o.", UserName="gas@ssrd.io"},
+                new UserDBModel{ Name="groceries", Surname="mix", UserName="groceries@ssrd.io"},
+                new UserDBModel{ Name="Janez", Surname="Novak", UserName="janeznovak@ssrd.io"},
                 new UserDBModel{ Name="Tester", Surname="Test", UserName="tester@ssrd.io"},
                 new UserDBModel {Name="Credit", Surname="Credit", UserName=SecureBankConstants.CREDIT_USERNAME,}
             };
@@ -161,8 +167,21 @@ namespace SecureBank.DAL.Initializers
                     ReceiverId = userNames[random.Next(0, userNames.Count)],
                     SenderId = userNames[random.Next(0, userNames.Count)]
                 };
-
                 _context.Transactions.Add(transactionTable);
+            }
+
+            for(int i = 0; i < 6; i++)
+            {
+                var electricity = userNames.FirstOrDefault(t => t.Contains("electricity"));
+                var water = userNames.FirstOrDefault(t => t.Contains("water"));
+                var internet = userNames.FirstOrDefault(t => t.Contains("internet"));
+                var gas = userNames.FirstOrDefault(t => t.Contains("gas"));
+                var groceries = userNames.FirstOrDefault(t => t.Contains("groceries"));
+
+                _context.Transactions.Add(new TransactionDBModel 
+                {
+                    SenderId = electricity,
+                });
             }
 
             _context.SaveChanges();
