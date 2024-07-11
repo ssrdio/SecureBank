@@ -41,18 +41,15 @@ namespace SecureBank
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            AppSettings appSettings = Configuration.GetSection("AppSettings").Get<AppSettings>();
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(
                     policy =>
                     {
-                        policy.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
+                        policy.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod();
                     });
             });
-
-
-            AppSettings appSettings = Configuration.GetSection("AppSettings").Get<AppSettings>();
-
             if (appSettings != null)
             {
                 services.Configure<AppSettings>(options =>
@@ -63,7 +60,7 @@ namespace SecureBank
                     options.BaseUrl = appSettings.BaseUrl;
                 });
             }
-            else 
+            else
             {
                 throw new Exception("Appsettings cannot be null");
             }
@@ -71,7 +68,7 @@ namespace SecureBank
 
             DatabaseSettings customerDbSettings = Configuration.GetSection("DatabaseConnections:SecureBankMSSQL").Get<DatabaseSettings>();
             if (customerDbSettings != null)
-            {              
+            {
                 string customerConnectionString = string.Format("Server={0},{1};Database={2};User Id={3};Password={4}",
                     customerDbSettings.Server,
                     customerDbSettings.ServerPort,
@@ -106,7 +103,7 @@ namespace SecureBank
             services.AddScoped<IAdminBL, AdminBL>();
             services.AddScoped<IAdminStoreBL, AdminStoreBL>();
 
-            services.AddAuthorization(options => 
+            services.AddAuthorization(options =>
             {
                 AuthorizationPolicyBuilder defaultAuthorizationPolicyBuilder = new AuthorizationPolicyBuilder();
                 defaultAuthorizationPolicyBuilder.RequireAssertion(x => true);
@@ -125,12 +122,12 @@ namespace SecureBank
             {
                 ctfOptions = services.ConfigureCtf(Configuration);
             }
-            else 
+            else
             {
                 ctfOptions = services.ConfigureWithoutCtf(Configuration);
             }
 
-            services.AddControllersWithViews(options => 
+            services.AddControllersWithViews(options =>
             {
                 options.Filters.Add(new GlobalExceptionFilter());
             });
@@ -147,15 +144,12 @@ namespace SecureBank
                 string xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml");
                 x.IncludeXmlComments(xmlPath);
             });
-    });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            
             app.UseCors();
-            
             AppSettings appSettings = Configuration.GetSection("AppSettings").Get<AppSettings>();
 
             CtfOptions ctfOptions = app.ApplicationServices.GetRequiredService<IOptions<CtfOptions>>().Value;
@@ -218,7 +212,6 @@ namespace SecureBank
 
                 File.WriteAllText(fullPath, ftpChallenge.Flag + new string(Enumerable.Repeat(' ', 3245).ToArray()));
             }
-
 
             app.UseRouting();
 
