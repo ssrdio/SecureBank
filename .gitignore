@@ -15,3 +15,30 @@ obj/
 
 meeting-2018.12.21.pdf
 swagger.css
+
+# Ignore Docker runtime files
+data/
+logs/
+
+# Ignore node_modules
+node_modules/
+
+# Ignore build output
+out/
+build/
+
+# Ignore other temporary files
+*.log
+.DS_Store
+
+# Ignore sb-frontend dependencies and build output
+sb-frontend/node_modules/
+sb-frontend/.next/
+sb-frontend/out/
+sb-frontend/build/
+
+# Ignore environment variable files
+sb-frontend/.env.local
+sb-frontend/.env.development.local
+sb-frontend/.env.test.local
+sb-frontend/.env.production.local
