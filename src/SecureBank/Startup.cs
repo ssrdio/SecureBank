@@ -154,7 +154,6 @@ namespace SecureBank
                 string xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml");
                 x.IncludeXmlComments(xmlPath);
             });
-    });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
