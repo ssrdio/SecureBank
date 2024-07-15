@@ -52,7 +52,14 @@ namespace SecureBank
 
 
             AppSettings appSettings = Configuration.GetSection("AppSettings").Get<AppSettings>();
-
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                    policy =>
+                    {
+                        policy.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod();
+                    });
+            });
             if (appSettings != null)
             {
                 services.Configure<AppSettings>(options =>
@@ -63,7 +70,7 @@ namespace SecureBank
                     options.BaseUrl = appSettings.BaseUrl;
                 });
             }
-            else 
+            else
             {
                 throw new Exception("Appsettings cannot be null");
             }
@@ -71,7 +78,7 @@ namespace SecureBank
 
             DatabaseSettings customerDbSettings = Configuration.GetSection("DatabaseConnections:SecureBankMSSQL").Get<DatabaseSettings>();
             if (customerDbSettings != null)
-            {              
+            {
                 string customerConnectionString = string.Format("Server={0},{1};Database={2};User Id={3};Password={4}",
                     customerDbSettings.Server,
                     customerDbSettings.ServerPort,
@@ -106,7 +113,7 @@ namespace SecureBank
             services.AddScoped<IAdminBL, AdminBL>();
             services.AddScoped<IAdminStoreBL, AdminStoreBL>();
 
-            services.AddAuthorization(options => 
+            services.AddAuthorization(options =>
             {
                 AuthorizationPolicyBuilder defaultAuthorizationPolicyBuilder = new AuthorizationPolicyBuilder();
                 defaultAuthorizationPolicyBuilder.RequireAssertion(x => true);
@@ -125,12 +132,12 @@ namespace SecureBank
             {
                 ctfOptions = services.ConfigureCtf(Configuration);
             }
-            else 
+            else
             {
                 ctfOptions = services.ConfigureWithoutCtf(Configuration);
             }
 
-            services.AddControllersWithViews(options => 
+            services.AddControllersWithViews(options =>
             {
                 options.Filters.Add(new GlobalExceptionFilter());
             });
@@ -153,9 +160,8 @@ namespace SecureBank
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            
             app.UseCors();
-            
+
             AppSettings appSettings = Configuration.GetSection("AppSettings").Get<AppSettings>();
 
             CtfOptions ctfOptions = app.ApplicationServices.GetRequiredService<IOptions<CtfOptions>>().Value;
