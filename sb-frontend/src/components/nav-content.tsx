@@ -10,7 +10,7 @@ interface RouteProps {
   
   const routeList: RouteProps[] = [
     {
-      href: "#features",
+      href: "/",
       label: "Home",
     },
     {
@@ -18,11 +18,11 @@ interface RouteProps {
       label: "About",
     },
     {
-      href: "#login",
+      href: "/login",
       label: "Login",
     },
     {
-      href: "#signup",
+      href: "/signup",
       label: "Signup",
     },
   ];
