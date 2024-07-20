@@ -7,15 +7,15 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import LoginImage from "../../public/hero-img/hero-image-2.jpeg";
-import router from 'next/router'
+import router from 'next/router' 
 
 type Props = {}
 
 export default function LoginForm({ }: Props) {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [error, setError] = useState('')
-  
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+
     const validateEmail = (email: string) => {
       const re = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}/
       return re.test(email)
@@ -25,7 +25,7 @@ export default function LoginForm({ }: Props) {
         event.preventDefault();
       if (!validateEmail(email)) {
         setError('Invalid email address')
-          return;
+          return
       }
       try {
           const response = await fetch('http://localhost:1337/api/Auth/Login', {
@@ -38,19 +38,18 @@ export default function LoginForm({ }: Props) {
                   Password: password,
               }),
           });
-          console.log('Response status:', response.status);
-          console.log(response);
+          const responseData = await response.json() // parse response data
+          console.log('Response status:', response.status)
+          console.log('Response data:', responseData)
           if (!response.ok) {
-            throw new Error('Login failed'); // Throw error for non-successful response
+            throw new Error(responseData.detail || 'Login failed'); // Throw error for non-successful response
           }
-      
-          router.push('http://localhost:30000/transactions'); // Redirect upon successful login
-        } catch (err) {
-          console.error('Error occurred during login:', err);
-          setError('Login failed. Please check your credentials and try again.');
+          router.push('/transactions') // redirect upon successful login
+        } catch (err: any) {
+            console.error('Error occurred during login:', err)
+            setError(err.message || 'Login failed. Please check your credentials and try again.')
         }
-      };
-
+    }
     
     return (
     <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
