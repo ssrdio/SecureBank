@@ -83,13 +83,13 @@ tester@ssrd.io:test
 
 - [x] Fork main repo and create Frontend Branch
 - [x] Initialise NextJs App
-- [ ] Build basic landing page 
-- [ ] Create pre-auth routes 
-- [ ] Build Login Page
-- [ ] Build Signup Page
-- [ ] Create post-auth routes 
-- [ ] Build Basic Dashboard View
-- [ ] Develop Transactions Overview
+- [x] Build basic landing page 
+- [x] Create pre-auth routes 
+- [x] Build Login Page
+- [x] Build Signup Page
+- [x] Create post-auth routes 
+- [x] Build Basic Dashboard View
+- [x] Develop Transactions Overview
 - [ ] Create Store Page
 - [ ] Integrate with SecureBank back end endpoints 
 
