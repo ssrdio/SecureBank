@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import LoginImage from "../../public/hero-img/hero-image-2.jpeg";
-import router from 'next/router' 
+import { useRouter } from 'next/navigation'
+ 
 
 type Props = {}
 
@@ -15,6 +16,7 @@ export default function LoginForm({ }: Props) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const router = useRouter()
 
     const validateEmail = (email: string) => {
       const re = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}/
