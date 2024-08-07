@@ -46,7 +46,7 @@ namespace SecureBank
                 options.AddDefaultPolicy(
                     policy =>
                     {
-                        policy.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
+                        policy.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod().AllowCredentials();
                     });
             });
 
@@ -57,7 +57,8 @@ namespace SecureBank
                 options.AddDefaultPolicy(
                     policy =>
                     {
-                        policy.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod();
+                        policy.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+
                     });
             });
             if (appSettings != null)
