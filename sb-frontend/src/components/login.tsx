@@ -39,6 +39,7 @@ export default function LoginForm({ }: Props) {
                   UserName: email,
                   Password: password,
               }),
+              credentials: 'include', // include credentials in login request
           });
           const responseData = await response.json() // parse response data
           console.log('Response status:', response.status)
