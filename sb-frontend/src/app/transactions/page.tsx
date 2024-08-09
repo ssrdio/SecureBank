@@ -1,6 +1,4 @@
 "use client"
-
-import { Badge } from "@/components/ui/badge"
 import {
   Card,
   CardContent,
@@ -37,10 +35,16 @@ export default function Transactions({ }: Props) {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const response = await fetch('http://localhost:1337/api/Transaction/GetTransactions');
+        const response = await fetch('http://localhost:1337/api/Transaction/GetTransactions?draw=1&start=0&length=10', {
+          method: 'GET', 
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',   
+        });
         if (!response.ok) throw new Error('Failed to fetch transactions');
         const data = await response.json();
-        setTransactions(data);
+        setTransactions(data.data || []);
       } catch (error : any) {
         setError(error.message);
       } finally {
