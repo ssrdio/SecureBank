@@ -14,7 +14,7 @@ interface RouteProps {
       label: "Home",
     },
     {
-      href: "#about",
+      href: "/#about",
       label: "About",
     },
     {
