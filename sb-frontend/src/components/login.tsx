@@ -39,15 +39,15 @@ export default function LoginForm({ }: Props) {
                   UserName: email,
                   Password: password,
               }),
-              credentials: 'include', // include credentials in login request
+              credentials: 'include',
           });
-          const responseData = await response.json() // parse response data
+          const responseData = await response.json() 
           console.log('Response status:', response.status)
           console.log('Response data:', responseData)
           if (!response.ok) {
-            throw new Error(responseData.detail || 'Login failed'); // Throw error for non-successful response
+            throw new Error(responseData.detail || 'Login failed'); 
           }
-          router.push('/transactions') // redirect upon successful login
+          router.push('/transactions') 
         } catch (err: any) {
             console.error('Error occurred during login:', err)
             setError(err.message || 'Login failed. Please check your credentials and try again.')
