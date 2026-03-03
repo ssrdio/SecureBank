@@ -75,6 +75,7 @@ services:
       - DatabaseConnections:StoreMSSQL:Server=mssql
       - DatabaseConnections:StoreMSSQL:ServerPort=1433
       - DatabaseConnections:StoreMSSQL:Database=store
+      - ASPNETCORE_HTTP_PORTS=80
       - StoreAPI:Seed=true
     volumes:
       - ./logs/storeapi:/app/logs
@@ -88,8 +89,8 @@ services:
     environment: 
       - ACCEPT_EULA=y
       - SA_PASSWORD=Your_Password123
-    # ports: 
-    #   - 1433:1433
+    ports: 
+      - 1433:1433
     volumes: 
       - ./data:/var/opt/mssql/data
 
