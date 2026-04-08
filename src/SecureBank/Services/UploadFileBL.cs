@@ -15,10 +15,10 @@ namespace SecureBank.Services
     public class UploadFileBL : IUploadFileBL
     {
         protected readonly ILogger _accessLogger = LogManager.GetLogger("accessLogger");
-        public string UploadFile(MemoryStream stream)
+        public string UploadFile(MemoryStream stream, HttpContext httpContext = null)
         {
             string xmlStringContent = Encoding.UTF8.GetString(stream.ToArray());
-            string xml = ParseXml(xmlStringContent);
+            string xml = ParseXml(xmlStringContent, httpContext);
             if(xml == null)
             {
                 return null;
@@ -29,7 +29,7 @@ namespace SecureBank.Services
             return xml;
         }
 
-        protected virtual string ParseXml(string xml)
+        protected virtual string ParseXml(string xml, HttpContext httpContext = null)
         {
             XmlReaderSettings settings = new XmlReaderSettings
             {

@@ -1,6 +1,7 @@
 ﻿using SecureBank.Models;
 using SecureBank.Models.Transaction;
 using SecureBank.Models.User;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace SecureBank.Interfaces
     {
         string GetIndexViewName();
 
-        DataTableResp<TransactionResp> GetTransactions();
-        DataTableResp<AdminUserInfoResp> GetUsers();
+        DataTableResp<TransactionResp> GetTransactions(HttpContext httpContext = null);
+        DataTableResp<AdminUserInfoResp> GetUsers(HttpContext httpContext = null);
     }
 }

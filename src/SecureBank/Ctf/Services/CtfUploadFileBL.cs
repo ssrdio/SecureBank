@@ -18,16 +18,14 @@ namespace SecureBank.Ctf.Services
             "etc/passwd"
         };
 
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly CtfOptions _ctfOptions;
 
-        public CtfUploadFileBL(IHttpContextAccessor httpContextAccessor, IOptions<CtfOptions> options) : base()
+        public CtfUploadFileBL(IOptions<CtfOptions> options) : base()
         {
-            _httpContextAccessor = httpContextAccessor;
             _ctfOptions = options.Value;
         }
 
-        protected override string ParseXml(string xml)
+        protected override string ParseXml(string xml, HttpContext httpContext)
         {
             string parsedXml;
 
@@ -35,7 +33,7 @@ namespace SecureBank.Ctf.Services
             {
                 try
                 {
-                    parsedXml = base.ParseXml(xml);
+                    parsedXml = base.ParseXml(xml, httpContext);
                 }
                 catch(Exception ex)
                 {
@@ -67,7 +65,7 @@ namespace SecureBank.Ctf.Services
 
                         if (CTF_XEE_FILES.Any(x => xml.Contains(x)))
                         {
-                            _httpContextAccessor.HttpContext.Response.Headers.Add(xxeChallenge.FlagKey, xxeChallenge.Flag);
+                            httpContext.Response.Headers.Add(xxeChallenge.FlagKey, xxeChallenge.Flag);
                         }
                     }
                 }

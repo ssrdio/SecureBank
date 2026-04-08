@@ -1,4 +1,5 @@
 ﻿using SecureBank.DAL.DBModels;
+using Microsoft.AspNetCore.Http;
 using SecureBank.Models;
 using SecureBank.Models.Transaction;
 using System;
@@ -10,13 +11,13 @@ namespace SecureBank.Interfaces
 {
     public interface ITransactionBL
     {
-        string GetIndexViewName();
+        string GetIndexViewName(HttpContext httpContext = null);
 
-        TransactionDBModel Details(int? id);
+        TransactionDBModel Details(int? id, HttpContext httpContext = null);
 
-        bool Create(TransactionDBModel transactionTable);
+        bool Create(TransactionDBModel transactionTable, HttpContext httpContext = null);
 
-        DataTableResp<TransactionResp> GetTransactions(string userName, string search, int start, int lenght);
-        List<TransactionsByDayResp> GetTransactionsByDay(string userName);
+        DataTableResp<TransactionResp> GetTransactions(string userName, string search, int start, int lenght, HttpContext httpContext = null);
+        List<TransactionsByDayResp> GetTransactionsByDay(string userName, HttpContext httpContext = null);
     }
 }

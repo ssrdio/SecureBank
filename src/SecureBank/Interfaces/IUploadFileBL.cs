@@ -9,6 +9,6 @@ namespace SecureBank.Interfaces
 {
     public interface IUploadFileBL
     {
-        string UploadFile(MemoryStream stream);
+        string UploadFile(MemoryStream stream, HttpContext httpContext = null);
     }
 }

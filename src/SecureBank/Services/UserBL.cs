@@ -1,5 +1,6 @@
 ﻿using SecureBank.DAL.DAO;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using NLog;
 using SecureBank.DAL.DBModels;
 using SecureBank.Interfaces;
@@ -40,7 +41,7 @@ namespace SecureBank.Services
                 .ToList();
         }
 
-        public virtual AccountBalanceResp GetAmount(string userName)
+        public virtual AccountBalanceResp GetAmount(string userName, HttpContext httpContext = null)
         {
             double balance = _transactionDAO.GetAccountBalance(userName);
 
@@ -74,7 +75,7 @@ namespace SecureBank.Services
             }
         }
 
-        public virtual byte[] GetProfileImage(string userName)
+        public virtual byte[] GetProfileImage(string userName, HttpContext httpContext = null)
         {
             if (string.IsNullOrEmpty(userName))
             {

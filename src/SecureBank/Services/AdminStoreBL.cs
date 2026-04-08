@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace SecureBank.Services
 {
@@ -26,7 +27,7 @@ namespace SecureBank.Services
             return _storeAPICalls.AdminGetAllPurchasesAsync();
         }
 
-        public virtual async Task<DataTableResp<StoreItem>> GetStoreItems()
+        public virtual async Task<DataTableResp<StoreItem>> GetStoreItems(HttpContext httpContext = null)
         {
             List<StoreItem> storeItems = await _storeAPICalls.GetStoreItemsAsync();
 

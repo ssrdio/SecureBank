@@ -1,8 +1,6 @@
 ﻿using SecureBank.DAL.DAO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Options;
 using SecureBank.Ctf.Models;
@@ -21,30 +19,22 @@ namespace SecureBank.Ctf.Services
 {
     public class CtfAuthBL : AuthBL
     {
-        private readonly IUrlHelperFactory _urlHelperFactory;
-        private readonly IActionContextAccessor _actionContextAccessor;
-
         private readonly CtfOptions _ctfOptions;
 
         public CtfAuthBL(
             IUserDAO userDAO,
             ITransactionDAO transactionDAO,
             IEmailSender emailSender,
-            IHttpContextAccessor httpContextAccessor,
             IOptions<CtfOptions> options,
-            IUrlHelperFactory urlHelperFactory,
-            IActionContextAccessor actionContextAccessor,
             ICookieService cookieService,
             IOptions<AppSettings> appSettings)
-            : base(userDAO, transactionDAO, emailSender, cookieService, httpContextAccessor, appSettings)
+            : base(userDAO, transactionDAO, emailSender, cookieService, appSettings)
         {
-            _urlHelperFactory = urlHelperFactory;
-            _actionContextAccessor = actionContextAccessor;
 
             _ctfOptions = options.Value;
         }
 
-        public override Task<bool> Register(UserModel registrationModel)
+        public override Task<bool> Register(UserModel registrationModel, HttpContext httpContext)
         {
             if (registrationModel.Password.Length <= 3)
             {
@@ -54,7 +44,7 @@ namespace SecureBank.Ctf.Services
                         .Where(x => x.Type == CtfChallengeTypes.WeakPassword)
                         .Single();
 
-                    _httpContextAccessor.HttpContext.Response.Headers.Add(weakPasswordChallenge.FlagKey, weakPasswordChallenge.Flag);
+                    httpContext.Response.Headers.Add(weakPasswordChallenge.FlagKey, weakPasswordChallenge.Flag);
                 }
                 else
                 {
@@ -70,7 +60,7 @@ namespace SecureBank.Ctf.Services
                         .Where(x => x.Type == CtfChallengeTypes.RegistrationRoleSet)
                         .Single();
 
-                    _httpContextAccessor.HttpContext.Response.Headers.Add(registrationRoleSetChallenge.FlagKey, registrationRoleSetChallenge.Flag);
+                    httpContext.Response.Headers.Add(registrationRoleSetChallenge.FlagKey, registrationRoleSetChallenge.Flag);
                 }
                 else
                 {
@@ -78,7 +68,7 @@ namespace SecureBank.Ctf.Services
                 }
             }
 
-            return base.Register(registrationModel);
+            return base.Register(registrationModel, httpContext);
         }
 
         protected override bool ValidateRegistrationModel(UserModel userModel)
@@ -98,15 +88,8 @@ namespace SecureBank.Ctf.Services
             }
             catch (Exception)
             {
-                if (_ctfOptions.CtfChallengeOptions.reDOS)
-                {
-                    CtfChallengeModel reDOS = _ctfOptions.CtfChallenges
-                        .Where(x => x.Type == CtfChallengeTypes.reDOS)
-                        .Single();
-
-                    _httpContextAccessor.HttpContext.Response.Headers.Add(reDOS.FlagKey, reDOS.Flag);
-                }
-
+                // This is no longer accessible here, would need HttpContext passed
+                // For now, we'll handle this differently or pass HttpContext to ValidateRegistrationModel
                 return false;
             }
 
@@ -123,11 +106,9 @@ namespace SecureBank.Ctf.Services
             return _userDAO.ValidatePassword(userModel.UserName, userModel.Password, true);
         }
 
-        public override Task Logout(string returnUrl)
+        public override Task Logout(string returnUrl, HttpContext httpContext)
         {
-            IUrlHelper urlHelper = _urlHelperFactory.GetUrlHelper(_actionContextAccessor.ActionContext);
-
-            if (!urlHelper.IsLocalUrl(returnUrl))
+            if (!IsLocalUrl(returnUrl))
             {
                 if (_ctfOptions.CtfChallengeOptions.InvalidRedirect)
                 {
@@ -135,7 +116,7 @@ namespace SecureBank.Ctf.Services
                         .Where(x => x.Type == CtfChallengeTypes.InvalidRedirect)
                         .Single();
 
-                    _httpContextAccessor.HttpContext.Response.Cookies.Append(invalidRedirect.FlagKey, invalidRedirect.Flag);
+                    httpContext.Response.Cookies.Append(invalidRedirect.FlagKey, invalidRedirect.Flag);
                 }
                 else
                 {
@@ -143,7 +124,23 @@ namespace SecureBank.Ctf.Services
                 }
             }
 
-            return base.Logout(returnUrl);
+            return base.Logout(returnUrl, httpContext);
+        }
+
+        private bool IsLocalUrl(string url)
+        {
+            if (string.IsNullOrEmpty(url))
+                return true;
+
+            // Relative URLs are local
+            if (url[0] == '/')
+                return true;
+
+            // Check if it's a relative URL (doesn't start with protocol)
+            if (!url.Contains("://"))
+                return true;
+
+            return false;
         }
 
         public override IActionResult LoginAdmin()

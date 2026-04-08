@@ -23,7 +23,6 @@ namespace SecureBank.Services
         protected readonly IEmailSender _emailSender;
         protected readonly ICookieService _cookieService;
 
-        protected readonly IHttpContextAccessor _httpContextAccessor;
         protected readonly AppSettings _appSettings;
 
         protected readonly ILogger _accessLogger = LogManager.GetLogger("accessLogger");
@@ -36,7 +35,6 @@ namespace SecureBank.Services
             ITransactionDAO transactionDAO,
             IEmailSender emailSender,
             ICookieService cookieService,
-            IHttpContextAccessor httpContextAccessor,
             IOptions<AppSettings> appSettings)
         {
             _userDAO = userDAO;
@@ -45,19 +43,14 @@ namespace SecureBank.Services
             _cookieService = cookieService;
 
             _emailSender = emailSender;
-            _httpContextAccessor = httpContextAccessor;
 
             _appSettings = appSettings.Value;
         }
-        private string ContextScheme =>
-            _httpContextAccessor.HttpContext.Request.Scheme;
-        private string ContextHost =>
-            _httpContextAccessor.HttpContext.Request.Host.ToString();
-        private string GetCurrentDomain =>
-            $"{ContextScheme}://{ContextHost}";
+        private string GetCurrentDomain(HttpContext httpContext) =>
+            $"{httpContext.Request.Scheme}://{httpContext.Request.Host}";
 
 
-        public virtual async Task<bool> Register(UserModel registrationModel)
+        public virtual async Task<bool> Register(UserModel registrationModel, HttpContext httpContext)
         {
             bool isModelValid = ValidateRegistrationModel(registrationModel);
             if (!isModelValid)
@@ -86,7 +79,7 @@ namespace SecureBank.Services
             }
             else
             {
-                baseUrl = GetCurrentDomain;
+                baseUrl = GetCurrentDomain(httpContext);
             }
 
             string registrationMailSubject = "Confirm email";
@@ -163,7 +156,7 @@ namespace SecureBank.Services
         }
 
 
-        public virtual Task<UserModel> Login(UserModel loginModel)
+        public virtual Task<UserModel> Login(UserModel loginModel, HttpContext httpContext)
         {
             if (loginModel == null ||
                 string.IsNullOrEmpty(loginModel.UserName) ||
@@ -174,7 +167,7 @@ namespace SecureBank.Services
 
             var accessLogModel = new
             {
-                Ip = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString(),
+                Ip = httpContext.Connection.RemoteIpAddress.ToString(),
                 Username = loginModel.UserName,
                 Password = loginModel.Password
             };
@@ -189,7 +182,7 @@ namespace SecureBank.Services
 
             UserDBModel userModel = _userDAO.GetUser(loginModel.UserName);
 
-            string cookie = _cookieService.CreateCookie(userModel, _httpContextAccessor.HttpContext);
+            string cookie = _cookieService.CreateCookie(userModel, httpContext);
             if (string.IsNullOrEmpty(cookie))
             {
                 return Task.FromResult<UserModel>(null);
@@ -207,9 +200,9 @@ namespace SecureBank.Services
             return _userDAO.ValidatePassword(userModel.UserName, userModel.Password, false);
         }
 
-        public virtual Task Logout(string returnUrl)
+        public virtual Task Logout(string returnUrl, HttpContext httpContext)
         {
-            _cookieService.RemoveCookie(_httpContextAccessor.HttpContext);
+            _cookieService.RemoveCookie(httpContext);
 
             return Task.CompletedTask;
         }

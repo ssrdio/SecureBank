@@ -38,7 +38,7 @@ namespace SecureBank.Controllers
         [HttpGet]
         public async Task<IActionResult> Logout(string returnUrl = null)
         {
-            await _authBL.Logout(returnUrl);
+            await _authBL.Logout(returnUrl, HttpContext);
 
             if (returnUrl != null)
             {

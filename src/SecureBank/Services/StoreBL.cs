@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 namespace SecureBank.Services
 {
@@ -27,9 +28,9 @@ namespace SecureBank.Services
             _storeAPICalls = storeAPICalls;
         }
 
-        public virtual async Task<bool> BuyProduct(BuyProductReq buyProductReq, string userName)
+        public virtual async Task<bool> BuyProduct(BuyProductReq buyProductReq, string userName, HttpContext httpContext = null)
         {
-            bool payResult = await Pay(buyProductReq, userName);
+            bool payResult = await Pay(buyProductReq, userName, httpContext);
             if(!payResult)
             {
                 return false;
@@ -56,7 +57,7 @@ namespace SecureBank.Services
             return true;
         }
 
-        protected virtual async Task<bool> Pay(BuyProductReq buyProductReq, string userName)
+        protected virtual async Task<bool> Pay(BuyProductReq buyProductReq, string userName, HttpContext httpContext = null)
         {
             double accountBalance = _transactionDAO.GetAccountBalance(userName);
 
@@ -84,7 +85,7 @@ namespace SecureBank.Services
             return payResult;
         }
 
-        public virtual async Task<List<PurcahseHistoryItemResp>> GetPurchaseHistory(string userName)
+        public virtual async Task<List<PurcahseHistoryItemResp>> GetPurchaseHistory(string userName, HttpContext httpContext = null)
         {
             UserInfoReq userInfoReq = new UserInfoReq
             {

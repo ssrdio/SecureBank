@@ -24,7 +24,6 @@ namespace SecureBank.Ctf.Services
         };
 
         private readonly ICookieService _cookieService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
         private readonly CtfOptions _ctfOptions;
 
@@ -33,18 +32,16 @@ namespace SecureBank.Ctf.Services
             IWebHostEnvironment webHostEnvironment,
             IUserDAO userDAO,
             ICookieService cookieService,
-            IHttpContextAccessor httpContextAccessor,
             IOptions<CtfOptions> ctfOptions) : base(transactionDAO, userDAO, webHostEnvironment)
         {
             _cookieService = cookieService;
-            _httpContextAccessor = httpContextAccessor;
 
             _ctfOptions = ctfOptions.Value;
         }
 
-        public override AccountBalanceResp GetAmount(string userName)
+        public override AccountBalanceResp GetAmount(string userName, HttpContext httpContext)
         {
-            string loggedInUserName = _httpContextAccessor.HttpContext.GetUserName();
+            string loggedInUserName = httpContext.GetUserName();
 
             if (_ctfOptions.CtfChallengeOptions.SensitiveDataExposureBalance)
             {
@@ -54,7 +51,7 @@ namespace SecureBank.Ctf.Services
                         .Where(x => x.Type == CtfChallengeTypes.SensitiveDataExposure)
                         .Single();
 
-                    _httpContextAccessor.HttpContext.Response.Headers.Add(sensitiveDataExposure.FlagKey, sensitiveDataExposure.Flag);
+                    httpContext.Response.Headers.Add(sensitiveDataExposure.FlagKey, sensitiveDataExposure.Flag);
                 }
             }
             else
@@ -62,12 +59,12 @@ namespace SecureBank.Ctf.Services
                 userName = loggedInUserName;
             }
 
-            return base.GetAmount(userName);
+            return base.GetAmount(userName, httpContext);
         }
 
-        public override byte[] GetProfileImage(string userName)
+        public override byte[] GetProfileImage(string userName, HttpContext httpContext)
         {
-            string loggedInUserName = _httpContextAccessor.HttpContext.GetUserName();
+            string loggedInUserName = httpContext.GetUserName();
 
             if (_ctfOptions.CtfChallengeOptions.PathTraversal)
             {
@@ -77,7 +74,7 @@ namespace SecureBank.Ctf.Services
                         .Where(x => x.Type == CtfChallengeTypes.PathTraversal)
                         .Single();
 
-                    _httpContextAccessor.HttpContext.Response.Headers.Add(pathTraversal.FlagKey, pathTraversal.Flag);
+                    httpContext.Response.Headers.Add(pathTraversal.FlagKey, pathTraversal.Flag);
                 }
             }
             else
@@ -96,7 +93,7 @@ namespace SecureBank.Ctf.Services
                         .Where(x => x.Type == CtfChallengeTypes.SensitiveDataExposure)
                         .Single();
 
-                    _httpContextAccessor.HttpContext.Response.Headers.Add(sensitiveDataExposure.FlagKey, sensitiveDataExposure.Flag);
+                    httpContext.Response.Headers.Add(sensitiveDataExposure.FlagKey, sensitiveDataExposure.Flag);
                 }
             }
             else
@@ -104,7 +101,7 @@ namespace SecureBank.Ctf.Services
                 userName = loggedInUserName;
             }
 
-            return base.GetProfileImage(userName);
+            return base.GetProfileImage(userName, httpContext);
         }
     }
 }

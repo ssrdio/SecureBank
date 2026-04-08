@@ -15,17 +15,15 @@ namespace SecureBank.Ctf.Services
     public class CtfAdminStoreBL : AdminStoreBL
     {
         private readonly CtfOptions _ctfOptions;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public CtfAdminStoreBL(StoreAPICalls storeAPICalls, IOptions<CtfOptions> ctfOptions, IHttpContextAccessor httpContextAccessor) : base(storeAPICalls)
+        public CtfAdminStoreBL(StoreAPICalls storeAPICalls, IOptions<CtfOptions> ctfOptions) : base(storeAPICalls)
         {
             _ctfOptions = ctfOptions.Value;
-            _httpContextAccessor = httpContextAccessor;
         }
 
-        public override async Task<DataTableResp<StoreItem>> GetStoreItems()
+        public override async Task<DataTableResp<StoreItem>> GetStoreItems(HttpContext httpContext)
         {
-            DataTableResp<StoreItem> storeItems = await base.GetStoreItems();
+            DataTableResp<StoreItem> storeItems = await base.GetStoreItems(httpContext);
             if (_ctfOptions.CtfChallengeOptions.TableXss)
             {
                 bool xss = storeItems.Data.Any(x => CtfConstants.XXS_KEYVORDS.Any(c => (x.Name?.Contains(c) ?? false) || (x.Description?.Contains(c) ?? false)));
@@ -35,7 +33,7 @@ namespace SecureBank.Ctf.Services
                         .Where(x => x.Type == CtfChallengeTypes.Xss)
                         .Single();
 
-                    _httpContextAccessor.HttpContext.Response.Headers.Add(xxsChallenge.FlagKey, xxsChallenge.Flag);
+                    httpContext.Response.Headers.Add(xxsChallenge.FlagKey, xxsChallenge.Flag);
                 }
             }
 

@@ -78,8 +78,6 @@ namespace SecureBank
                 services.AddDbContext<PortalDBContext>(options => options.UseSqlite("Filename=./customerDB.db"));
             }
 
-            services.AddTransient<IActionContextAccessor, ActionContextAccessor>();
-
             services.AddTransient<ITransactionDAO, TransactionDAO>();
             services.AddTransient<IUserDAO, UserDAO>();
             services.AddTransient<IDbInitializer, DbInitializer>();
@@ -132,7 +130,7 @@ namespace SecureBank
 
             services.AddSwaggerGen(x =>
             {
-                x.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "BankWeb API", Version = "v1" });
+                x.SwaggerDoc("v1", new Microsoft.OpenApi.OpenApiInfo { Title = "BankWeb API", Version = "v1" });
 
                 string xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml");
                 x.IncludeXmlComments(xmlPath);

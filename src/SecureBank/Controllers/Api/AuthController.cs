@@ -29,7 +29,7 @@ namespace SecureBank.Controllers.Api
                 return BadRequest();
             }
 
-            UserModel userModel = await _authBL.Login(loginModel);
+            UserModel userModel = await _authBL.Login(loginModel, HttpContext);
             if (userModel == null)
             {
                 return BadRequest();
@@ -49,7 +49,7 @@ namespace SecureBank.Controllers.Api
         [ProducesResponseType(typeof(EmptyResult), StatusCodes.Status200OK)]
         public async Task<IActionResult> Logout()
         {
-            await _authBL.Logout(null);
+            await _authBL.Logout(null, HttpContext);
 
             return Ok(new EmptyResult());
         }
@@ -64,7 +64,7 @@ namespace SecureBank.Controllers.Api
                 return BadRequest();
             }
 
-            bool registrationResult = await _authBL.Register(registrationModel);
+            bool registrationResult = await _authBL.Register(registrationModel, HttpContext);
             if (!registrationResult)
             {
                 return BadRequest();
