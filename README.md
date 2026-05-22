@@ -20,10 +20,10 @@ On the image below you can review how the application is built from the infrastr
 ![alt text](https://raw.githubusercontent.com/ssrdio/SecureBank/master/infra.png "Docker infrastructure")
 
 ## From source
-> Make sure that you have Microsoft SQL Server DB available. You can install or run it inside docker.
+> Make sure that you have PostgreSQL available. You can install or run it inside Docker.
 
-1. Install [.NET 5.0 SDK](https://dotnet.microsoft.com/download/dotnet/5.0)
-2. Install [Visual Studio 2019](https://visualstudio.microsoft.com/downloads/) or just run with  [Visual Studio Code](https://code.visualstudio.com/download)
+1. Install [.NET 10.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
+2. Install [Visual Studio 2026](https://visualstudio.microsoft.com/vs/) or just run with  [Visual Studio Code](https://code.visualstudio.com/download)
 3. Clone from GitHub
 4. Navigate to directory SecureBank -> src
 5. `dotnet run` or open solution in IDE and run there 
@@ -45,7 +45,6 @@ On the image below you can review how the application is built from the infrastr
 2. Install [Docker Compose](https://docs.docker.com/compose/install/)
 3. Create `docker-compose.yml`
 ```
-version: '3'
 services:
     securebank:
         image: ssrd/securebank
