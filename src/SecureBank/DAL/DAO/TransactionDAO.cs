@@ -195,9 +195,9 @@ namespace SecureBank.DAL.DAO
         {
             string query = $@"
                 SELECT *
-                    FROM Transactions
-                WHERE (ReceiverId='{userName}' OR SenderId='{userName}')
-                    AND Reason LIKE '%{search}%'";
+                    FROM ""Transactions""
+                WHERE (""ReceiverId""='{userName}' OR ""SenderId""='{userName}')
+                    AND ""Reason"" LIKE '%{search}%'";
 
             return _customerContext.Transactions
                 .FromSqlRaw(query)

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using SecureBank.DAL.DAO;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
 using SecureBank.Ctf;
 using SecureBank.Ctf.Models;

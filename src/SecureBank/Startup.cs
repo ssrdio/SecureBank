@@ -62,15 +62,14 @@ namespace SecureBank
             DatabaseSettings customerDbSettings = Configuration.GetSection("DatabaseConnections:SecureBankMSSQL").Get<DatabaseSettings>();
             if (customerDbSettings != null)
             {              
-                string customerConnectionString = string.Format("Server={0},{1};Database={2};User Id={3};Password={4}",
+                string customerConnectionString = string.Format("Host={0};Port={1};Database={2};Username={3};Password={4}",
                     customerDbSettings.Server,
                     customerDbSettings.ServerPort,
                     customerDbSettings.Database,
                     customerDbSettings.UserId,
                     customerDbSettings.UserPass);
                 _logger.Info(customerConnectionString);
-                // configure mssql
-                services.AddDbContext<PortalDBContext>(options => options.UseSqlServer(customerConnectionString));
+                services.AddDbContext<PortalDBContext>(options => options.UseNpgsql(customerConnectionString));
             }
             else
             {

@@ -17,6 +17,7 @@ namespace SecureBank
     {
         public static void Main(string[] args)
         {
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
             var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
             //var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
             try

@@ -27,14 +27,13 @@ namespace StoreAPI
             DatabaseSettings storeDbSettings = Configuration.GetSection("DatabaseConnections:StoreMSSQL").Get<DatabaseSettings>();
             if (storeDbSettings != null && !String.IsNullOrEmpty(storeDbSettings.Database))
             {
-                // configure mssql
-                string storeConnectionString = string.Format("Server={0},{1};Database={2};User Id={3};Password={4};TrustServerCertificate=True",
+                string storeConnectionString = string.Format("Host={0};Port={1};Database={2};Username={3};Password={4}",
                   storeDbSettings.Server,
                   storeDbSettings.ServerPort,
                   storeDbSettings.Database,
                   storeDbSettings.UserId,
                   storeDbSettings.UserPass);
-                services.AddDbContext<StoreContext>(options => options.UseSqlServer(storeConnectionString));
+                services.AddDbContext<StoreContext>(options => options.UseNpgsql(storeConnectionString));
             }
             else
             {
