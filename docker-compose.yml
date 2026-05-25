@@ -75,6 +75,9 @@ services:
       - DatabaseConnections:StoreMSSQL:Database=store
       - ASPNETCORE_HTTP_PORTS=80
       - StoreAPI:Seed=true
+      - Ctf:Enabled=false
+      - Ctf:Seed=example
+      - Ctf:FlagFormat=ctf{{{0}}}
     volumes:
       - ./logs/storeapi:/app/logs
     ports:
@@ -94,11 +97,11 @@ services:
       - ./init-store-db.sql:/docker-entrypoint-initdb.d/init-store-db.sql
 
   maildev:
-    image: maildev/maildev:1.1.0
+    image: maildev/maildev:2.2.1
     container_name: maildev
     ports: 
-      - '1080:80'
-      # - '1025:25'
+      - '1080:1080'
+      - '1025:1025'
 
 volumes: 
   pgdata:
