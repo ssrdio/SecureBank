@@ -14,5 +14,6 @@ namespace SecureBank.Interfaces
 
         List<string> FindUsers(string search);
         Task<byte[]> SetProfileImageUrl(string username, string url);
+        bool UpdateProfile(string userName, string name, string surname);
     }
 }

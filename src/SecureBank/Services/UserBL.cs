@@ -114,5 +114,10 @@ namespace SecureBank.Services
 
             return data;
         }
+
+        public virtual bool UpdateProfile(string userName, string name, string surname)
+        {
+            return _userDAO.UpdateProfile(userName, name, surname);
+        }
     }
 }

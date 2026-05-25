@@ -154,5 +154,18 @@ namespace SecureBank.DAL.DAO
                 .Where(x => x.UserName.Contains(search))
                 .ToList();
         }
+
+        public virtual bool UpdateProfile(string userName, string name, string surname)
+        {
+            var user = _portalDBContext.UserData.FirstOrDefault(x => x.UserName == userName);
+            if (user == null)
+            {
+                return false;
+            }
+            user.Name = name;
+            user.Surname = surname;
+            _portalDBContext.SaveChanges();
+            return true;
+        }
     }
 }

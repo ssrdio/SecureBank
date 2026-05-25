@@ -38,6 +38,24 @@
 
         <hr />
 
+        <h4 class="secondaryTitle">Edit profile</h4>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <label>Name</label>
+                <input type="text" id="profileName" class="form-control" value="@Model.Name" />
+            </div>
+            <div class="col-md-3">
+                <label>Surname</label>
+                <input type="text" id="profileSurname" class="form-control" value="@Model.Surname" />
+            </div>
+            <div class="col-md-2" style="align-self:flex-end;">
+                <button id="btnUpdateProfile" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+        <div id="profileResult" style="display:none" class="alert"></div>
+
+        <hr />
+
         <h4 class="secondaryTitle">Change profile image</h4>
         <div class="form-group row">
             <div class="col-md-6">
@@ -56,6 +74,21 @@
 @section Scripts {
     <script type="text/javascript">
         $(document).ready(function () {
+            $('#btnUpdateProfile').on('click', function () {
+                $.ajax({
+                    type: "POST",
+                    url: "/api/User/UpdateProfile",
+                    data: JSON.stringify({ "Username": "@Model.Username", "Name": $('#profileName').val(), "Surname": $('#profileSurname').val() }),
+                    contentType: 'application/json',
+                    success: function () {
+                        $('#profileResult').removeClass('alert-danger').addClass('alert-success').text('Profile updated.').show();
+                    },
+                    error: function () {
+                        $('#profileResult').removeClass('alert-success').addClass('alert-danger').text('Failed to update profile.').show();
+                    }
+                });
+            });
+
             $('#btnChangeImage').on('click', function () {
                 var url = $('#imageUrl').val();
                 if (!url) return;

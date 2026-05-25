@@ -56,5 +56,17 @@ namespace SecureBank.Controllers.Api
 
             return Ok(accountBalance);
         }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult UpdateProfile([FromBody] UpdateProfileModel model)
+        {
+            bool result = _userBL.UpdateProfile(model.Username, model.Name, model.Surname);
+            if (result)
+            {
+                return Ok("Profile updated.");
+            }
+            return BadRequest("Failed to update profile.");
+        }
     }
 }

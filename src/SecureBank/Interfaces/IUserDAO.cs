@@ -21,5 +21,6 @@ namespace SecureBank.Interfaces
         List<UserDBModel> GetUsers(string search);
         public bool UpdatePasswordToken(string userName, string token);
         public bool PasswordTokenExists(string token);
+        public bool UpdateProfile(string userName, string name, string surname);
     }
 }
