@@ -8,9 +8,9 @@ PORT=${ASPNETCORE_PORT:-80}
 # Build the server URLs - support multiple ports for flexibility
 run_cmd="dotnet SecureBank.dll --urls http://0.0.0.0:${PORT}"
 
-echo "Going to sleep for 30 seconds waiting for SQL server run"
+echo "Going to sleep for 10 seconds waiting for PostgreSQL server run"
 
-sleep 30
+sleep 10
 
 >&2 echo "SQL Server is up - executing command on port ${PORT}"
 exec $run_cmd

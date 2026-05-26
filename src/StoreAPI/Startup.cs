@@ -56,7 +56,8 @@ namespace StoreAPI
             {
                 Enabled = Configuration["Ctf:Enabled"]?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false,
                 Seed = Configuration["Ctf:Seed"] ?? "",
-                FlagFormat = Configuration["Ctf:FlagFormat"] ?? "CTF{{{0}}}"
+                FlagFormat = Configuration["Ctf:FlagFormat"] ?? "CTF{{{0}}}",
+                SsrfChallenge = Configuration["Ctf:Challenges:Ssrf"]?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false
             };
 
             if (ctfSettings.Enabled && !string.IsNullOrEmpty(ctfSettings.Seed))

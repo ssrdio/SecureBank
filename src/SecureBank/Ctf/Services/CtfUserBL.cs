@@ -51,7 +51,7 @@ namespace SecureBank.Ctf.Services
                         .Where(x => x.Type == CtfChallengeTypes.SensitiveDataExposure)
                         .Single();
 
-                    httpContext.Response.Headers.Add(sensitiveDataExposure.FlagKey, sensitiveDataExposure.Flag);
+                    httpContext.Response.Headers[sensitiveDataExposure.FlagKey] = sensitiveDataExposure.Flag;
                 }
             }
             else
@@ -74,7 +74,7 @@ namespace SecureBank.Ctf.Services
                         .Where(x => x.Type == CtfChallengeTypes.PathTraversal)
                         .Single();
 
-                    httpContext.Response.Headers.Add(pathTraversal.FlagKey, pathTraversal.Flag);
+                    httpContext.Response.Headers[pathTraversal.FlagKey] = pathTraversal.Flag;
                 }
             }
             else
@@ -93,7 +93,7 @@ namespace SecureBank.Ctf.Services
                         .Where(x => x.Type == CtfChallengeTypes.SensitiveDataExposure)
                         .Single();
 
-                    httpContext.Response.Headers.Add(sensitiveDataExposure.FlagKey, sensitiveDataExposure.Flag);
+                    httpContext.Response.Headers[sensitiveDataExposure.FlagKey] = sensitiveDataExposure.Flag;
                 }
             }
             else

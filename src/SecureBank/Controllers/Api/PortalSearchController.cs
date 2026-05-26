@@ -18,7 +18,7 @@ namespace SecureBank.Controllers.Api
         [HttpGet]
         public IActionResult Index(string searchString)
         {
-            PortalSearchModel portalSearchModel = _portalSearchBL.Search(searchString);
+            PortalSearchModel portalSearchModel = _portalSearchBL.Search(searchString, HttpContext);
 
             return Ok(portalSearchModel);
         }

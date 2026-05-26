@@ -65,7 +65,7 @@ namespace SecureBank.Ctf.Services
 
                         if (CTF_XEE_FILES.Any(x => xml.Contains(x)))
                         {
-                            httpContext.Response.Headers.Add(xxeChallenge.FlagKey, xxeChallenge.Flag);
+                            httpContext.Response.Headers[xxeChallenge.FlagKey] = xxeChallenge.Flag;
                         }
                     }
                 }

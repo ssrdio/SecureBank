@@ -20,6 +20,11 @@ namespace SecureBank.Ctf.Services
     public class CtfAuthBL : AuthBL
     {
         private readonly CtfOptions _ctfOptions;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        // Vulnerable regex pattern for reDOS challenge - catastrophic backtracking on non-email strings
+        private const string REDOS_EMAIL_REGEX_PATTERN =
+            @"^([a-zA-Z0-9]+([._-]?[a-zA-Z0-9]+)*)+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
 
         public CtfAuthBL(
             IUserDAO userDAO,
@@ -27,11 +32,13 @@ namespace SecureBank.Ctf.Services
             IEmailSender emailSender,
             IOptions<CtfOptions> options,
             ICookieService cookieService,
-            IOptions<AppSettings> appSettings)
+            IOptions<AppSettings> appSettings,
+            IHttpContextAccessor httpContextAccessor)
             : base(userDAO, transactionDAO, emailSender, cookieService, appSettings)
         {
 
             _ctfOptions = options.Value;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public override Task<bool> Register(UserModel registrationModel, HttpContext httpContext)
@@ -44,7 +51,7 @@ namespace SecureBank.Ctf.Services
                         .Where(x => x.Type == CtfChallengeTypes.WeakPassword)
                         .Single();
 
-                    httpContext.Response.Headers.Add(weakPasswordChallenge.FlagKey, weakPasswordChallenge.Flag);
+                    httpContext.Response.Headers[weakPasswordChallenge.FlagKey] = weakPasswordChallenge.Flag;
                 }
                 else
                 {
@@ -60,7 +67,7 @@ namespace SecureBank.Ctf.Services
                         .Where(x => x.Type == CtfChallengeTypes.RegistrationRoleSet)
                         .Single();
 
-                    httpContext.Response.Headers.Add(registrationRoleSetChallenge.FlagKey, registrationRoleSetChallenge.Flag);
+                    httpContext.Response.Headers[registrationRoleSetChallenge.FlagKey] = registrationRoleSetChallenge.Flag;
                 }
                 else
                 {
@@ -78,18 +85,26 @@ namespace SecureBank.Ctf.Services
                 return false;
             }
 
+            string pattern = _ctfOptions.CtfChallengeOptions.reDOS ? REDOS_EMAIL_REGEX_PATTERN : EMAIL_REGEX_PATTERN;
+
             try
             {
-                bool isEmailValid = Regex.IsMatch(userModel.UserName, EMAIL_REGEX_PATTERN, RegexOptions.IgnoreCase, TimeSpan.FromSeconds(5));
+                bool isEmailValid = Regex.IsMatch(userModel.UserName, pattern, RegexOptions.IgnoreCase, TimeSpan.FromSeconds(5));
                 if (!isEmailValid)
                 {
                     return false;
                 }
             }
-            catch (Exception)
+            catch (RegexMatchTimeoutException)
             {
-                // This is no longer accessible here, would need HttpContext passed
-                // For now, we'll handle this differently or pass HttpContext to ValidateRegistrationModel
+                if (_ctfOptions.CtfChallengeOptions.reDOS)
+                {
+                    CtfChallengeModel reDosChallenge = _ctfOptions.CtfChallenges
+                        .Where(x => x.Type == CtfChallengeTypes.reDOS)
+                        .Single();
+
+                    _httpContextAccessor.HttpContext?.Response.Headers[reDosChallenge.FlagKey] = reDosChallenge.Flag;
+                }
                 return false;
             }
 

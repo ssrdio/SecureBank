@@ -26,7 +26,7 @@ namespace SecureBank.Controllers.Api
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult Get([FromRoute] int id)
         {
-            TransactionDBModel transaction = _transactionBL.Details(id);
+            TransactionDBModel transaction = _transactionBL.Details(id, HttpContext);
             if (transaction == null)
             {
                 return NotFound();
@@ -43,7 +43,7 @@ namespace SecureBank.Controllers.Api
             [FromQuery(Name = "search[value]")] string search)
         {
             DataTableResp<TransactionResp> dataTableResp = _transactionBL.GetTransactions(
-                HttpContext.GetUserName(), search, start, length);
+                HttpContext.GetUserName(), search, start, length, HttpContext);
 
             return Ok(dataTableResp);
         }
@@ -52,7 +52,7 @@ namespace SecureBank.Controllers.Api
         [ProducesResponseType(typeof(List<TransactionResp>), StatusCodes.Status200OK)]
         public IActionResult GetTransactionHistory([FromQuery] string userName)
         {
-            List<TransactionsByDayResp> transactions = _transactionBL.GetTransactionsByDay(userName);
+            List<TransactionsByDayResp> transactions = _transactionBL.GetTransactionsByDay(userName, HttpContext);
 
             return Ok(transactions);
         }
@@ -67,7 +67,7 @@ namespace SecureBank.Controllers.Api
                 return BadRequest(ModelState);
             }
 
-            bool createResult = _transactionBL.Create(transaction);
+            bool createResult = _transactionBL.Create(transaction, HttpContext);
             if (!createResult)
             {
                 return BadRequest();
@@ -75,5 +75,6 @@ namespace SecureBank.Controllers.Api
 
             return Ok(new EmptyResult());
         }
+        
     }
 }

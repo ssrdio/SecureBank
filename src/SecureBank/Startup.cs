@@ -81,6 +81,8 @@ namespace SecureBank
             services.AddTransient<IUserDAO, UserDAO>();
             services.AddTransient<IDbInitializer, DbInitializer>();
 
+            services.AddHttpContextAccessor();
+
             services.AddScoped<StoreAPICalls>();
             services.AddTransient<IEmailSender, EmailSender>();
 
@@ -199,7 +201,16 @@ namespace SecureBank
 
                 string fullPath = Path.Combine(env.ContentRootPath, "Documents", SecureBankConstants.DIRECTORY_BROWSING_FILE_NAME);
 
-                File.WriteAllText(fullPath, ftpChallenge.Flag + new string(Enumerable.Repeat(' ', 3245).ToArray()));
+                string flagContent = ftpChallenge.Flag;
+                string pdfContent = "%PDF-1.4\n" +
+                    "1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n" +
+                    "2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n" +
+                    "3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>\nendobj\n" +
+                    "5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n" +
+                    "4 0 obj\n<< /Length " + (44 + flagContent.Length) + " >>\nstream\nBT\n/F1 12 Tf\n100 700 Td\n(" + flagContent + ") Tj\nET\nendstream\nendobj\n" +
+                    "xref\n0 6\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n" +
+                    "trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n0\n%%EOF";
+                File.WriteAllText(fullPath, pdfContent);
             }
 
             app.UseRouting();

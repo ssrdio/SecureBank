@@ -65,7 +65,7 @@ namespace SecureBank.Ctf.Services
                 if (storeItems != null)
                 {
                     CtfChallengeModel invalidModelChallenge = _ctfOptions.CtfChallenges
-                        .Where(x => x.Type == CtfChallengeTypes.InvalidStoreModel)
+                        .Where(x => x.Type == CtfChallengeTypes.InvalidModel)
                         .Single();
 
                     StoreItem storeItem = storeItems
@@ -75,7 +75,7 @@ namespace SecureBank.Ctf.Services
                     {
                         if (storeItem.Price != buyProductReq.Price)
                         {
-                            httpContext.Response.Headers.Add(invalidModelChallenge.FlagKey, invalidModelChallenge.Flag);
+                            httpContext.Response.Headers[invalidModelChallenge.FlagKey] = invalidModelChallenge.Flag;
                         }
                     }
                 }
@@ -114,10 +114,10 @@ namespace SecureBank.Ctf.Services
                 if (storeItem.Price != buyProductReq.Price)
                 {
                     CtfChallengeModel invalidStoreModelRequest = _ctfOptions.CtfChallenges
-                           .Where(x => x.Type == CtfChallengeTypes.InvalidStoreModel)
+                           .Where(x => x.Type == CtfChallengeTypes.InvalidModel)
                            .SingleOrDefault();
 
-                    httpContext.Response.Headers.Add(invalidStoreModelRequest.FlagKey, invalidStoreModelRequest.Flag);
+                    httpContext.Response.Headers[invalidStoreModelRequest.FlagKey] = invalidStoreModelRequest.Flag;
                 }
             }
             else
@@ -148,7 +148,7 @@ namespace SecureBank.Ctf.Services
                         .Where(x => x.Type == CtfChallengeTypes.SimultaneousRequest)
                         .SingleOrDefault();
 
-                    httpContext.Response.Headers.Add(simultaneousRequest.FlagKey, simultaneousRequest.Flag);
+                    httpContext.Response.Headers[simultaneousRequest.FlagKey] = simultaneousRequest.Flag;
                 }
             }
 
@@ -173,7 +173,7 @@ namespace SecureBank.Ctf.Services
                         .Where(x => x.Type == CtfChallengeTypes.SensitiveDataExposure)
                         .Single();
 
-                    httpContext.Response.Headers.Add(sensitiveDataExposure.FlagKey, sensitiveDataExposure.Flag);
+                    httpContext.Response.Headers[sensitiveDataExposure.FlagKey] = sensitiveDataExposure.Flag;
                 }
                 else
                 {

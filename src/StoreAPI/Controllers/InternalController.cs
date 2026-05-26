@@ -17,9 +17,9 @@ namespace StoreAPI.Controllers
         [Produces("text/plain")]
         public IActionResult Flag()
         {
-            if (!_ctfSettings.Enabled || string.IsNullOrEmpty(_ctfSettings.GeneratedFlag))
+            if (!_ctfSettings.Enabled || !_ctfSettings.SsrfChallenge || string.IsNullOrEmpty(_ctfSettings.GeneratedFlag))
             {
-                return Ok("Flag is disabled");
+                return Ok("Flag disabled, good job though.");
             }
 
             return Ok(_ctfSettings.GeneratedFlag);

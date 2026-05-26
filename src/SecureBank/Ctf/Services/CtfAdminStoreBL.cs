@@ -33,7 +33,7 @@ namespace SecureBank.Ctf.Services
                         .Where(x => x.Type == CtfChallengeTypes.Xss)
                         .Single();
 
-                    httpContext.Response.Headers.Add(xxsChallenge.FlagKey, xxsChallenge.Flag);
+                    httpContext.Response.Headers[xxsChallenge.FlagKey] = xxsChallenge.Flag;
                 }
             }
 

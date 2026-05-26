@@ -16,7 +16,7 @@ services:
       - AppSettings:SmtpCredentials:Password=
       - AppSettings:Ctf:Enabled=false
       - AppSettings:Ctf:Seed=example
-      - AppSettings:Ctf:GenerateCtfdExport=false
+      - AppSettings:Ctf:GenerateCtfdExport=true
       - AppSettings:Ctf:FlagFormat=ctf{{{0}}}
 #      - AppSettings:Ctf:FlagFormat=ctf{{{0}}}.challenge{1}"
       - AppSettings:Ctf:UseRealChallengeName=true
@@ -78,6 +78,7 @@ services:
       - Ctf:Enabled=false
       - Ctf:Seed=example
       - Ctf:FlagFormat=ctf{{{0}}}
+      - Ctf:Challenges:Ssrf=true
     volumes:
       - ./logs/storeapi:/app/logs
     ports:
