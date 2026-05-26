@@ -12,5 +12,5 @@ echo "Going to sleep for 10 seconds waiting for PostgreSQL server run"
 
 sleep 10
 
->&2 echo "SQL Server is up - executing command on port ${PORT}"
+>&2 echo "PostgreSQL Server is up - executing command on port ${PORT}"
 exec $run_cmd

@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using StoreAPI.DAL;
 using StoreAPI.Models;
 using Microsoft.Extensions.Hosting;
-using NLog.Fluent;
+
 
 namespace StoreAPI
 {
@@ -44,7 +44,7 @@ namespace StoreAPI
 
             services.AddSwaggerGen(x =>
             {
-                x.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "StoreAPI", Version = "v1" });
+                x.SwaggerDoc("v1", new Microsoft.OpenApi.OpenApiInfo { Title = "StoreAPI", Version = "v1" });
 
                 string xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml");
                 x.IncludeXmlComments(xmlPath);
