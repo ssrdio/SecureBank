@@ -29,25 +29,22 @@ namespace SecureBank.Ctf.Services
         private readonly TimeSpan SIMULTANEOUS_REQUESTS_WAIT_FOR = new TimeSpan(0, 0, 1);
         private readonly TimeSpan LOCK_BUY_REQUEST_FOR = new TimeSpan(0, 0, 1);
 
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly CtfOptions _ctfOptions;
         private readonly IMemoryCache _memoryCache;
 
         public CtfStoreBL(
             ITransactionDAO transactionDAO,
             StoreAPICalls storeAPICalls,
-            IHttpContextAccessor httpContextAccessor,
             IOptions<CtfOptions> ctfOptions,
             IMemoryCache memoryCache)
             : base(transactionDAO, storeAPICalls)
         {
-            _httpContextAccessor = httpContextAccessor;
             _memoryCache = memoryCache;
 
             _ctfOptions = ctfOptions.Value;
         }
 
-        public async override Task<bool> BuyProduct(BuyProductReq buyProductReq, string userName)
+        public async override Task<bool> BuyProduct(BuyProductReq buyProductReq, string userName, HttpContext httpContext)
         {
             string cacheKey = string.Format(SIMULTANEOUS_REQUESTS_KEY, userName, buyProductReq.Id);
             if (_memoryCache.TryGetValue(cacheKey, out string value))
@@ -60,7 +57,7 @@ namespace SecureBank.Ctf.Services
 
             _memoryCache.Set(cacheKey, string.Empty, LOCK_BUY_REQUEST_FOR);
 
-            bool result = await base.BuyProduct(buyProductReq, userName);
+            bool result = await base.BuyProduct(buyProductReq, userName, httpContext);
 
             if (_ctfOptions.CtfChallengeOptions.InvalidModelStore)
             {
@@ -68,7 +65,7 @@ namespace SecureBank.Ctf.Services
                 if (storeItems != null)
                 {
                     CtfChallengeModel invalidModelChallenge = _ctfOptions.CtfChallenges
-                        .Where(x => x.Type == CtfChallengeTypes.InvalidStoreModel)
+                        .Where(x => x.Type == CtfChallengeTypes.InvalidModel)
                         .Single();
 
                     StoreItem storeItem = storeItems
@@ -78,7 +75,7 @@ namespace SecureBank.Ctf.Services
                     {
                         if (storeItem.Price != buyProductReq.Price)
                         {
-                            _httpContextAccessor.HttpContext.Response.Headers.Add(invalidModelChallenge.FlagKey, invalidModelChallenge.Flag);
+                            httpContext.Response.Headers[invalidModelChallenge.FlagKey] = invalidModelChallenge.Flag;
                         }
                     }
                 }
@@ -89,7 +86,7 @@ namespace SecureBank.Ctf.Services
             return result;
         }
 
-        protected override async Task<bool> Pay(BuyProductReq buyProductReq, string userName)
+        protected override async Task<bool> Pay(BuyProductReq buyProductReq, string userName, HttpContext httpContext)
         {
             double accountBalance = _transactionDAO.GetAccountBalance(userName);
             Stopwatch stopwatch = new Stopwatch();
@@ -117,10 +114,10 @@ namespace SecureBank.Ctf.Services
                 if (storeItem.Price != buyProductReq.Price)
                 {
                     CtfChallengeModel invalidStoreModelRequest = _ctfOptions.CtfChallenges
-                           .Where(x => x.Type == CtfChallengeTypes.InvalidStoreModel)
+                           .Where(x => x.Type == CtfChallengeTypes.InvalidModel)
                            .SingleOrDefault();
 
-                    _httpContextAccessor.HttpContext.Response.Headers.Add(invalidStoreModelRequest.FlagKey, invalidStoreModelRequest.Flag);
+                    httpContext.Response.Headers[invalidStoreModelRequest.FlagKey] = invalidStoreModelRequest.Flag;
                 }
             }
             else
@@ -151,7 +148,7 @@ namespace SecureBank.Ctf.Services
                         .Where(x => x.Type == CtfChallengeTypes.SimultaneousRequest)
                         .SingleOrDefault();
 
-                    _httpContextAccessor.HttpContext.Response.Headers.Add(simultaneousRequest.FlagKey, simultaneousRequest.Flag);
+                    httpContext.Response.Headers[simultaneousRequest.FlagKey] = simultaneousRequest.Flag;
                 }
             }
 
@@ -166,9 +163,9 @@ namespace SecureBank.Ctf.Services
             return _transactionDAO.Pay(depositRequest);
         }
 
-        public override Task<List<PurcahseHistoryItemResp>> GetPurchaseHistory(string userName)
+        public override Task<List<PurcahseHistoryItemResp>> GetPurchaseHistory(string userName, HttpContext httpContext)
         {
-            if (userName != _httpContextAccessor.HttpContext.GetUserName())
+            if (userName != httpContext.GetUserName())
             {
                 if (_ctfOptions.CtfChallengeOptions.SensitiveDataExposureStore)
                 {
@@ -176,15 +173,15 @@ namespace SecureBank.Ctf.Services
                         .Where(x => x.Type == CtfChallengeTypes.SensitiveDataExposure)
                         .Single();
 
-                    _httpContextAccessor.HttpContext.Response.Headers.Add(sensitiveDataExposure.FlagKey, sensitiveDataExposure.Flag);
+                    httpContext.Response.Headers[sensitiveDataExposure.FlagKey] = sensitiveDataExposure.Flag;
                 }
                 else
                 {
-                    userName = _httpContextAccessor.HttpContext.GetUserName();
+                    userName = httpContext.GetUserName();
                 }
             }
 
-            return base.GetPurchaseHistory(userName);
+            return base.GetPurchaseHistory(userName, httpContext);
         }
     }
 }

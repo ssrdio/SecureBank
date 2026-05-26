@@ -1,4 +1,5 @@
 ﻿using SecureBank.Models.PortalSearch;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,6 @@ namespace SecureBank.Interfaces
 {
     public interface IPortalSearchBL
     {
-        PortalSearchModel Search(string search);
+        PortalSearchModel Search(string search, HttpContext httpContext = null);
     }
 }

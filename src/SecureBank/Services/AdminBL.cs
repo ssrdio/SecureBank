@@ -1,4 +1,5 @@
 ﻿using SecureBank.DAL.DAO;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using NLog;
 using SecureBank.DAL.DBModels;
@@ -36,7 +37,7 @@ namespace SecureBank.Services
             return "Index";
         }
 
-        public virtual DataTableResp<TransactionResp> GetTransactions()
+        public virtual DataTableResp<TransactionResp> GetTransactions(HttpContext httpContext = null)
         {
             List<TransactionResp> transactionRespList = new List<TransactionResp>();
             List<TransactionResp> transactionDaoList = _transactionDao.GetTransactions();
@@ -151,7 +152,7 @@ namespace SecureBank.Services
                 data: transactionRespList);
         }
 
-        public virtual DataTableResp<AdminUserInfoResp> GetUsers()
+        public virtual DataTableResp<AdminUserInfoResp> GetUsers(HttpContext httpContext = null)
         {
             List<AdminUserInfoResp> users = _userDAO.GetUsers()
                 .Select(t => new AdminUserInfoResp

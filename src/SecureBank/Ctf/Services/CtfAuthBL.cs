@@ -1,8 +1,6 @@
 ﻿using SecureBank.DAL.DAO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Options;
 using SecureBank.Ctf.Models;
@@ -21,30 +19,29 @@ namespace SecureBank.Ctf.Services
 {
     public class CtfAuthBL : AuthBL
     {
-        private readonly IUrlHelperFactory _urlHelperFactory;
-        private readonly IActionContextAccessor _actionContextAccessor;
-
         private readonly CtfOptions _ctfOptions;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        // Vulnerable regex pattern for reDOS challenge - catastrophic backtracking on non-email strings
+        private const string REDOS_EMAIL_REGEX_PATTERN =
+            @"^([a-zA-Z0-9]+([._-]?[a-zA-Z0-9]+)*)+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
 
         public CtfAuthBL(
             IUserDAO userDAO,
             ITransactionDAO transactionDAO,
             IEmailSender emailSender,
-            IHttpContextAccessor httpContextAccessor,
             IOptions<CtfOptions> options,
-            IUrlHelperFactory urlHelperFactory,
-            IActionContextAccessor actionContextAccessor,
             ICookieService cookieService,
-            IOptions<AppSettings> appSettings)
-            : base(userDAO, transactionDAO, emailSender, cookieService, httpContextAccessor, appSettings)
+            IOptions<AppSettings> appSettings,
+            IHttpContextAccessor httpContextAccessor)
+            : base(userDAO, transactionDAO, emailSender, cookieService, appSettings)
         {
-            _urlHelperFactory = urlHelperFactory;
-            _actionContextAccessor = actionContextAccessor;
 
             _ctfOptions = options.Value;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public override Task<bool> Register(UserModel registrationModel)
+        public override Task<bool> Register(UserModel registrationModel, HttpContext httpContext)
         {
             if (registrationModel.Password.Length <= 3)
             {
@@ -54,7 +51,7 @@ namespace SecureBank.Ctf.Services
                         .Where(x => x.Type == CtfChallengeTypes.WeakPassword)
                         .Single();
 
-                    _httpContextAccessor.HttpContext.Response.Headers.Add(weakPasswordChallenge.FlagKey, weakPasswordChallenge.Flag);
+                    httpContext.Response.Headers[weakPasswordChallenge.FlagKey] = weakPasswordChallenge.Flag;
                 }
                 else
                 {
@@ -70,7 +67,7 @@ namespace SecureBank.Ctf.Services
                         .Where(x => x.Type == CtfChallengeTypes.RegistrationRoleSet)
                         .Single();
 
-                    _httpContextAccessor.HttpContext.Response.Headers.Add(registrationRoleSetChallenge.FlagKey, registrationRoleSetChallenge.Flag);
+                    httpContext.Response.Headers[registrationRoleSetChallenge.FlagKey] = registrationRoleSetChallenge.Flag;
                 }
                 else
                 {
@@ -78,7 +75,7 @@ namespace SecureBank.Ctf.Services
                 }
             }
 
-            return base.Register(registrationModel);
+            return base.Register(registrationModel, httpContext);
         }
 
         protected override bool ValidateRegistrationModel(UserModel userModel)
@@ -88,25 +85,26 @@ namespace SecureBank.Ctf.Services
                 return false;
             }
 
+            string pattern = _ctfOptions.CtfChallengeOptions.reDOS ? REDOS_EMAIL_REGEX_PATTERN : EMAIL_REGEX_PATTERN;
+
             try
             {
-                bool isEmailValid = Regex.IsMatch(userModel.UserName, EMAIL_REGEX_PATTERN, RegexOptions.IgnoreCase, TimeSpan.FromSeconds(5));
+                bool isEmailValid = Regex.IsMatch(userModel.UserName, pattern, RegexOptions.IgnoreCase, TimeSpan.FromSeconds(5));
                 if (!isEmailValid)
                 {
                     return false;
                 }
             }
-            catch (Exception)
+            catch (RegexMatchTimeoutException)
             {
                 if (_ctfOptions.CtfChallengeOptions.reDOS)
                 {
-                    CtfChallengeModel reDOS = _ctfOptions.CtfChallenges
+                    CtfChallengeModel reDosChallenge = _ctfOptions.CtfChallenges
                         .Where(x => x.Type == CtfChallengeTypes.reDOS)
                         .Single();
 
-                    _httpContextAccessor.HttpContext.Response.Headers.Add(reDOS.FlagKey, reDOS.Flag);
+                    _httpContextAccessor.HttpContext?.Response.Headers[reDosChallenge.FlagKey] = reDosChallenge.Flag;
                 }
-
                 return false;
             }
 
@@ -123,11 +121,9 @@ namespace SecureBank.Ctf.Services
             return _userDAO.ValidatePassword(userModel.UserName, userModel.Password, true);
         }
 
-        public override Task Logout(string returnUrl)
+        public override Task Logout(string returnUrl, HttpContext httpContext)
         {
-            IUrlHelper urlHelper = _urlHelperFactory.GetUrlHelper(_actionContextAccessor.ActionContext);
-
-            if (!urlHelper.IsLocalUrl(returnUrl))
+            if (!IsLocalUrl(returnUrl))
             {
                 if (_ctfOptions.CtfChallengeOptions.InvalidRedirect)
                 {
@@ -135,7 +131,7 @@ namespace SecureBank.Ctf.Services
                         .Where(x => x.Type == CtfChallengeTypes.InvalidRedirect)
                         .Single();
 
-                    _httpContextAccessor.HttpContext.Response.Cookies.Append(invalidRedirect.FlagKey, invalidRedirect.Flag);
+                    httpContext.Response.Cookies.Append(invalidRedirect.FlagKey, invalidRedirect.Flag);
                 }
                 else
                 {
@@ -143,7 +139,23 @@ namespace SecureBank.Ctf.Services
                 }
             }
 
-            return base.Logout(returnUrl);
+            return base.Logout(returnUrl, httpContext);
+        }
+
+        private bool IsLocalUrl(string url)
+        {
+            if (string.IsNullOrEmpty(url))
+                return true;
+
+            // Relative URLs are local
+            if (url[0] == '/')
+                return true;
+
+            // Check if it's a relative URL (doesn't start with protocol)
+            if (!url.Contains("://"))
+                return true;
+
+            return false;
         }
 
         public override IActionResult LoginAdmin()

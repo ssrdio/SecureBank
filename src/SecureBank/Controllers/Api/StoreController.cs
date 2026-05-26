@@ -38,7 +38,7 @@ namespace SecureBank.Controllers.Api
                 username = HttpContext.GetUserName();
             }
 
-            List<PurcahseHistoryItemResp> history = await _storeBL.GetPurchaseHistory(username);
+            List<PurcahseHistoryItemResp> history = await _storeBL.GetPurchaseHistory(username, HttpContext);
 
             return Ok(history);
         }
@@ -53,7 +53,7 @@ namespace SecureBank.Controllers.Api
                 return BadRequest();
             }
 
-            bool result = await _storeBL.BuyProduct(buyProductReq, HttpContext.GetUserName());
+            bool result = await _storeBL.BuyProduct(buyProductReq, HttpContext.GetUserName(), HttpContext);
             if (!result)
             {
                 return BadRequest();

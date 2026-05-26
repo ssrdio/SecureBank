@@ -1,5 +1,6 @@
 ﻿using SecureBank.DAL.DAO;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using NLog;
 using SecureBank.DAL.DBModels;
 using SecureBank.Interfaces;
@@ -40,7 +41,7 @@ namespace SecureBank.Services
                 .ToList();
         }
 
-        public virtual AccountBalanceResp GetAmount(string userName)
+        public virtual AccountBalanceResp GetAmount(string userName, HttpContext httpContext = null)
         {
             double balance = _transactionDAO.GetAccountBalance(userName);
 
@@ -50,31 +51,29 @@ namespace SecureBank.Services
             return accountBalance;
         }
 
-        public virtual async Task<bool> SetProfileImageUrl(string username, string url)
+        public virtual async Task<byte[]> SetProfileImageUrl(string username, string url)
         {
             // User can set the profile picture as any URL, intended to get images from
             // another server, but can actually do get requests in name of server instead.
             // CWE-918: Server-Side Request Forgery (SSRF)
             try
             {
-                // Response from get request.
                 byte[] responseBytes = await new HttpClient().GetByteArrayAsync(url);
 
-                // Setting the path of file.
                 string contentRootPath = _webHostEnvironment.ContentRootPath;
                 string path = System.IO.Path.Combine(contentRootPath, BASE_FOLDER);
                 string userPath = System.IO.Path.Combine(path, username);
 
                 await System.IO.File.WriteAllBytesAsync(userPath, responseBytes);
-                return true;
+                return responseBytes;
             }
             catch
             {
-                return false;
+                return null;
             }
         }
 
-        public virtual byte[] GetProfileImage(string userName)
+        public virtual byte[] GetProfileImage(string userName, HttpContext httpContext = null)
         {
             if (string.IsNullOrEmpty(userName))
             {
@@ -114,6 +113,11 @@ namespace SecureBank.Services
             }
 
             return data;
+        }
+
+        public virtual bool UpdateProfile(string userName, string name, string surname)
+        {
+            return _userDAO.UpdateProfile(userName, name, surname);
         }
     }
 }

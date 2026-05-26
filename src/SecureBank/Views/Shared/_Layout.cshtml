@@ -46,7 +46,6 @@
                         <li class="nav-item"><a class="nav-link" asp-controller="Transaction" asp-action="Index">Transactions</a></li>
                         <li class="nav-item"><a class="nav-link" asp-controller="Store" asp-action="Index">Store</a></li>
                         <li class="nav-item"><a class="nav-link" asp-controller="PortalSearch" asp-action="Index">Search</a></li>
-
                     </ul>
                 }
 
@@ -62,8 +61,10 @@
                 else
                 {
                     <div class="pull-right">
-                        <img style="border-radius:50%" src="/api/User/ProfileImage?user=@Context.GetUserName()" height="50" width="50" />
-                        <span style="color:gray">@Context.GetUserName()</span>
+                        <a href="/User/ProfilePage" style="text-decoration:none;">
+                            <img style="border-radius:50%" src="/api/User/ProfileImage?user=@Context.GetUserName()" height="50" width="50" />
+                            <span style="color:gray">@Context.GetUserName()</span>
+                        </a>
                         <span class="navAccountAmountColor">
                             <span id="amount"></span>
                             <span>€</span>
@@ -87,7 +88,7 @@
                 <div class="col-lg-6">
                     <div class="row">
                         <div class="col-12">
-                            <p>&copy; 2022. SSRD SecureBank</p>
+                            <p>&copy; 2026. SSRD SecureBank</p>
                         </div>
                     </div>
                 </div>

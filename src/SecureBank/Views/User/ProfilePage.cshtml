@@ -1,0 +1,125 @@
+@model SecureBank.Models.ProfilePageViewModel
+@{
+    ViewData["Title"] = "Profile Page";
+}
+
+<div class="container-fluid">
+    <div class="container">
+
+        <h2 class="transTableTitle">Profile Page</h2>
+
+        <div class="row">
+            <div class="col-md-4 text-center">
+                <div class="profileImageContainer">
+                    <img src="@Model.ImageUrl" alt="Profile Image" class="profileImage" style="border-radius:50%; width:150px; height:150px; object-fit:cover;" />
+                </div>
+            </div>
+            <div class="col-md-8">
+                <table class="table">
+                    <tr>
+                        <th>Email</th>
+                        <td>@Model.Username</td>
+                    </tr>
+                    <tr>
+                        <th>Name</th>
+                        <td>@Model.Name</td>
+                    </tr>
+                    <tr>
+                        <th>Surname</th>
+                        <td>@Model.Surname</td>
+                    </tr>
+                    <tr>
+                        <th>Balance</th>
+                        <td>@Model.Balance €</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <hr />
+
+        <h4 class="secondaryTitle">Edit profile</h4>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <label>Name</label>
+                <input type="text" id="profileName" class="form-control" value="@Model.Name" />
+            </div>
+            <div class="col-md-3">
+                <label>Surname</label>
+                <input type="text" id="profileSurname" class="form-control" value="@Model.Surname" />
+            </div>
+            <div class="col-md-2" style="align-self:flex-end;">
+                <button id="btnUpdateProfile" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+        <div id="profileResult" style="display:none" class="alert"></div>
+
+        <hr />
+
+        <h4 class="secondaryTitle">Change profile image</h4>
+        <div class="form-group row">
+            <div class="col-md-6">
+                <input type="text" id="imageUrl" class="form-control" placeholder="Enter image URL" />
+            </div>
+            <div class="col-md-2">
+                <button id="btnChangeImage" class="btn btn-primary">Update</button>
+            </div>
+        </div>
+        <div id="imageResult" style="display:none" class="alert"></div>
+        <pre id="responsePreview" style="display:none; margin-top:15px; max-height:300px; overflow:auto; background:#f5f5f5; padding:10px; border:1px solid #ddd;"></pre>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#btnUpdateProfile').on('click', function () {
+                $.ajax({
+                    type: "POST",
+                    url: "/api/User/UpdateProfile",
+                    data: JSON.stringify({ "Username": "@Model.Username", "Name": $('#profileName').val(), "Surname": $('#profileSurname').val() }),
+                    contentType: 'application/json',
+                    success: function () {
+                        $('#profileResult').removeClass('alert-danger').addClass('alert-success').text('Profile updated.').show();
+                    },
+                    error: function () {
+                        $('#profileResult').removeClass('alert-success').addClass('alert-danger').text('Failed to update profile.').show();
+                    }
+                });
+            });
+
+            $('#btnChangeImage').on('click', function () {
+                var url = $('#imageUrl').val();
+                if (!url) return;
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/api/User/ProfileImage', true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.responseType = 'blob';
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        var blob = xhr.response;
+                        var imgUrl = URL.createObjectURL(blob);
+                        $('.profileImage').attr('src', imgUrl);
+                        $('#imageResult').removeClass('alert-danger').addClass('alert-success').text('Profile image updated.').show();
+
+                        var reader = new FileReader();
+                        reader.onload = function () {
+                            var text = reader.result;
+                            $('#responsePreview').text(text).show();
+                            var flagMatch = text.match(/CTF\{[^}]+\}/);
+                            if (flagMatch) {
+                                alert('Flag captured: ' + flagMatch[0]);
+                            }
+                        };
+                        reader.readAsText(blob);
+                    } else {
+                        $('#imageResult').removeClass('alert-success').addClass('alert-danger').text('Failed to get resource.').show();
+                    }
+                };
+                xhr.send(JSON.stringify({ "Username": "@Model.Username", "ImageUrl": url }));
+            });
+        });
+    </script>
+}

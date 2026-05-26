@@ -4,6 +4,7 @@ using SecureBank.Models;
 using SecureBank.Models.Transaction;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Http;
 
 namespace SecureBank.Services
 {
@@ -16,9 +17,9 @@ namespace SecureBank.Services
             _transactionDAO = transactionDAO;
         }
 
-        public virtual bool Create(TransactionDBModel transaction)
+        public virtual bool Create(TransactionDBModel transaction, HttpContext httpContext = null)
         {
-            bool result = CheckTransaction(transaction);
+            bool result = CheckTransaction(transaction, httpContext);
             if(!result)
             {
                 return false;
@@ -27,7 +28,7 @@ namespace SecureBank.Services
             return _transactionDAO.Add(transaction);
         }
 
-        protected virtual bool CheckTransaction(TransactionDBModel transaction)
+        protected virtual bool CheckTransaction(TransactionDBModel transaction, HttpContext httpContext = null)
         {
             if(transaction.Amount < 0)
             {
@@ -53,7 +54,7 @@ namespace SecureBank.Services
             return true;
         }
 
-        public virtual TransactionDBModel Details(int? id)
+        public virtual TransactionDBModel Details(int? id, HttpContext httpContext = null)
         {
             if (!id.HasValue)
             {
@@ -65,7 +66,7 @@ namespace SecureBank.Services
             return transaction;
         }
 
-        public virtual DataTableResp<TransactionResp> GetTransactions(string userName, string search, int start, int lenght)
+        public virtual DataTableResp<TransactionResp> GetTransactions(string userName, string search, int start, int lenght, HttpContext httpContext = null)
         {
             List<TransactionResp> transactions = _transactionDAO.GetTransactions(userName, search);
 
@@ -75,12 +76,12 @@ namespace SecureBank.Services
                 data: transactions.Skip(start).Take(lenght).ToList());
         }
 
-        public virtual List<TransactionsByDayResp> GetTransactionsByDay(string userName)
+        public virtual List<TransactionsByDayResp> GetTransactionsByDay(string userName, HttpContext httpContext = null)
         {
             return _transactionDAO.GetTransactionsByDay(userName);
         }
 
-        public virtual string GetIndexViewName()
+        public virtual string GetIndexViewName(HttpContext httpContext = null)
         {
             return "Index";
         }

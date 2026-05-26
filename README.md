@@ -7,7 +7,7 @@
 [![](https://sonarcloud.io/api/project_badges/measure?project=ssrdio_SecureBank&branch=master&metric=bugs)](https://sonarcloud.io/dashboard/?id=ssrdio_SecureBank&branch=master) 
 [![](https://sonarcloud.io/api/project_badges/measure?project=ssrdio_SecureBank&branch=master&metric=code_smells)](https://sonarcloud.io/dashboard/?id=ssrdio_SecureBank&branch=master) 
 
-SecureBank is a FinTech application which contains all OWASP TOP 10 security vulnerabilities along with some other security flaws found in real-world applications.
+SecureBank is a FinTech application which contains all OWASP TOP 10 2025 security vulnerabilities along with some other security flaws found in real-world applications.
 
 You can read more about SecureBank and OWASP top 10 vulnerabilities [here](https://ssrd.gitbook.io/securebank/).
 ![alt text](https://raw.githubusercontent.com/ssrdio/SecureBank/master/preview.gif "SecureBankPreview")
@@ -20,10 +20,10 @@ On the image below you can review how the application is built from the infrastr
 ![alt text](https://raw.githubusercontent.com/ssrdio/SecureBank/master/infra.png "Docker infrastructure")
 
 ## From source
-> Make sure that you have Microsoft SQL Server DB available. You can install or run it inside docker.
+> Make sure that you have PostgreSQL available. You can install or run it inside Docker.
 
-1. Install [.NET 5.0 SDK](https://dotnet.microsoft.com/download/dotnet/5.0)
-2. Install [Visual Studio 2019](https://visualstudio.microsoft.com/downloads/) or just run with  [Visual Studio Code](https://code.visualstudio.com/download)
+1. Install [.NET 10.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
+2. Install [Visual Studio 2026](https://visualstudio.microsoft.com/vs/) or just run with  [Visual Studio Code](https://code.visualstudio.com/download)
 3. Clone from GitHub
 4. Navigate to directory SecureBank -> src
 5. `dotnet run` or open solution in IDE and run there 
@@ -45,49 +45,60 @@ On the image below you can review how the application is built from the infrastr
 2. Install [Docker Compose](https://docs.docker.com/compose/install/)
 3. Create `docker-compose.yml`
 ```
-version: '3'
 services:
     securebank:
         image: ssrd/securebank
         environment: 
-            - AppSettings:BaseUrl=http://localhost:80
-            - AppSettings:Ctf:Enabled=true
-            - AppSettings:Ctf:Seed=example
-            - AppSettings:Ctf:GenerateCtfdExport=false
-            - AppSettings:Ctf:FlagFormat=ctf{{{0}}}
-            - AppSettings:Ctf:UseRealChallengeName=true
-            - AppSettings:Ctf:Challenges:SqlInjection=true
-            - AppSettings:Ctf:Challenges:WeakPassword=true
-            - AppSettings:Ctf:Challenges:SensitiveDataExposureStore=true
-            - AppSettings:Ctf:Challenges:SensitiveDataExposureBalance=true
-            - AppSettings:Ctf:Challenges:SensitiveDataExposureProfileImage=true
-            - AppSettings:Ctf:Challenges:PathTraversal=true
-            - AppSettings:Ctf:Challenges:Enumeration=true
-            - AppSettings:Ctf:Challenges:XxeInjection=true
-            - AppSettings:Ctf:Challenges:MissingAuthentication=true
-            - AppSettings:Ctf:Challenges:RegistrationRoleSet=true
-            - AppSettings:Ctf:Challenges:ChangeRoleInCookie=true
-            - AppSettings:Ctf:Challenges:UnconfirmedLogin=true
-            - AppSettings:Ctf:Challenges:ExceptionHandlingTransactionCreate=true
-            - AppSettings:Ctf:Challenges:ExceptionHandlingTransactionUpload=true
-            - AppSettings:Ctf:Challenges:TableXss=true
-            - AppSettings:Ctf:Challenges:PortalSearchXss=true
-            - AppSettings:Ctf:Challenges:InvalidModelStore=true
-            - AppSettings:Ctf:Challenges:InvalidModelTransaction=true
-            - AppSettings:Ctf:Challenges:UnknownGeneration=true
-            - AppSettings:Ctf:Challenges:HiddenPageRegisterAdmin=true
-            - AppSettings:Ctf:Challenges:HiddenPageLoginAdmin=true
-            - AppSettings:Ctf:Challenges:InvalidRedirect=true
-            - AppSettings:Ctf:Challenges:DirectoryBrowsing=true
-            - AppSettings:Ctf:Challenges:Swagger=true
-            - AppSettings:Ctf:Challenges:Base2048Content=true
-            - AppSettings:Ctf:Challenges:SimultaneousRequest=true
-            - AppSettings:Ctf:Challenges:reDOS=true
-            - AppSettings:Ctf:Challenges:FreeCredit=true
-            - SeedingSettings:Seed=true
-            - SeedingSettings:Admin=admin@ssrd.io
-            - SeedingSettings:AdminPassword=admin
-            - SeedingSettings:UserPassword=test
+          - AppSettings:BaseUrl=http://localhost:1337
+          - AppSettings:StoreEndpoint:ApiUrl=http://storeapi:80/api/Store/
+          - AppSettings:StoreEndpoint:ApiToken=
+          - AppSettings:SmtpCredentials:Ip=maildev
+          - AppSettings:SmtpCredentials:Port=25
+          - AppSettings:SmtpCredentials:Username=
+          - AppSettings:SmtpCredentials:Password=
+          - AppSettings:Ctf:Enabled=false
+          - AppSettings:Ctf:Seed=example
+          - AppSettings:Ctf:GenerateCtfdExport=true
+          - AppSettings:Ctf:FlagFormat=ctf{{{0}}}
+          #- AppSettings:Ctf:FlagFormat=ctf{{{0}}}.challenge{1}"
+          - AppSettings:Ctf:UseRealChallengeName=true
+          - AppSettings:Ctf:Challenges:SqlInjection=true
+          - AppSettings:Ctf:Challenges:WeakPassword=true
+          - AppSettings:Ctf:Challenges:SensitiveDataExposureStore=true
+          - AppSettings:Ctf:Challenges:SensitiveDataExposureBalance=true
+          - AppSettings:Ctf:Challenges:SensitiveDataExposureProfileImage=true
+          - AppSettings:Ctf:Challenges:ExceptionHandlingTransactionUpload=true
+          - AppSettings:Ctf:Challenges:PathTraversal=true
+          - AppSettings:Ctf:Challenges:Enumeration=true
+          - AppSettings:Ctf:Challenges:XxeInjection=true
+          - AppSettings:Ctf:Challenges:MissingAuthentication=true
+          - AppSettings:Ctf:Challenges:RegistrationRoleSet=true
+          - AppSettings:Ctf:Challenges:ChangeRoleInCookie=true
+          - AppSettings:Ctf:Challenges:UnconfirmedLogin=true
+          - AppSettings:Ctf:Challenges:ExceptionHandlingTransactionCreate=true
+          - AppSettings:Ctf:Challenges:TableXss=true
+          - AppSettings:Ctf:Challenges:PortalSearchXss=true
+          - AppSettings:Ctf:Challenges:InvalidModelStore=true
+          - AppSettings:Ctf:Challenges:InvalidModelTransaction=true
+          - AppSettings:Ctf:Challenges:UnknownGeneration=true
+          - AppSettings:Ctf:Challenges:HiddenPageRegisterAdmin=true
+          - AppSettings:Ctf:Challenges:HiddenPageLoginAdmin=true
+          - AppSettings:Ctf:Challenges:InvalidRedirect=true
+          - AppSettings:Ctf:Challenges:DirectoryBrowsing=true
+          - AppSettings:Ctf:Challenges:Swagger=true
+          - AppSettings:Ctf:Challenges:Base2048Content=true
+          - AppSettings:Ctf:Challenges:SimultaneousRequest=true
+          - AppSettings:Ctf:Challenges:reDOS=true
+          - AppSettings:Ctf:Challenges:FreeCredit=true
+          - DatabaseConnections:SecureBankMSSQL:UserId=securebank
+          - DatabaseConnections:SecureBankMSSQL:UserPass=Your_Password123
+          - DatabaseConnections:SecureBankMSSQL:Server=postgres
+          - DatabaseConnections:SecureBankMSSQL:ServerPort=5432
+          - DatabaseConnections:SecureBankMSSQL:Database=securebank
+          - SeedingSettings:Seed=true
+          - SeedingSettings:Admin=admin@ssrd.io
+          - SeedingSettings:AdminPassword=admin
+          - SeedingSettings:UserPassword=test1
         ports: 
             - 80:80
             - 1080:1080

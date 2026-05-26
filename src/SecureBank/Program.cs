@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NLog;
 using NLog.Web;
 
 namespace SecureBank
@@ -16,7 +17,9 @@ namespace SecureBank
     {
         public static void Main(string[] args)
         {
-            var logger = NLog.Web.NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+            var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
+            //var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
             try
             {
                 logger.Debug("init main");

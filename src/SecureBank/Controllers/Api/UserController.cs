@@ -27,21 +27,20 @@ namespace SecureBank.Controllers.Api
         [Produces("image/jpg")]
         public IActionResult ProfileImage([FromQuery] string user)
         {
-            byte[] file = _userBL.GetProfileImage(user);
+            byte[] file = _userBL.GetProfileImage(user, HttpContext);
 
             return File(file, "image/jpg");
         }
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [Produces("text/plain")]
-        public async Task<IActionResult> ProfileImage(NewImageModel image)
+        public async Task<IActionResult> ProfileImage(ProfileImageModel image)
         {
-            bool success = await _userBL.SetProfileImageUrl(image.Username, image.ImageUrl);
-            if (success)
+            byte[] responseBytes = await _userBL.SetProfileImageUrl(image.Username, image.ImageUrl);
+            if (responseBytes != null)
             {
                 _logger.Info($"Setting new image for user {image.Username}");
-                return Ok("New image set.");
+                return File(responseBytes, "image/jpg");
             }
             else
             {
@@ -53,9 +52,21 @@ namespace SecureBank.Controllers.Api
         [ProducesResponseType(typeof(AccountBalanceResp), StatusCodes.Status200OK)]
         public IActionResult GetAvailableFunds([FromQuery] string user)
         {
-            AccountBalanceResp accountBalance = _userBL.GetAmount(user);
+            AccountBalanceResp accountBalance = _userBL.GetAmount(user, HttpContext);
 
             return Ok(accountBalance);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult UpdateProfile([FromBody] UpdateProfileModel model)
+        {
+            bool result = _userBL.UpdateProfile(model.Username, model.Name, model.Surname);
+            if (result)
+            {
+                return Ok("Profile updated.");
+            }
+            return BadRequest("Failed to update profile.");
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using SecureBank.Models;
 using SecureBank.Models.Store;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace SecureBank.Interfaces
         string GetIndexViewName();
 
         Task<List<PurcahseHistoryItemResp>> GetAllPurchases();
-        Task<DataTableResp<StoreItem>> GetStoreItems();
+        Task<DataTableResp<StoreItem>> GetStoreItems(HttpContext httpContext = null);
 
         Task<bool> CreateStoreItem(StoreItem storeItem);
 

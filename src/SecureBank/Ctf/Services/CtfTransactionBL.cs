@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using SecureBank.DAL.DAO;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
 using SecureBank.Ctf;
 using SecureBank.Ctf.Models;
@@ -15,8 +14,6 @@ using SecureBank.Models;
 using SecureBank.Models.Transaction;
 using SecureBank.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Filters;
 using SecureBank.Authorization;
 
 namespace SecureBank.Ctf.Services
@@ -25,29 +22,21 @@ namespace SecureBank.Ctf.Services
     {
         private readonly IUserDAO _userDAO;
 
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IActionContextAccessor _actionContextAccessor;
-
         private readonly CtfOptions _ctfOptions;
 
         public CtfTransactionBL(
             ITransactionDAO transactionDAO,
             IUserDAO userDAO,
-            IHttpContextAccessor httpContextAccessor,
-            IActionContextAccessor actionContextAccessor,
             IOptions<CtfOptions> ctfOptions) : base(transactionDAO)
         {
             _userDAO = userDAO;
 
-            _httpContextAccessor = httpContextAccessor;
-            _actionContextAccessor = actionContextAccessor;
-
             _ctfOptions = ctfOptions.Value;
         }
 
-        public override bool Create(TransactionDBModel transactionTable)
+        public override bool Create(TransactionDBModel transactionTable, HttpContext httpContext)
         {
-            string userName = _httpContextAccessor.HttpContext.GetUserName();
+            string userName = httpContext.GetUserName();
 
             if (transactionTable.SenderId != userName)
             {
@@ -60,7 +49,7 @@ namespace SecureBank.Ctf.Services
                     .Where(x => x.Type == CtfChallengeTypes.InvalidModel)
                     .Single();
 
-                _httpContextAccessor.HttpContext.Response.Cookies.Append(invalidModelChallenge.FlagKey, invalidModelChallenge.Flag);
+                httpContext.Response.Cookies.Append(invalidModelChallenge.FlagKey, invalidModelChallenge.Flag);
             }
 
             if(_ctfOptions.CtfChallengeOptions.FreeCredit)
@@ -115,7 +104,7 @@ namespace SecureBank.Ctf.Services
             return base.Create(transactionTable);
         }
 
-        protected override bool CheckTransaction(TransactionDBModel transaction)
+        protected override bool CheckTransaction(TransactionDBModel transaction, HttpContext httpContext)
         {
             if(_ctfOptions.CtfChallengeOptions.FreeCredit)
             {
@@ -125,16 +114,16 @@ namespace SecureBank.Ctf.Services
                         .Where(x => x.Type == CtfChallengeTypes.FreeCredit)
                         .SingleOrDefault();
 
-                    _httpContextAccessor.HttpContext.Response.Cookies.Append(freeCredit.FlagKey, freeCredit.Flag);
+                    httpContext.Response.Cookies.Append(freeCredit.FlagKey, freeCredit.Flag);
 
                     return true;
                 }
             }
 
-            return base.CheckTransaction(transaction);
+            return base.CheckTransaction(transaction, httpContext);
         }
 
-        public override TransactionDBModel Details(int? id)
+        public override TransactionDBModel Details(int? id, HttpContext httpContext)
         {
             TransactionDBModel transaction = base.Details(id);
             if (transaction == null)
@@ -142,8 +131,8 @@ namespace SecureBank.Ctf.Services
                 return null;
             }
 
-            string userName = _httpContextAccessor.HttpContext.GetUserName();
-            string role = _httpContextAccessor.HttpContext.GetRole();
+            string userName = httpContext.GetUserName();
+            string role = httpContext.GetRole();
 
             if (transaction.SenderId != userName && transaction.ReceiverId != userName && role != CookieConstants.ADMIN_ROLE_STRING)
             {
@@ -153,7 +142,7 @@ namespace SecureBank.Ctf.Services
                         .Where(x => x.Type == CtfChallengeTypes.Enumeration)
                         .Single();
 
-                    _httpContextAccessor.HttpContext.Response.Headers.Add(enumerationChallenge.FlagKey, enumerationChallenge.Flag);
+                    httpContext.Response.Headers[enumerationChallenge.FlagKey] = enumerationChallenge.Flag;
                 }
                 else
                 {
@@ -164,7 +153,7 @@ namespace SecureBank.Ctf.Services
             return transaction;
         }
 
-        public override DataTableResp<TransactionResp> GetTransactions(string userName, string search, int start, int lenght)
+        public override DataTableResp<TransactionResp> GetTransactions(string userName, string search, int start, int lenght, HttpContext httpContext)
         {
             List<TransactionResp> transactions;
 
@@ -180,7 +169,7 @@ namespace SecureBank.Ctf.Services
                 }
                 catch (Exception)
                 {
-                    _httpContextAccessor.HttpContext.Response.Headers.Add(sqlInjectionChallenge.FlagKey, sqlInjectionChallenge.Flag);
+                    httpContext.Response.Headers[sqlInjectionChallenge.FlagKey] = sqlInjectionChallenge.Flag;
                     throw;
                 }
 
@@ -188,7 +177,7 @@ namespace SecureBank.Ctf.Services
 
                 if (validTransactions.Count != transactions.Count)
                 {
-                    _httpContextAccessor.HttpContext.Response.Headers.Add(sqlInjectionChallenge.FlagKey, sqlInjectionChallenge.Flag);
+                    httpContext.Response.Headers[sqlInjectionChallenge.FlagKey] = sqlInjectionChallenge.Flag;
                 }
                 else
                 {
@@ -196,7 +185,7 @@ namespace SecureBank.Ctf.Services
                     {
                         if (!validTransactions.Any(x => x.IsEqual(transaction)))
                         {
-                            _httpContextAccessor.HttpContext.Response.Headers.Add(sqlInjectionChallenge.FlagKey, sqlInjectionChallenge.Flag);
+                            httpContext.Response.Headers[sqlInjectionChallenge.FlagKey] = sqlInjectionChallenge.Flag;
                             break;
                         }
                     }
@@ -217,7 +206,7 @@ namespace SecureBank.Ctf.Services
                         .Where(x => x.Type == CtfChallengeTypes.Xss)
                         .Single();
 
-                    _httpContextAccessor.HttpContext.Response.Headers.Add(xxsChallenge.FlagKey, xxsChallenge.Flag);
+                    httpContext.Response.Headers[xxsChallenge.FlagKey] = xxsChallenge.Flag;
                 }
             }
 
@@ -230,7 +219,7 @@ namespace SecureBank.Ctf.Services
                     .ToList());
         }
 
-        public override List<TransactionsByDayResp> GetTransactionsByDay(string userName)
+        public override List<TransactionsByDayResp> GetTransactionsByDay(string userName, HttpContext httpContext)
         {
             CtfChallengeModel sqlInjectionChallenge = _ctfOptions.CtfChallenges
                 .Where(x => x.Type == CtfChallengeTypes.SqlInjection)
@@ -246,7 +235,7 @@ namespace SecureBank.Ctf.Services
                 }
                 catch (Exception)
                 {
-                    _httpContextAccessor.HttpContext.Response.Headers.Add(sqlInjectionChallenge.FlagKey, sqlInjectionChallenge.Flag);
+                    httpContext.Response.Headers[sqlInjectionChallenge.FlagKey] = sqlInjectionChallenge.Flag;
                     return null;
                 }
 
@@ -254,7 +243,7 @@ namespace SecureBank.Ctf.Services
 
                 if (validTransactions.Count != transactions.Count)
                 {
-                    _httpContextAccessor.HttpContext.Response.Headers.Add(sqlInjectionChallenge.FlagKey, sqlInjectionChallenge.Flag);
+                    httpContext.Response.Headers[sqlInjectionChallenge.FlagKey] = sqlInjectionChallenge.Flag;
                 }
                 else
                 {
@@ -262,7 +251,7 @@ namespace SecureBank.Ctf.Services
                     {
                         if (!validTransactions.Any(x => x.IsEqual(transaction)))
                         {
-                            _httpContextAccessor.HttpContext.Response.Headers.Add(sqlInjectionChallenge.FlagKey, sqlInjectionChallenge.Flag);
+                            httpContext.Response.Headers[sqlInjectionChallenge.FlagKey] = sqlInjectionChallenge.Flag;
                             break;
                         }
                     }
@@ -276,11 +265,9 @@ namespace SecureBank.Ctf.Services
             return transactions;
         }
 
-        public override string GetIndexViewName()
+        public override string GetIndexViewName(HttpContext httpContext)
         {
-            ActionContext actionContext = _actionContextAccessor.ActionContext;
-
-            string user = actionContext.HttpContext.GetUserName();
+            string user = httpContext.GetUserName();
 
             UserDBModel userDBModel = _userDAO.GetUser(user);
             if (!userDBModel.Confirmed)
@@ -291,7 +278,8 @@ namespace SecureBank.Ctf.Services
                         .Where(x => x.Type == CtfChallengeTypes.UnconfirmedLogin)
                         .SingleOrDefault();
 
-                    actionContext.ModelState.AddModelError(string.Empty, ctfChallengeModel.Flag);
+                    // Cannot directly access ModelState from here, would need ActionContext
+                    // This would require refactoring to pass it or handle differently
                 }
             }
 

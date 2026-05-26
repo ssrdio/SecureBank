@@ -29,7 +29,7 @@ namespace SecureBank.Controllers
         // GET: Transaction
         public IActionResult Index()
         {
-            string viewName = _transactionBL.GetIndexViewName();
+            string viewName = _transactionBL.GetIndexViewName(HttpContext);
 
             return View(viewName);
         }
@@ -37,7 +37,7 @@ namespace SecureBank.Controllers
         // GET: Transaction/Details/5
         public IActionResult Details(int? id)
         {
-            TransactionDBModel transaction = _transactionBL.Details(id);
+            TransactionDBModel transaction = _transactionBL.Details(id, HttpContext);
             if (transaction == null)
             {
                 return NotFound();
@@ -64,7 +64,7 @@ namespace SecureBank.Controllers
                 return View(transaction);
             }
 
-            bool createResult = _transactionBL.Create(transaction);
+            bool createResult = _transactionBL.Create(transaction, HttpContext);
             if (!createResult)
             {
                 ModelState.AddModelError(string.Empty, "Error");

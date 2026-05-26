@@ -17,18 +17,16 @@ namespace SecureBank.Ctf.Services
     public class CtfAdminBL : AdminBL
     {
         private readonly CtfOptions _ctfOptions;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public CtfAdminBL(ITransactionDAO transactionDao, IUserDAO userDAO, IOptions<CtfOptions> ctfOptions, IHttpContextAccessor httpContextAccessor)
+        public CtfAdminBL(ITransactionDAO transactionDao, IUserDAO userDAO, IOptions<CtfOptions> ctfOptions)
             : base(transactionDao, userDAO)
         {
             _ctfOptions = ctfOptions.Value;
-            _httpContextAccessor = httpContextAccessor;
         }
 
-        public override DataTableResp<TransactionResp> GetTransactions()
+        public override DataTableResp<TransactionResp> GetTransactions(HttpContext httpContext)
         {
-            DataTableResp<TransactionResp> transactions = base.GetTransactions();
+            DataTableResp<TransactionResp> transactions = base.GetTransactions(httpContext);
             if (_ctfOptions.CtfChallengeOptions.TableXss)
             {
                 bool xss = transactions.Data.Any(x => CtfConstants.XXS_KEYVORDS.Any(c =>
@@ -41,15 +39,15 @@ namespace SecureBank.Ctf.Services
                         .Where(x => x.Type == CtfChallengeTypes.Xss)
                         .Single();
 
-                    _httpContextAccessor.HttpContext.Response.Headers.Add(xssChallenge.FlagKey, xssChallenge.Flag);
+                    httpContext.Response.Headers[xssChallenge.FlagKey] = xssChallenge.Flag;
                 }
             }
             return transactions;
         }
 
-        public override DataTableResp<AdminUserInfoResp> GetUsers()
+        public override DataTableResp<AdminUserInfoResp> GetUsers(HttpContext httpContext)
         {
-            DataTableResp<AdminUserInfoResp> users = base.GetUsers();
+            DataTableResp<AdminUserInfoResp> users = base.GetUsers(httpContext);
             if (_ctfOptions.CtfChallengeOptions.TableXss)
             {
                 bool xss = users.Data.Any(x => CtfConstants.XXS_KEYVORDS.Any(c =>
@@ -60,7 +58,7 @@ namespace SecureBank.Ctf.Services
                         .Where(x => x.Type == CtfChallengeTypes.Xss)
                         .Single();
 
-                    _httpContextAccessor.HttpContext.Response.Headers.Add(xxsChallenge.FlagKey, xxsChallenge.Flag);
+                    httpContext.Response.Headers[xxsChallenge.FlagKey] = xxsChallenge.Flag;
                 }
             }
 

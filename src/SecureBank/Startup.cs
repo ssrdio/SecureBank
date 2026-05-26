@@ -62,15 +62,14 @@ namespace SecureBank
             DatabaseSettings customerDbSettings = Configuration.GetSection("DatabaseConnections:SecureBankMSSQL").Get<DatabaseSettings>();
             if (customerDbSettings != null)
             {              
-                string customerConnectionString = string.Format("Server={0},{1};Database={2};User Id={3};Password={4}",
+                string customerConnectionString = string.Format("Host={0};Port={1};Database={2};Username={3};Password={4}",
                     customerDbSettings.Server,
                     customerDbSettings.ServerPort,
                     customerDbSettings.Database,
                     customerDbSettings.UserId,
                     customerDbSettings.UserPass);
                 _logger.Info(customerConnectionString);
-                // configure mssql
-                services.AddDbContext<PortalDBContext>(options => options.UseSqlServer(customerConnectionString));
+                services.AddDbContext<PortalDBContext>(options => options.UseNpgsql(customerConnectionString));
             }
             else
             {
@@ -78,11 +77,11 @@ namespace SecureBank
                 services.AddDbContext<PortalDBContext>(options => options.UseSqlite("Filename=./customerDB.db"));
             }
 
-            services.AddTransient<IActionContextAccessor, ActionContextAccessor>();
-
             services.AddTransient<ITransactionDAO, TransactionDAO>();
             services.AddTransient<IUserDAO, UserDAO>();
             services.AddTransient<IDbInitializer, DbInitializer>();
+
+            services.AddHttpContextAccessor();
 
             services.AddScoped<StoreAPICalls>();
             services.AddTransient<IEmailSender, EmailSender>();
@@ -132,7 +131,7 @@ namespace SecureBank
 
             services.AddSwaggerGen(x =>
             {
-                x.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "BankWeb API", Version = "v1" });
+                x.SwaggerDoc("v1", new Microsoft.OpenApi.OpenApiInfo { Title = "BankWeb API", Version = "v1" });
 
                 string xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml");
                 x.IncludeXmlComments(xmlPath);
@@ -202,7 +201,16 @@ namespace SecureBank
 
                 string fullPath = Path.Combine(env.ContentRootPath, "Documents", SecureBankConstants.DIRECTORY_BROWSING_FILE_NAME);
 
-                File.WriteAllText(fullPath, ftpChallenge.Flag + new string(Enumerable.Repeat(' ', 3245).ToArray()));
+                string flagContent = ftpChallenge.Flag;
+                string pdfContent = "%PDF-1.4\n" +
+                    "1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n" +
+                    "2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n" +
+                    "3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>\nendobj\n" +
+                    "5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n" +
+                    "4 0 obj\n<< /Length " + (44 + flagContent.Length) + " >>\nstream\nBT\n/F1 12 Tf\n100 700 Td\n(" + flagContent + ") Tj\nET\nendstream\nendobj\n" +
+                    "xref\n0 6\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n" +
+                    "trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n0\n%%EOF";
+                File.WriteAllText(fullPath, pdfContent);
             }
 
             app.UseRouting();

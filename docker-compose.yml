@@ -1,11 +1,9 @@
-version: '3'
-
 services:
   securebank:
     build: ./src/SecureBank
     container_name: securebank
     depends_on:
-      - mssql
+      - postgres
       - maildev
       - storeapi
     environment: 
@@ -18,7 +16,7 @@ services:
       - AppSettings:SmtpCredentials:Password=
       - AppSettings:Ctf:Enabled=false
       - AppSettings:Ctf:Seed=example
-      - AppSettings:Ctf:GenerateCtfdExport=false
+      - AppSettings:Ctf:GenerateCtfdExport=true
       - AppSettings:Ctf:FlagFormat=ctf{{{0}}}
 #      - AppSettings:Ctf:FlagFormat=ctf{{{0}}}.challenge{1}"
       - AppSettings:Ctf:UseRealChallengeName=true
@@ -50,10 +48,10 @@ services:
       - AppSettings:Ctf:Challenges:SimultaneousRequest=true
       - AppSettings:Ctf:Challenges:reDOS=true
       - AppSettings:Ctf:Challenges:FreeCredit=true
-      - DatabaseConnections:SecureBankMSSQL:UserId=sa
+      - DatabaseConnections:SecureBankMSSQL:UserId=securebank
       - DatabaseConnections:SecureBankMSSQL:UserPass=Your_Password123
-      - DatabaseConnections:SecureBankMSSQL:Server=mssql
-      - DatabaseConnections:SecureBankMSSQL:ServerPort=1433
+      - DatabaseConnections:SecureBankMSSQL:Server=postgres
+      - DatabaseConnections:SecureBankMSSQL:ServerPort=5432
       - DatabaseConnections:SecureBankMSSQL:Database=securebank
       - SeedingSettings:Seed=true
       - SeedingSettings:Admin=admin@ssrd.io
@@ -68,38 +66,43 @@ services:
     build: ./src/StoreAPI
     container_name: storeapi
     depends_on: 
-      - mssql
+      - postgres
     environment: 
-      - DatabaseConnections:StoreMSSQL:UserId=sa
+      - DatabaseConnections:StoreMSSQL:UserId=securebank
       - DatabaseConnections:StoreMSSQL:UserPass=Your_Password123
-      - DatabaseConnections:StoreMSSQL:Server=mssql
-      - DatabaseConnections:StoreMSSQL:ServerPort=1433
+      - DatabaseConnections:StoreMSSQL:Server=postgres
+      - DatabaseConnections:StoreMSSQL:ServerPort=5432
       - DatabaseConnections:StoreMSSQL:Database=store
       - ASPNETCORE_HTTP_PORTS=80
       - StoreAPI:Seed=true
+      - Ctf:Enabled=false
+      - Ctf:Seed=example
+      - Ctf:FlagFormat=ctf{{{0}}}
+      - Ctf:Challenges:Ssrf=true
     volumes:
       - ./logs/storeapi:/app/logs
     ports:
       - 1338:80
   
-  mssql:
-    image: mcr.microsoft.com/mssql/server
-    container_name: mssql
-    user: root
+  postgres:
+    image: postgres:16
+    container_name: postgres
     environment: 
-      - ACCEPT_EULA=y
-      - SA_PASSWORD=Your_Password123
+      - POSTGRES_USER=securebank
+      - POSTGRES_PASSWORD=Your_Password123
+      - POSTGRES_DB=securebank
     ports: 
-      - 1433:1433
+      - 5432:5432
     volumes: 
-      - ./data:/var/opt/mssql/data
+      - pgdata:/var/lib/postgresql/data
+      - ./init-store-db.sql:/docker-entrypoint-initdb.d/init-store-db.sql
 
   maildev:
-    image: maildev/maildev:1.1.0
+    image: maildev/maildev:2.2.1
     container_name: maildev
     ports: 
-      - '1080:80'
-      # - '1025:25'
+      - '1080:1080'
+      - '1025:1025'
 
 volumes: 
-  mssql-data:
+  pgdata:

@@ -1,4 +1,5 @@
 ﻿using SecureBank.Models.User;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,10 +9,11 @@ namespace SecureBank.Interfaces
 {
     public interface IUserBL
     {
-        AccountBalanceResp GetAmount(string userName);
-        byte[] GetProfileImage(string userName);
+        AccountBalanceResp GetAmount(string userName, HttpContext httpContext = null);
+        byte[] GetProfileImage(string userName, HttpContext httpContext = null);
 
         List<string> FindUsers(string search);
-        Task<bool> SetProfileImageUrl(string username, string url);
+        Task<byte[]> SetProfileImageUrl(string username, string url);
+        bool UpdateProfile(string userName, string name, string surname);
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace SecureBank.Models
 {
-    public class NewImageModel
+    public class ProfileImageModel
     {
         public string Username { get; set; }
         public string ImageUrl { get; set; }

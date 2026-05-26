@@ -29,7 +29,7 @@ namespace SecureBank.Controllers.Api
                 return BadRequest();
             }
 
-            UserModel userModel = await _authBL.Login(loginModel);
+            UserModel userModel = await _authBL.Login(loginModel, HttpContext);
             if (userModel == null)
             {
                 return BadRequest();
@@ -47,9 +47,9 @@ namespace SecureBank.Controllers.Api
 
         [HttpGet]
         [ProducesResponseType(typeof(EmptyResult), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Logout()
+        public async Task<IActionResult> Logout([FromQuery] string returnUrl = null)
         {
-            await _authBL.Logout(null);
+            await _authBL.Logout(returnUrl, HttpContext);
 
             return Ok(new EmptyResult());
         }
@@ -64,7 +64,7 @@ namespace SecureBank.Controllers.Api
                 return BadRequest();
             }
 
-            bool registrationResult = await _authBL.Register(registrationModel);
+            bool registrationResult = await _authBL.Register(registrationModel, HttpContext);
             if (!registrationResult)
             {
                 return BadRequest();
@@ -73,12 +73,12 @@ namespace SecureBank.Controllers.Api
             return Ok(new EmptyResult());
         }
 
-        //[ApiExplorerSettings(IgnoreApi = true)]
-        //[HiddenPage]
-        //[HttpPost]
-        //public void RegisterAdmin([FromBody] UserModel userModel)
-        //{
-        //}
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [HiddenPage]
+        [HttpPost]
+        public void RegisterAdmin([FromBody] UserModel userModel)
+        {
+        }
 
         [HttpPost]
         [ProducesResponseType(typeof(EmptyResult), StatusCodes.Status200OK)]

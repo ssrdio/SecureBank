@@ -52,7 +52,7 @@ namespace SecureBank.Ctf.Authorization
                         .Where(x => x.Type == CtfChallengeTypes.ChangeRoleInCookie)
                         .Single();
 
-                    context.HttpContext.Response.Headers.Add(ctfChallenge.FlagKey, ctfChallenge.Flag);
+                    context.HttpContext.Response.Headers[ctfChallenge.FlagKey] = ctfChallenge.Flag;
                 }
             }
             else
@@ -79,7 +79,7 @@ namespace SecureBank.Ctf.Authorization
                     .Where(x => x.Type == CtfChallengeTypes.MissingAuthentication)
                     .Single();
 
-                context.HttpContext.Response.Headers.Add(missingAuth.FlagKey, missingAuth.Flag);
+                context.HttpContext.Response.Headers[missingAuth.FlagKey] = missingAuth.Flag;
             }
             else
             {

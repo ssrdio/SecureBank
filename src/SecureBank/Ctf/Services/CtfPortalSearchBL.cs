@@ -12,18 +12,14 @@ namespace SecureBank.Ctf.Services
 {
     public class CtfPortalSearchBL : PortalSearchBL
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
-
         private readonly CtfOptions _ctfOptions;
 
-        public CtfPortalSearchBL(IHttpContextAccessor httpContextAccessor, IOptions<CtfOptions> ctfOptions)
+        public CtfPortalSearchBL(IOptions<CtfOptions> ctfOptions)
         {
-            _httpContextAccessor = httpContextAccessor;
-
             _ctfOptions = ctfOptions.Value;
         }
 
-        public override PortalSearchModel Search(string search)
+        public override PortalSearchModel Search(string search, HttpContext httpContext)
         {
             if (!string.IsNullOrEmpty(search))
             {
@@ -36,12 +32,12 @@ namespace SecureBank.Ctf.Services
                             .Where(x => x.Type == CtfChallengeTypes.Xss)
                             .Single();
 
-                        _httpContextAccessor.HttpContext.Response.Headers.Add(xssChallenge.FlagKey, xssChallenge.Flag);
+                        httpContext.Response.Headers[xssChallenge.FlagKey] = xssChallenge.Flag;
                     }
                 }
             }
 
-            return base.Search(search);
+            return base.Search(search, httpContext);
         }
     }
 }

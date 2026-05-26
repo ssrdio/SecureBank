@@ -37,7 +37,7 @@ namespace SecureBank.Controllers
             using MemoryStream memoryStream = new MemoryStream();
             await Request.Form.Files[0].CopyToAsync(memoryStream);
 
-            string parsedXml = _uploadFileBL.UploadFile(memoryStream);
+            string parsedXml = _uploadFileBL.UploadFile(memoryStream, HttpContext);
             if (string.IsNullOrEmpty(parsedXml))
             {
                 return View();
