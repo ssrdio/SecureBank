@@ -1,3 +1,3 @@
 #!/bin/bash
 
-./maildev/bin/maildev
+node ./maildev/bin/maildev --smtp 25 --web 1080
