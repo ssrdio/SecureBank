@@ -21,7 +21,7 @@ namespace SecureBank.Services
 
             if(string.IsNullOrEmpty(search))
             {
-                return portalSearchModel; // NOSONAR
+                return portalSearchModel;
             }
 
             loremIpsumText = loremIpsumText.ToLower();

@@ -61,5 +61,5 @@ namespace SecureBank.Services
             
             return result;
         }
-    } // NOSONAR
+    }
 }
