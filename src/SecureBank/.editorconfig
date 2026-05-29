@@ -1,0 +1,26 @@
+# This file configures SonarAnalyzer rule exclusions for intentionally vulnerable code (CTF challenges).
+# These files contain deliberate security vulnerabilities for educational/CTF purposes.
+
+root = true
+
+# UploadFileBL.cs - Intentional XXE vulnerability (insecure XML parsing)
+[Services/UploadFileBL.cs]
+dotnet_diagnostic.S2755.severity = none
+
+# UserBL.cs - Intentional path traversal vulnerability
+[Services/UserBL.cs]
+dotnet_diagnostic.S2083.severity = none
+dotnet_diagnostic.S4790.severity = none
+
+# AuthController.cs - Intentional open redirect vulnerability
+[Controllers/AuthController.cs]
+dotnet_diagnostic.S5146.severity = none
+
+# PortalSearchBL.cs - Intentional insecure search (returns unsanitized input)
+[Services/PortalSearchBL.cs]
+dotnet_diagnostic.S5131.severity = none
+
+# PortalSearch/Index.cshtml - Intentional XSS via Html.Raw
+[Views/PortalSearch/Index.cshtml]
+dotnet_diagnostic.S5131.severity = none
+

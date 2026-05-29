@@ -43,7 +43,7 @@ namespace SecureBank.Controllers
 
             if (returnUrl != null)
             {
-                return Redirect(returnUrl); // NOSONAR
+                return Redirect(returnUrl);
             }
             else
             {
