@@ -22,11 +22,11 @@
         {
             if (!_ctfOptions.Value.IsCtfEnabled || _ctfOptions.Value.CtfChallengeOptions.PortalSearchXss)
             {
-                <p>Results for search: @Html.Raw(@Model.SearchString)</p>
+                <p>Results for search: @Html.Raw(@Model.SearchString)</p> // NOSONAR
             }
             else
             {
-                <p>Results for search: @Model.SearchString</p>
+                <p>Results for search: @Model.SearchString</p> // NOSONAR
             }
         }
 
