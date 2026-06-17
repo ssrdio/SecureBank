@@ -1,19 +1,21 @@
 name: Generate static map
+
 on:
   workflow_dispatch:
-   inputs:
-    website_url:
-      required: false
-      default: "http://89.167.106.119:3001/map" 
+    inputs:
+      website_url:
+        description: URL to capture
+        required: false
+        default: "http://89.167.106.119:3001/map"
   schedule:
-    - cron: 00 00 * * 0
+    - cron: "0 0 * * 0"
 
 jobs:
   screenshots:
     runs-on: ubuntu-latest
+
     steps:
       - uses: karol-brejna-i/webpage-screenshot-action@v1
         with:
-          url: $URL
-        env:
-          URL: ${{inputs.website_url}}
+          url: ${{ inputs.website_url || 'http://89.167.106.119:3001/map' }}
+          output: map-static.png
