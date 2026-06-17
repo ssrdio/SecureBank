@@ -48,8 +48,9 @@ jobs:
               { waitUntil: 'networkidle' }
             );
       
-            // Optional: wait for your map to finish rendering
-            // await page.waitForSelector('#map-ready');
+            await page.waitForSelector('#map-ready');
+            await page.waitForLoadState('networkidle');
+            await page.waitForTimeout(3000);
       
             await page.screenshot({
               path: 'images/static-map.png'
@@ -59,7 +60,7 @@ jobs:
           })();
           EOF
         env:
-          URL: ${{ github.event_name == 'workflow_dispatch' && inputs.website_url || 'http://89.167.106.119:3001/map' }}
+          URL: ${{ github.event_name == 'workflow_dispatch' && inputs.website_url || 'https://mbank.ssrd.io/' }}
 
       - name: Commit updated map
         run: |
