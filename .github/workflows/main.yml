@@ -1,5 +1,9 @@
 name: Generate static map
 on:
+  workflow_dispatch:
+   inputs:
+    name:
+      required: false
   schedule:
     - cron: 00 00 * * 0
 
