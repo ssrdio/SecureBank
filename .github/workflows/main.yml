@@ -5,10 +5,10 @@ on:
     inputs:
       website_url:
         description: URL to capture
-        required: false
-        default: "http://89.167.106.119:3001/map"
+        required: true
+        default: "https://mbank.ssrd.io/"
   schedule:
-    - cron: "0 0 * * 0"
+    - cron: "0 0 * * *"
 
 permissions:
   contents: write
