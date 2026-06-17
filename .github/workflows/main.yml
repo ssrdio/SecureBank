@@ -30,8 +30,8 @@ jobs:
 
       - name: Commit updated map
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "actions-runner[bot]@users.noreply.github.com"
+          git config user.name "DominikBrezovsek"
+          git config user.email "dominik.brezovsek@student.um.si"
 
           git add images/static-map.png
 
