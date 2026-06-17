@@ -10,12 +10,35 @@ on:
   schedule:
     - cron: "0 0 * * 0"
 
+permissions:
+  contents: write
+
 jobs:
   screenshots:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v4
+
+      - name: Ensure images directory exists
+        run: mkdir -p images
+
       - uses: karol-brejna-i/webpage-screenshot-action@v1
         with:
           url: ${{ inputs.website_url || 'http://89.167.106.119:3001/map' }}
-          output: map-static.png
+          output: images/static-map.png
+
+      - name: Commit updated map
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "actions-runner[bot]@users.noreply.github.com"
+
+          git add images/static-map.png
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          git commit -m "Update static map"
+          git push
