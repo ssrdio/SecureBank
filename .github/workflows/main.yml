@@ -26,6 +26,7 @@ jobs:
       - uses: karol-brejna-i/webpage-screenshot-action@v1
         with:
           url: ${{ inputs.website_url || 'http://89.167.106.119:3001/map' }}
+          mode: page
           output: images/static-map.png
 
       - name: Commit updated map
