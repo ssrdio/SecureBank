@@ -1,0 +1,12 @@
+name: Generate static map
+on:
+  schedule:
+    - cron: 00 00 * * 0
+
+jobs:
+  screenshots:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: karol-brejna-i/webpage-screenshot-action@v1
+        with:
+          url: http://89.167.106.119:3001/map
