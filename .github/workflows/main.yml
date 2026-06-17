@@ -23,11 +23,43 @@ jobs:
       - name: Ensure images directory exists
         run: mkdir -p images
 
-      - uses: karol-brejna-i/webpage-screenshot-action@v1
+      - uses: actions/setup-node@v4
         with:
-          url: ${{ inputs.website_url || 'http://89.167.106.119:3001/map' }}
-          mode: page
-          output: images/static-map.png
+          node-version: 22
+      
+      - name: Install Playwright
+        run: |
+          npm install -D playwright
+          npx playwright install --with-deps chromium
+      
+      - name: Take screenshot
+        run: |
+          node <<'EOF'
+          const { chromium } = require('playwright');
+      
+          (async () => {
+            const browser = await chromium.launch();
+            const page = await browser.newPage({
+              viewport: { width: 1920, height: 1080 }
+            });
+      
+            await page.goto(
+              process.env.URL,
+              { waitUntil: 'networkidle' }
+            );
+      
+            // Optional: wait for your map to finish rendering
+            // await page.waitForSelector('#map-ready');
+      
+            await page.screenshot({
+              path: 'images/static-map.png'
+            });
+      
+            await browser.close();
+          })();
+          EOF
+        env:
+          URL: ${{ github.event_name == 'workflow_dispatch' && inputs.website_url || 'http://89.167.106.119:3001/map' }}
 
       - name: Commit updated map
         run: |
