@@ -9,7 +9,7 @@
 
 ### Used by cybersecurity enthusiasts worldwide
 
-[See where SecureBank is being used[Placeholder]](https://example.com)
+[See where SecureBank is being used (placeholder)](https://example.com)
 
 ![static_map.png](https://raw.githubusercontent.com/ssrdio/SecureBank/master/images/static-map.png)
 
