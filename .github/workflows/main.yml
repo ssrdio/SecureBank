@@ -47,10 +47,12 @@ jobs:
               process.env.URL,
               { waitUntil: 'networkidle' }
             );
-      
-            await page.waitForSelector('#map-ready');
-            await page.waitForLoadState('networkidle');
-            await page.waitForTimeout(3000);
+
+            // Wait until map-ready is visible (display: block)
+            await page.waitForFunction(() => {
+              const el = document.querySelector('#map-ready');
+              return el && window.getComputedStyle(el).display === 'block';
+            });
       
             await page.screenshot({
               path: 'images/static-map.png'
