@@ -8,7 +8,7 @@ services:
       - storeapi
     environment: 
       - AppSettings:BaseUrl=http://localhost:1337
-      - AppSettings:PingHome=http://localhost:1337
+      - AppSettings:PingHome=true
       - AppSettings:StoreEndpoint:ApiUrl=http://storeapi:80/api/Store/
       - AppSettings:StoreEndpoint:ApiToken=
       - AppSettings:SmtpCredentials:Ip=maildev
