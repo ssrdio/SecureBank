@@ -7,6 +7,12 @@
 [![](https://sonarcloud.io/api/project_badges/measure?project=ssrdio_SecureBank&branch=master&metric=bugs)](https://sonarcloud.io/dashboard/?id=ssrdio_SecureBank&branch=master) 
 [![](https://sonarcloud.io/api/project_badges/measure?project=ssrdio_SecureBank&branch=master&metric=code_smells)](https://sonarcloud.io/dashboard/?id=ssrdio_SecureBank&branch=master) 
 
+### Used by cybersecurity enthusiasts worldwide
+
+[See where SecureBank is being used[Placeholder]](https://example.com)
+
+![static_map.png](https://raw.githubusercontent.com/ssrdio/SecureBank/master/images/static-map.png)
+
 SecureBank is a FinTech application which contains all OWASP TOP 10 2025 security vulnerabilities along with some other security flaws found in real-world applications.
 
 You can read more about SecureBank and OWASP top 10 vulnerabilities [here](https://ssrd.gitbook.io/securebank/).
@@ -129,3 +135,7 @@ Run  `docker run -d -p 80:80 -p 5000:5000 -p 1080:1080 -e 'AppSettings:Ctf:Enabl
 
 ## Custom training
 For custom training you can contact us at [training[at]ssrd.io](training@ssrd.io)
+
+## Usage statistics
+
+*App uses a simple call to our server in order to provide number of installations worldwide. Approximate location is displayed from your public IP and put on the map. If you don't want to be part of our statistics, just set `AppSettings:PingHome=false` in `docker-compose.yaml` or `appsettings.json` files.*

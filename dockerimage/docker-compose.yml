@@ -3,6 +3,7 @@ services:
         image: ssrd/securebank
         environment: 
             - AppSettings:BaseUrl=http://localhost:1337
+            - AppSettings:PingHome=true
             - AppSettings:Ctf:Enabled=true
             - AppSettings:Ctf:Seed=example
             - AppSettings:Ctf:GenerateCtfdExport=false

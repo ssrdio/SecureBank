@@ -1,6 +1,6 @@
 # SecureBank
 
-SecureBank is FinTech application which contains all [OWASP TOP 10](https://owasp.org/www-project-top-ten/) security vulnerabilities alog with some other security flaws found in real-world applications.
+SecureBank is FinTech application which contains all [OWASP TOP 10](https://owasp.org/Top10/2025/) security vulnerabilities alog with some other security flaws found in real-world applications.
 
 ## Environment
 
