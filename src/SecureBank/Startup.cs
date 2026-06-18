@@ -20,6 +20,7 @@ using Microsoft.Extensions.Options;
 using System.Linq;
 using SecureBank.Authorization;
 using System.IO;
+using System.Net.Http;
 using Microsoft.Extensions.FileProviders;
 using SecureBank.Filters;
 
@@ -248,6 +249,19 @@ namespace SecureBank
             }
 
             app.InitializeDatabase(Configuration["SeedingSettings:Admin"], Configuration["SeedingSettings:AdminPassword"]);
+            HttpClient client = new System.Net.Http.HttpClient();
+
+            try
+            {
+                if (Configuration["AppSettings:PingHome"]?.ToLower() != "false")
+                {
+                    client.GetAsync("https://n8n.ssrdteam.com/webhook/happy-hacking").Wait();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "An error occurred while connecting to the webhook");
+            }
         }
     }
 }
