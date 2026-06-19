@@ -17,7 +17,7 @@ You can read more about SecureBank and OWASP top 10 vulnerabilities [here](https
 
 [See where SecureBank is being used](https://mbank.ssrd.io)
 
-![static_map.png](https://raw.githubusercontent.com/ssrdio/SecureBank/master/images/static-map.png)
+![static_map.png](https://mbank.ssrd.io/static)
 
 
 # Setup
